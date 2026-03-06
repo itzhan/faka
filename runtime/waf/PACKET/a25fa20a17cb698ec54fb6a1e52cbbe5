@@ -1,0 +1,1 @@
+s=/admin/api/dict/get&amp;dict=commodity-&gt;owner=0 and delivery_way=0 and (shared_id is null or shared_id=0),id,name

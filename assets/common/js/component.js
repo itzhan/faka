@@ -89,7 +89,7 @@ const component = new class Component {
             maxmin: opt.maxmin ?? true,
             closeBtn: opt.closeBtn ?? 1,
             shadeClose: opt.shadeClose ?? false,
-            anim: 4,
+            anim: 0,
             yes: (index, lay) => {
                 let data = form.getData();
                 if (!form.validator()) {

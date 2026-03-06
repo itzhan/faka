@@ -1,0 +1,56 @@
+FROM php:8.1-apache
+
+# 安装系统依赖
+RUN apt-get update && apt-get install -y \
+    libpng-dev \
+    libjpeg62-turbo-dev \
+    libfreetype6-dev \
+    libzip-dev \
+    libcurl4-openssl-dev \
+    unzip \
+    && rm -rf /var/lib/apt/lists/*
+
+# 安装 PHP 扩展
+RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install -j$(nproc) \
+    pdo_mysql \
+    gd \
+    zip \
+    curl \
+    opcache
+
+# 安装 Redis 扩展（用于 session 存储，消除文件锁瓶颈）
+RUN pecl install redis && docker-php-ext-enable redis
+
+# 安装 Xdebug（开发调试用）
+RUN pecl install xdebug && docker-php-ext-enable xdebug
+
+# 启用 Apache mod_rewrite
+RUN a2enmod rewrite
+
+# 允许 .htaccess 覆盖
+RUN sed -i 's/AllowOverride None/AllowOverride All/g' /etc/apache2/apache2.conf
+
+WORKDIR /var/www/html
+
+# 开发环境 PHP 配置
+RUN echo "upload_max_filesize=64M" > /usr/local/etc/php/conf.d/custom.ini \
+    && echo "post_max_size=64M" >> /usr/local/etc/php/conf.d/custom.ini \
+    && echo "memory_limit=256M" >> /usr/local/etc/php/conf.d/custom.ini \
+    && echo "max_execution_time=300" >> /usr/local/etc/php/conf.d/custom.ini \
+    && echo "display_errors=On" >> /usr/local/etc/php/conf.d/custom.ini \
+    && echo "error_reporting=E_ALL" >> /usr/local/etc/php/conf.d/custom.ini \
+    && echo "log_errors=On" >> /usr/local/etc/php/conf.d/custom.ini \
+    && echo "opcache.enable=0" >> /usr/local/etc/php/conf.d/custom.ini
+
+# Session 使用 Redis 存储（替代文件锁，提速 1000%）
+RUN echo "session.save_handler = redis" > /usr/local/etc/php/conf.d/session-redis.ini \
+    && echo 'session.save_path = "tcp://redis:6379"' >> /usr/local/etc/php/conf.d/session-redis.ini
+
+# Xdebug 配置
+RUN echo "xdebug.mode=debug,develop" > /usr/local/etc/php/conf.d/xdebug.ini \
+    && echo "xdebug.start_with_request=yes" >> /usr/local/etc/php/conf.d/xdebug.ini \
+    && echo "xdebug.client_host=host.docker.internal" >> /usr/local/etc/php/conf.d/xdebug.ini \
+    && echo "xdebug.client_port=9003" >> /usr/local/etc/php/conf.d/xdebug.ini
+
+EXPOSE 80

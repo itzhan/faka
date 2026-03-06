@@ -17,90 +17,35 @@
     <div class="post d-flex flex-column-fluid" id="kt_post">
         <!--begin::Container-->
         <div id="kt_content_container" class="container-fluid">
-            <!--begin::Row-->
-            <div class="row g-5 g-xl-10">
-                <div class="col-xl-2">
-                    <!--begin::Statistics Widget 1-->
-                    <div class="card bgi-no-repeat card-xl-stretch mb-xl-8"
-                         style="background-position: right top; background-size: 30% auto; background-image: url(/assets/admin/images/svg/shapes/abstract-4.svg)">
-                        <!--begin::Body-->
-                        <div class="card-body">
-                            <span class="card-title fw-bolder text-muted text-hover-primary fs-4">总用户</span>
-                            <div class="fw-bolder fs-1 text-primary my-6">#{$userCount}</div>
-                        </div>
-                        <!--end::Body-->
-                    </div>
-                    <!--end::Statistics Widget 1-->
+            <!-- Stat Cards -->
+            <div class="polaris-grid polaris-grid-6" style="margin-bottom:20px;">
+                <div class="polaris-stat-card">
+                    <div class="stat-label">总用户</div>
+                    <div class="stat-value">#{$userCount}</div>
                 </div>
-                <div class="col-xl-2">
-                    <!--begin::Statistics Widget 1-->
-                    <div class="card bgi-no-repeat card-xl-stretch mb-xl-8"
-                         style="background-position: right top; background-size: 30% auto; background-image: url(/assets/admin/images/svg/shapes/abstract-4.svg)">
-                        <!--begin::Body-->
-                        <div class="card-body">
-                            <span class="card-title fw-bolder text-muted text-hover-primary fs-4">商家</span>
-                            <div class="fw-bolder fs-1 text-success my-6">#{$businessCount}</div>
-                        </div>
-                        <!--end::Body-->
-                    </div>
-                    <!--end::Statistics Widget 1-->
+                <div class="polaris-stat-card">
+                    <div class="stat-label">商家</div>
+                    <div class="stat-value text-success">#{$businessCount}</div>
                 </div>
-                <div class="col-xl-2">
-                    <!--begin::Statistics Widget 1-->
-                    <div class="card bgi-no-repeat card-xl-stretch mb-xl-8"
-                         style="background-position: right top; background-size: 30% auto; background-image: url(/assets/admin/images/svg/shapes/abstract-4.svg)">
-                        <!--begin::Body-->
-                        <div class="card-body">
-                            <span class="card-title fw-bolder text-muted text-hover-primary fs-4">当前余额</span>
-                            <div class="fw-bolder fs-1 text-primary my-6">￥#{$balance}</div>
-                        </div>
-                        <!--end::Body-->
-                    </div>
-                    <!--end::Statistics Widget 1-->
+                <div class="polaris-stat-card">
+                    <div class="stat-label">当前余额</div>
+                    <div class="stat-value">￥#{$balance}</div>
                 </div>
-                <div class="col-xl-2">
-                    <!--begin::Statistics Widget 1-->
-                    <div class="card bgi-no-repeat card-xl-stretch mb-xl-8"
-                         style="background-position: right top; background-size: 30% auto; background-image: url(/assets/admin/images/svg/shapes/abstract-4.svg)">
-                        <!--begin::Body-->
-                        <div class="card-body">
-                            <span class="card-title fw-bolder text-muted text-hover-primary fs-4">总充值</span>
-                            <div class="fw-bolder fs-1 text-success my-6">#{$recharge}</div>
-                        </div>
-                        <!--end::Body-->
-                    </div>
-                    <!--end::Statistics Widget 1-->
+                <div class="polaris-stat-card">
+                    <div class="stat-label">总充值</div>
+                    <div class="stat-value text-success">#{$recharge}</div>
                 </div>
-                <div class="col-xl-2">
-                    <!--begin::Statistics Widget 1-->
-                    <div class="card bgi-no-repeat card-xl-stretch mb-xl-8"
-                         style="background-position: right top; background-size: 30% auto; background-image: url(/assets/admin/images/svg/shapes/abstract-4.svg)">
-                        <!--begin::Body-->
-                        <div class="card-body">
-                            <span class="card-title fw-bolder text-muted text-hover-primary fs-4">当前硬币</span>
-                            <div class="fw-bolder fs-1 text-primary my-6">￥#{$coin}</div>
-                        </div>
-                        <!--end::Body-->
-                    </div>
-                    <!--end::Statistics Widget 1-->
+                <div class="polaris-stat-card">
+                    <div class="stat-label">当前硬币</div>
+                    <div class="stat-value">￥#{$coin}</div>
                 </div>
-                <div class="col-xl-2">
-                    <!--begin::Statistics Widget 1-->
-                    <div class="card bgi-no-repeat card-xl-stretch mb-xl-8"
-                         style="background-position: right top; background-size: 30% auto; background-image: url(/assets/admin/images/svg/shapes/abstract-4.svg)">
-                        <!--begin::Body-->
-                        <div class="card-body">
-                            <span class="card-title fw-bolder text-muted text-hover-primary fs-4">总获得硬币</span>
-                            <div class="fw-bolder fs-1 text-success my-6">#{$totalCoin}</div>
-                        </div>
-                        <!--end::Body-->
-                    </div>
-                    <!--end::Statistics Widget 1-->
+                <div class="polaris-stat-card">
+                    <div class="stat-label">总获得硬币</div>
+                    <div class="stat-value text-success">#{$totalCoin}</div>
                 </div>
             </div>
-            <!--end::Row-->
 
-            <!--begin::Tables Widget 9-->
+            <!-- Table -->
             <div class="card mb-5 mb-xl-8">
                 <!--begin::Header-->
                 <div class="card-header">
@@ -118,8 +63,6 @@
                     <table id="user-table"></table>
                 </div>
             </div>
-
-            <!--end::Tables Widget 9-->
         </div>
         <!--end::Container-->
     </div>

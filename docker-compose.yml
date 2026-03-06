@@ -1,0 +1,70 @@
+version: '3.8'
+
+services:
+  # PHP + Apache 应用
+  web:
+    build: .
+    container_name: acg-faka-web
+    ports:
+      - "8080:80"
+    volumes:
+      # 挂载项目目录，方便开发时修改代码实时生效
+      - .:/var/www/html
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    environment:
+      - APACHE_DOCUMENT_ROOT=/var/www/html
+    restart: unless-stopped
+    networks:
+      - acg-network
+
+  # Redis - Session 存储（替代文件锁，提速 1000%）
+  redis:
+    image: redis:7-alpine
+    container_name: acg-faka-redis
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes
+    restart: unless-stopped
+    networks:
+      - acg-network
+
+  # MySQL 数据库
+  mysql:
+    image: mysql:8.0
+    container_name: acg-faka-mysql
+    ports:
+      - "3307:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: Ab123168.
+      MYSQL_DATABASE: qiumingfaka
+      MYSQL_USER: qiuming
+      MYSQL_PASSWORD: Ab123168.
+    volumes:
+      # 数据持久化
+      - mysql_data:/var/lib/mysql
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+      - --default-authentication-plugin=mysql_native_password
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot123456" ]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    restart: unless-stopped
+    networks:
+      - acg-network
+
+volumes:
+  mysql_data:
+    driver: local
+  redis_data:
+    driver: local
+
+networks:
+  acg-network:
+    driver: bridge

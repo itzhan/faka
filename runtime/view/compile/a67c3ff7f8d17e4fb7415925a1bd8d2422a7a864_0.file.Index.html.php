@@ -1,0 +1,238 @@
+<?php
+/* Smarty version 3.1.46, created on 2026-03-05 16:32:54
+  from '/var/www/html/app/View/Admin/Dashboard/Index.html' */
+
+/* @var Smarty_Internal_Template $_smarty_tpl */
+if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
+  'version' => '3.1.46',
+  'unifunc' => 'content_69a93fb6d24749_18803659',
+  'has_nocache_code' => false,
+  'file_dependency' => 
+  array (
+    'a67c3ff7f8d17e4fb7415925a1bd8d2422a7a864' => 
+    array (
+      0 => '/var/www/html/app/View/Admin/Dashboard/Index.html',
+      1 => 1772697523,
+      2 => 'file',
+    ),
+  ),
+  'includes' => 
+  array (
+    'file:../Header.html' => 1,
+    'file:../Toolbar.html' => 1,
+    'file:../Footer.html' => 1,
+  ),
+),false)) {
+function content_69a93fb6d24749_18803659 (Smarty_Internal_Template $_smarty_tpl) {
+$_smarty_tpl->_subTemplateRender("file:../Header.html", $_smarty_tpl->cache_id, $_smarty_tpl->compile_id, 0, $_smarty_tpl->cache_lifetime, array(), 0, false);
+echo js("/assets/static/echarts.min.js");?>
+
+<style>
+    @media (max-width: 576px) {
+        .polaris-stat-card .stat-value { font-size: 20px !important; }
+    }
+</style>
+
+<!--begin::Content-->
+<div class="content d-flex flex-column flex-column-fluid" id="kt_content">
+    <!--begin::Toolbar-->
+    <?php $_smarty_tpl->_subTemplateRender("file:../Toolbar.html", $_smarty_tpl->cache_id, $_smarty_tpl->compile_id, 0, $_smarty_tpl->cache_lifetime, array(), 0, false);
+?>
+    <!--end::Toolbar-->
+
+    <!--begin::Post-->
+    <div class="post d-flex flex-column-fluid">
+        <!--begin::Container-->
+        <div id="kt_content_container" class="container-fluid">
+            <div class="row g-4">
+                <!-- 官方公告卡片 -->
+                <div class="col-12 col-lg-3">
+                    <div class="card h-100">
+                        <div class="card-header border-0">
+                            <div class="card-title">
+                                <h3 class="mb-0 fw-bold" style="font-size:14px;color:#303030;">
+                                    <i class="fa-duotone fa-regular fa-bullhorn" style="color:#616161;margin-right:6px;"></i>
+                                    官方公告
+                                </h3>
+                            </div>
+                        </div>
+                        <div class="card-body ad-html" style="font-size:13px;color:#616161;">
+                            <div class="text-center py-4" style="color:#b5b5b5;">
+                                <i class="fas fa-spinner fa-spin" style="font-size:18px;"></i>
+                                <div style="margin-top:8px;font-size:13px;">加载中...</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 主要内容区域 -->
+                <div class="col-12 col-lg-9">
+                    <!-- 用户信息卡片 -->
+                    <div class="card mb-4" style="overflow:hidden;">
+                        <div class="card-body p-0">
+                            <!-- 顶部信息栏 -->
+                            <div style="padding:20px;border-bottom:1px solid #e1e1e1;">
+                                <div class="d-flex align-items-center justify-content-between">
+                                    <div class="d-flex align-items-center">
+                                        <div style="position:relative;margin-right:12px;">
+                                            <img src="<?php if ($_smarty_tpl->tpl_vars['user']->value['avatar']) {
+echo $_smarty_tpl->tpl_vars['user']->value['avatar'];
+} else { ?>/favicon.ico<?php }?>"
+                                                 alt="用户头像"
+                                                 style="width:40px;height:40px;border-radius:50%;border:2px solid #e1e1e1;object-fit:cover;" />
+                                            <div style="position:absolute;bottom:0;right:0;width:12px;height:12px;background:#29845a;border-radius:50%;border:2px solid #fff;"></div>
+                                        </div>
+                                        <div>
+                                            <div style="font-size:15px;font-weight:600;color:#303030;"><?php echo $_smarty_tpl->tpl_vars['user']->value['nickname'];?>
+</div>
+                                            <div style="font-size:12px;color:#616161;">
+                                                <i class="fa-duotone fa-regular fa-envelope" style="margin-right:4px;"></i><?php echo $_smarty_tpl->tpl_vars['user']->value['email'];?>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <a href="/admin/manage/set" class="btn btn-light btn-sm">
+                                        <i class="fa-duotone fa-regular fa-user-pen"></i>
+                                        <span class="d-none d-sm-inline">编辑资料</span>
+                                    </a>
+                                </div>
+                            </div>
+
+                            <!-- 详细信息区域 -->
+                            <div style="padding:16px 20px;">
+                                <div class="row g-3">
+                                    <!-- 本次登录IP -->
+                                    <div class="col-12 col-sm-6">
+                                        <div style="padding:12px;border-radius:8px;transition:background 100ms ease;" onmouseover="this.style.background='#f7f7f7'" onmouseout="this.style.background='transparent'">
+                                            <div style="font-size:12px;color:#616161;margin-bottom:2px;">本次登录IP</div>
+                                            <div style="font-size:13px;font-weight:500;color:#303030;"><?php echo $_smarty_tpl->tpl_vars['user']->value['login_ip'];?>
+</div>
+                                        </div>
+                                    </div>
+                                    <!-- 上次登录信息 -->
+                                    <div class="col-12 col-sm-6">
+                                        <div style="padding:12px;border-radius:8px;transition:background 100ms ease;" onmouseover="this.style.background='#f7f7f7'" onmouseout="this.style.background='transparent'">
+                                            <div style="font-size:12px;color:#616161;margin-bottom:2px;">上次登录</div>
+                                            <div style="font-size:13px;font-weight:500;">
+                                                <?php if ($_smarty_tpl->tpl_vars['user']->value['last_login_ip']) {?>
+                                                    <span style="color:#303030;"><?php echo $_smarty_tpl->tpl_vars['user']->value['last_login_ip'];?>
+</span>
+                                                    <span style="color:#616161;font-size:12px;margin-left:8px;"><?php echo $_smarty_tpl->tpl_vars['user']->value['last_login_time'];?>
+</span>
+                                                <?php } else { ?>
+                                                    <span style="color:#b5b5b5;">暂无记录</span>
+                                                <?php }?>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 数据筛选器 -->
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <div class="d-flex align-items-center">
+                            <select name="status" class="form-select form-select-sm dashboard-data-type" style="width:auto;">
+                                <option value="0" selected="selected">今日数据</option>
+                                <option value="1">昨日数据</option>
+                                <option value="2">本周数据</option>
+                                <option value="3">本月数据</option>
+                                <option value="4">所有数据</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- 统计卡片网格 -->
+                    <div class="polaris-grid polaris-grid-4" style="margin-bottom:20px;">
+                        <!-- 交易金额 -->
+                        <div class="polaris-stat-card">
+                            <div class="stat-label">交易金额</div>
+                            <div class="stat-value turnover">...</div>
+                        </div>
+                        <!-- 订单 -->
+                        <div class="polaris-stat-card">
+                            <div class="stat-label">订单</div>
+                            <div class="stat-value text-success order_num">...</div>
+                        </div>
+                        <!-- 子站 -->
+                        <div class="polaris-stat-card">
+                            <div class="stat-label">子站</div>
+                            <div class="stat-value business">...</div>
+                        </div>
+                        <!-- 未处理提现 -->
+                        <div class="polaris-stat-card">
+                            <div class="stat-label">未处理提现</div>
+                            <div class="stat-value text-critical cash_status_0">...</div>
+                        </div>
+                        <!-- 成功提现 -->
+                        <div class="polaris-stat-card">
+                            <div class="stat-label">成功提现</div>
+                            <div class="stat-value text-success cash_money_status_1">...</div>
+                        </div>
+                        <!-- 注册用户 -->
+                        <div class="polaris-stat-card">
+                            <div class="stat-label">注册用户</div>
+                            <div class="stat-value user_register_num">...</div>
+                        </div>
+                        <!-- 打卡用户 -->
+                        <div class="polaris-stat-card">
+                            <div class="stat-label">打卡用户</div>
+                            <div class="stat-value text-info user_login_num">...</div>
+                        </div>
+                        <!-- 充值金额 -->
+                        <div class="polaris-stat-card">
+                            <div class="stat-label">充值金额</div>
+                            <div class="stat-value text-warning recharge_amount">...</div>
+                        </div>
+                        <!-- 第三方支付 -->
+                        <div class="polaris-stat-card">
+                            <div class="stat-label">第三方支付</div>
+                            <div class="stat-value text-success online_amout">...</div>
+                        </div>
+                        <!-- 推广返利 -->
+                        <div class="polaris-stat-card">
+                            <div class="stat-label">推广返利</div>
+                            <div class="stat-value text-critical divide_amount">...</div>
+                        </div>
+                        <!-- 子站佣金 -->
+                        <div class="polaris-stat-card">
+                            <div class="stat-label">子站佣金</div>
+                            <div class="stat-value rebate">...</div>
+                        </div>
+                        <!-- 供货手续费 -->
+                        <div class="polaris-stat-card">
+                            <div class="stat-label">供货手续费</div>
+                            <div class="stat-value text-success cost">...</div>
+                        </div>
+                    </div>
+
+                    <!-- 图表区域 -->
+                    <div class="card">
+                        <div class="card-header border-0">
+                            <div class="card-title">
+                                <h3 class="fw-bold mb-0" style="font-size:14px;color:#303030;">
+                                    <i class="fa-duotone fa-regular fa-chart-line" style="color:#616161;margin-right:6px;"></i>
+                                    本周数据
+                                </h3>
+                            </div>
+                        </div>
+                        <div class="card-body" style="padding:16px 20px 20px;">
+                            <div id="statistics" style="height:350px;width:100%;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--end::Container-->
+    </div>
+    <!--end::Post-->
+</div>
+<!--end::Content-->
+
+
+<?php echo ready("/assets/admin/controller/dashboard/index.js");?>
+
+<?php $_smarty_tpl->_subTemplateRender("file:../Footer.html", $_smarty_tpl->cache_id, $_smarty_tpl->compile_id, 0, $_smarty_tpl->cache_lifetime, array(), 0, false);
+}
+}

@@ -3,36 +3,29 @@
     <!--begin::Container-->
     <div id="kt_toolbar_container" class="container-fluid d-flex flex-stack">
         <!--begin::Page title-->
-        <div data-kt-swapper="true" data-kt-swapper-mode="prepend"
-             class="page-title d-flex align-items-center flex-wrap me-3 mb-5 mb-lg-0">
+        <div class="page-title d-flex align-items-center flex-wrap me-3 mb-5 mb-lg-0">
             <!--begin::Title-->
-            <h1 class="d-flex align-items-center text-dark fw-bolder fs-3 my-1">#{$title}</h1>
+            <h1 class="d-flex align-items-center fw-bolder my-1" style="font-size:20px;color:#303030;">#{$title}</h1>
             <!--end::Title-->
             <!--begin::Separator-->
-            <span class="h-20px border-gray-200 border-start mx-4"></span>
+            <span class="mx-3" style="color:#e1e1e1;">›</span>
             <!--end::Separator-->
             <!--begin::Breadcrumb-->
-            <ul class="breadcrumb breadcrumb-separatorless fw-bold fs-7 my-1">
+            <ul class="breadcrumb breadcrumb-separatorless fw-bold my-1" style="font-size:13px;">
                 #{if is_array($toolbar)}
                 #{foreach $toolbar as $bar}
-                <!--begin::Item-->
                 <li class="breadcrumb-item">
-                    <a href="#{$bar.url}" class="#{if getLocalRouter()==$bar.url} text-dark fw-bolder #{else} text-muted #{/if} text-hover-primary">#{$bar.name}</a>
+                    <a href="#{$bar.url}" class="#{if getLocalRouter()==$bar.url} text-dark fw-bolder #{else} text-muted #{/if} text-hover-primary" style="text-decoration:none;">#{$bar.name}</a>
                 </li>
-                <!--end::Item-->
                 <li class="breadcrumb-item">
-                    <span class="bullet bg-gray-200 w-5px h-2px"></span>
+                    <span style="color:#b5b5b5;margin:0 4px;">›</span>
                 </li>
                 #{/foreach}
                 #{else}
-                <!--begin::Item-->
                 <li class="breadcrumb-item text-muted">
-                    <a href="javascript:void(0)" class="text-muted text-hover-primary">(✪ω✪)</a>
+                    <a href="javascript:void(0)" class="text-muted text-hover-primary" style="text-decoration:none;">(✪ω✪)</a>
                 </li>
-                <!--end::Item-->
                 #{/if}
-
-
             </ul>
             <!--end::Breadcrumb-->
         </div>

@@ -1,0 +1,105 @@
+<?php
+/* Smarty version 3.1.46, created on 2026-03-06 14:33:43
+  from '/var/www/html/app/View/Admin/Authentication/Login.html' */
+
+/* @var Smarty_Internal_Template $_smarty_tpl */
+if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
+  'version' => '3.1.46',
+  'unifunc' => 'content_69aa75478a42e9_57990464',
+  'has_nocache_code' => false,
+  'file_dependency' => 
+  array (
+    'e2c07068067bc0144f4c48f95256a03251e461ef' => 
+    array (
+      0 => '/var/www/html/app/View/Admin/Authentication/Login.html',
+      1 => 1772697676,
+      2 => 'file',
+    ),
+  ),
+  'includes' => 
+  array (
+  ),
+),false)) {
+function content_69aa75478a42e9_57990464 (Smarty_Internal_Template $_smarty_tpl) {
+?><!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>登录 - <?php echo $_smarty_tpl->tpl_vars['config']->value['title'];?>
+</title>
+    <link rel="shortcut icon" href="/favicon.ico"/>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <?php echo css(array("/assets/common/css/_.css","/assets/admin/css/auth.css"),array("/assets/admin/css/style.bundle.css","/assets/common/css/font.min.css","/assets/common/js/layui/css/layui.css","/assets/common/css/select2.min.css","/assets/common/css/component.css","/assets/common/css/toastr.min.css","/assets/common/js/table/bootstrap-table.css","/assets/common/js/layer/theme/default/layer.css","/assets/admin/css/auth.css"));?>
+
+
+    <?php echo js("/assets/common/js/ready.js");?>
+
+</head>
+<body class="polaris-login-page">
+
+<main class="polaris-login-wrap">
+    <section class="polaris-login-card">
+        <!-- Shopify green accent bar -->
+        <div class="polaris-login-accent"></div>
+
+        <header class="polaris-login-header">
+            <div class="polaris-login-logo">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
+                    <path d="M12 2L2 7V17L12 22L22 17V7L12 2Z" fill="#303030" opacity="0.9"/>
+                    <path d="M12 6L7 8.5V15.5L12 18L17 15.5V8.5L12 6Z" fill="#303030" opacity="0.4"/>
+                </svg>
+            </div>
+            <h1 class="polaris-login-title">管理员登录</h1>
+            <p class="polaris-login-subtitle">请输入您的账号和密码</p>
+        </header>
+
+        <div class="polaris-login-body">
+            <form id="ay-form" novalidate>
+                <div class="polaris-field">
+                    <label class="polaris-field-label" for="ay-user">邮箱</label>
+                    <input id="ay-user" name="username" class="polaris-input" type="text"
+                           placeholder="请输入您的邮箱"
+                           autocomplete="username" required>
+                </div>
+                <div class="polaris-field">
+                    <label class="polaris-field-label" for="ay-pass">密码</label>
+                    <div class="polaris-input-wrap">
+                        <input id="ay-pass" name="password" class="polaris-input" type="password"
+                               placeholder="请输入密码"
+                               autocomplete="current-password" required>
+                        <button type="button" class="polaris-eye-btn" id="ay-eye" aria-label="显示密码">
+                            <svg viewBox="0 0 20 20" width="18" height="18" fill="none">
+                                <path d="M10 4.5C5.5 4.5 2 10 2 10s3.5 5.5 8 5.5 8-5.5 8-5.5-3.5-5.5-8-5.5z" stroke="#8a8a8a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                <circle cx="10" cy="10" r="2.5" stroke="#8a8a8a" stroke-width="1.5"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="polaris-login-options">
+                    <label class="polaris-checkbox">
+                        <input type="checkbox" id="ay-remember" name="remember" value="1">
+                        <span>保持登录(365天)</span>
+                    </label>
+                    <a class="polaris-link" href="javascript:void(0)" onclick="message.info('查看官方文档重置密码方法');">忘记密码？</a>
+                </div>
+
+                <button class="polaris-login-btn" type="submit" id="ay-submit">确认登入</button>
+            </form>
+            <div class="polaris-login-footer">© <?php echo $_smarty_tpl->tpl_vars['config']->value['shop_name'];?>
+</div>
+        </div>
+    </section>
+</main>
+
+<?php echo ready("/assets/admin/controller/auth/login.js");?>
+
+
+<?php echo js(array("/assets/common/js/_.js"),array("/assets/common/js/util/dict.js","/assets/common/js/jquery.min.js","/assets/common/js/toastr.min.js","/assets/common/js/component/loading.js","/assets/common/js/util.js","/assets/common/js/layer/layer.js","/assets/common/js/jquery.pjax.min.js","/assets/common/js/jquery.qrcode.min.js","/assets/common/js/format.js","/assets/common/js/message.js","/assets/common/js/component.js","/assets/common/js/layui/layui.js","/assets/common/js/jquery.treegrid.min.js","/assets/common/js/bootstrap/bootstrap.bundle.min.js","/assets/common/js/table/bootstrap-table.min.js","/assets/common/js/table/bootstrap-table-treegrid.min.js","/assets/common/js/component/form.js","/assets/common/js/component/search.js","/assets/common/js/component/xm-select.js","/assets/common/js/component/tree.select.js","/assets/common/js/component/authtree.js","/assets/common/js/component/table.js","/assets/common/js/component/select2.min.js","/assets/common/js/cache.js","/assets/common/js/editor/editor.js","/assets/common/js/editor/code/code.js","/assets/common/js/component/decimal.js"));?>
+
+</body>
+</html><?php }
+}

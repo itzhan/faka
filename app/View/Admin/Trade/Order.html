@@ -9,51 +9,23 @@
     <div class="post d-flex flex-column-fluid" id="kt_post">
         <!--begin::Container-->
         <div id="kt_content_container" class="container-fluid">
-            <!--begin::Row-->
-            <div class="row g-5 g-xl-10">
-                <div class="col-xl-4">
-                    <!--begin::Statistics Widget 1-->
-                    <div class="card bgi-no-repeat card-xl-stretch mb-xl-8"
-                         style="background-position: right top; background-size: 30% auto; background-image: url(/assets/admin/images/svg/shapes/abstract-4.svg)">
-                        <!--begin::Body-->
-                        <div class="card-body">
-                            <span class="card-title fw-bolder text-muted text-hover-primary fs-4">订单数量</span>
-                            <div class="fw-bolder fs-1 text-primary my-6 order_count">...</div>
-                        </div>
-                        <!--end::Body-->
-                    </div>
-                    <!--end::Statistics Widget 1-->
+            <!-- Stat Cards -->
+            <div class="polaris-grid polaris-grid-3" style="margin-bottom:20px;">
+                <div class="polaris-stat-card">
+                    <div class="stat-label">订单数量</div>
+                    <div class="stat-value order_count">...</div>
                 </div>
-                <div class="col-xl-4">
-                    <!--begin::Statistics Widget 1-->
-                    <div class="card bgi-no-repeat card-xl-stretch mb-xl-8"
-                         style="background-position: right top; background-size: 30% auto; background-image: url(/assets/admin/images/svg/shapes/abstract-4.svg)">
-                        <!--begin::Body-->
-                        <div class="card-body">
-                            <span class="card-title fw-bolder text-muted text-hover-primary fs-4">订单金额</span>
-                            <div class="fw-bolder fs-1 text-success my-6 order_amount">...</div>
-                        </div>
-                        <!--end::Body-->
-                    </div>
-                    <!--end::Statistics Widget 1-->
+                <div class="polaris-stat-card">
+                    <div class="stat-label">订单金额</div>
+                    <div class="stat-value text-success order_amount">...</div>
                 </div>
-                <div class="col-xl-4">
-                    <!--begin::Statistics Widget 1-->
-                    <div class="card bgi-no-repeat card-xl-stretch mb-xl-8"
-                         style="background-position: right top; background-size: 30% auto; background-image: url(/assets/admin/images/svg/shapes/abstract-4.svg)">
-                        <!--begin::Body-->
-                        <div class="card-body">
-                            <span class="card-title fw-bolder text-muted text-hover-primary fs-4">手续费</span>
-                            <div class="fw-bolder fs-1 text-danger my-6 order_cost">...</div>
-                        </div>
-                        <!--end::Body-->
-                    </div>
-                    <!--end::Statistics Widget 1-->
+                <div class="polaris-stat-card">
+                    <div class="stat-label">手续费</div>
+                    <div class="stat-value text-critical order_cost">...</div>
                 </div>
             </div>
-            <!--end::Row-->
 
-            <!--begin::Tables Widget 9-->
+            <!-- Table -->
             <div class="card mb-5 mb-xl-8">
                 <!--begin::Header-->
                 <div class="card-header border-0">
@@ -73,8 +45,6 @@
                     <table id="order-table"></table>
                 </div>
             </div>
-
-            <!--end::Tables Widget 9-->
         </div>
         <!--end::Container-->
     </div>

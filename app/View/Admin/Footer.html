@@ -1,10 +1,9 @@
+        </main>
+        <!--end::Main Content-->
+    </div>
+    <!--end::Layout-->
 </div>
-</div>
-<!--end::Wrapper-->
-</div>
-<!--end::Page-->
-</div>
-<!--end::Root-->
+<!--end::Shopify Admin Shell-->
 
 <div id="kt_scrolltop" class="scrolltop" data-kt-scrolltop="true"><i class="fa-duotone fa-regular fa-arrow-up text-white"></i></div>
 
@@ -45,6 +44,83 @@
 "/assets/admin/js/menu.js",
 "/assets/admin/controller/global.js"
 ])}
+
+<script>
+/* Shopify Admin — Sidebar Toggle, Search & Active State Sync */
+document.addEventListener('DOMContentLoaded', function() {
+    var toggle = document.getElementById('sp_sidebar_toggle');
+    var sidebar = document.getElementById('sp_sidebar');
+    var overlay = null;
+
+    /* --- Sidebar mobile toggle --- */
+    if (toggle && sidebar) {
+        toggle.addEventListener('click', function() {
+            sidebar.classList.toggle('sp-sidebar-open');
+            if (sidebar.classList.contains('sp-sidebar-open')) {
+                if (!overlay) {
+                    overlay = document.createElement('div');
+                    overlay.className = 'sp-overlay';
+                    overlay.addEventListener('click', function() {
+                        sidebar.classList.remove('sp-sidebar-open');
+                        overlay.classList.remove('sp-overlay-show');
+                    });
+                    document.body.appendChild(overlay);
+                }
+                setTimeout(function() { overlay.classList.add('sp-overlay-show'); }, 10);
+            } else if (overlay) {
+                overlay.classList.remove('sp-overlay-show');
+            }
+        });
+    }
+
+    /* --- ⌘K search shortcut --- */
+    var searchBtn = document.getElementById('sp_search_trigger');
+    if (searchBtn) {
+        searchBtn.addEventListener('click', function() {
+            if (typeof layer !== 'undefined') {
+                layer.msg('搜索功能即将上线', {icon: 6, time: 1500});
+            }
+        });
+        document.addEventListener('keydown', function(e) {
+            if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+                e.preventDefault();
+                searchBtn.click();
+            }
+        });
+    }
+
+    /* --- Sidebar Active State Sync --- */
+    function syncSidebarActive() {
+        var path = window.location.pathname.replace(/\/+$/, '');
+        var allLinks = document.querySelectorAll('.sp-nav-link, .sp-sidebar-bottom .sp-nav-link');
+        var bestMatch = null;
+        var bestLen = 0;
+
+        allLinks.forEach(function(link) {
+            link.classList.remove('sp-active');
+            var href = (link.getAttribute('href') || '').replace(/\/+$/, '');
+            if (href && path.indexOf(href) === 0 && href.length > bestLen) {
+                bestMatch = link;
+                bestLen = href.length;
+            }
+        });
+
+        if (bestMatch) {
+            bestMatch.classList.add('sp-active');
+        }
+    }
+
+    /* Sync on first load */
+    syncSidebarActive();
+
+    /* Sync after pjax navigation */
+    if (typeof $ !== 'undefined') {
+        $(document).on('pjax:end', function() {
+            syncSidebarActive();
+        });
+    }
+});
+</script>
 
 <!--start::HOOK-->
 #{hook(\App\Consts\Hook::ADMIN_VIEW_BODY)}

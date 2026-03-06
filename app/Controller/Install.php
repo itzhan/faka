@@ -64,6 +64,14 @@ class Install extends User
             }
         }
 
+        // 读取数据库配置，用于预填安装表单
+        $dbConfig = config("database");
+        $data['db_host'] = $dbConfig['host'] ?? '127.0.0.1';
+        $data['db_database'] = $dbConfig['database'] ?? '';
+        $data['db_username'] = $dbConfig['username'] ?? '';
+        $data['db_password'] = $dbConfig['password'] ?? '';
+        $data['db_prefix'] = $dbConfig['prefix'] ?? 'acg_';
+
         return View::render("Install.html", $data);
     }
 

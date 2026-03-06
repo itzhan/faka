@@ -1,0 +1,93 @@
+version: '3.8'
+
+services:
+  # PHP + Apache 开发环境（Xdebug + 错误显示 + opcache关闭）
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: acg-faka-web-dev
+    ports:
+      - "8081:80"
+    volumes:
+      # 代码热更新：本地修改 → 容器内实时生效
+      - .:/var/www/html
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    environment:
+      - APACHE_DOCUMENT_ROOT=/var/www/html
+      - PHP_IDE_CONFIG=serverName=acg-faka-dev
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    restart: unless-stopped
+    networks:
+      - acg-dev-network
+
+  # Redis - Session 存储（替代文件锁，提速 1000%）
+  redis:
+    image: redis:7-alpine
+    container_name: acg-faka-redis-dev
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_dev_data:/data
+    command: redis-server --appendonly yes
+    restart: unless-stopped
+    networks:
+      - acg-dev-network
+
+  # MySQL（与生产环境完全相同的配置）
+  mysql:
+    image: mysql:8.0
+    container_name: acg-faka-mysql-dev
+    ports:
+      - "3308:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: Ab123168.
+      MYSQL_DATABASE: qiumingfaka
+      MYSQL_USER: qiuming
+      MYSQL_PASSWORD: Ab123168.
+    volumes:
+      - mysql_dev_data:/var/lib/mysql
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+      - --default-authentication-plugin=mysql_native_password
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-pAb123168." ]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    restart: unless-stopped
+    networks:
+      - acg-dev-network
+
+  # phpMyAdmin - 可视化管理数据库
+  phpmyadmin:
+    image: phpmyadmin:latest
+    container_name: acg-faka-phpmyadmin
+    ports:
+      - "8082:80"
+    environment:
+      PMA_HOST: mysql
+      PMA_USER: root
+      PMA_PASSWORD: Ab123168.
+    depends_on:
+      mysql:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - acg-dev-network
+
+volumes:
+  mysql_dev_data:
+    driver: local
+  redis_dev_data:
+    driver: local
+
+networks:
+  acg-dev-network:
+    driver: bridge

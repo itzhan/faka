@@ -269,7 +269,7 @@
                         type: 1,
                         title: false,
                         closeBtn: 0, //不显示关闭按钮
-                        anim: 5,
+                        anim: 0,
                         area: ['245px', '245px'],
                         shadeClose: true, //开启遮罩关闭
                         content: '<div class="wxqrcode-' + item.id + '" style="padding: 22px 20px 20px 24px;overflow: hidden;"></div>',

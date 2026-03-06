@@ -955,7 +955,7 @@ class Table {
                 type: 1,
                 title: false,
                 closeBtn: 0,
-                anim: 5,
+                anim: 0,
                 area: 'auto',
                 shadeClose: true,
                 content: `<img  src="${imageUrl}" style="width: auto;">`

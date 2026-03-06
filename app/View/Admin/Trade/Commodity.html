@@ -8,91 +8,35 @@
     <div class="post d-flex flex-column-fluid">
         <!--begin::Container-->
         <div id="kt_content_container" class="container-fluid">
-            <!--begin::Row-->
-            <div class="row g-5 g-xl-10">
-                <div class="col-xl-2">
-                    <!--begin::Statistics Widget 1-->
-                    <div class="card bgi-no-repeat card-xl-stretch mb-xl-8"
-                         style="background-position: right top; background-size: 30% auto; background-image: url(/assets/admin/images/svg/shapes/abstract-4.svg)">
-                        <!--begin::Body-->
-                        <div class="card-body">
-                            <span class="card-title fw-bolder text-muted text-hover-primary fs-4">总商品</span>
-                            <div class="fw-bolder fs-1 text-primary my-6">#{$all}</div>
-                        </div>
-                        <!--end::Body-->
-                    </div>
-                    <!--end::Statistics Widget 1-->
+            <!-- Stat Cards -->
+            <div class="polaris-grid polaris-grid-6" style="margin-bottom:20px;">
+                <div class="polaris-stat-card">
+                    <div class="stat-label">总商品</div>
+                    <div class="stat-value">#{$all}</div>
                 </div>
-                <div class="col-xl-2">
-                    <!--begin::Statistics Widget 1-->
-                    <div class="card bgi-no-repeat card-xl-stretch mb-xl-8"
-                         style="background-position: right top; background-size: 30% auto; background-image: url(/assets/admin/images/svg/shapes/abstract-2.svg)">
-                        <!--begin::Body-->
-                        <div class="card-body">
-                            <span class="card-title fw-bolder text-muted text-hover-primary fs-4">已上架</span>
-                            <div class="fw-bolder fs-1 text-success my-6">#{$shelves}</div>
-                        </div>
-                        <!--end::Body-->
-                    </div>
-                    <!--end::Statistics Widget 1-->
+                <div class="polaris-stat-card">
+                    <div class="stat-label">已上架</div>
+                    <div class="stat-value text-success">#{$shelves}</div>
                 </div>
-                <div class="col-xl-2">
-                    <!--begin::Statistics Widget 1-->
-                    <div class="card bgi-no-repeat card-xl-stretch mb-5 mb-xl-8"
-                         style="background-position: right top; background-size: 30% auto; background-image: url(/assets/admin/images/svg/shapes/abstract-1.svg)">
-                        <!--begin::Body-->
-                        <div class="card-body">
-                            <span class="card-title fw-bolder text-muted text-hover-primary fs-4">未上架</span>
-                            <div class="fw-bolder fs-1 text-danger my-6">#{$not}</div>
-                        </div>
-                        <!--end::Body-->
-                    </div>
-                    <!--end::Statistics Widget 1-->
+                <div class="polaris-stat-card">
+                    <div class="stat-label">未上架</div>
+                    <div class="stat-value text-critical">#{$not}</div>
                 </div>
-
-                <div class="col-xl-2">
-                    <!--begin::Statistics Widget 1-->
-                    <div class="card bgi-no-repeat card-xl-stretch mb-5 mb-xl-8"
-                         style="background-position: right top; background-size: 30% auto; background-image: url(/assets/admin/images/svg/shapes/abstract-3.svg)">
-                        <!--begin::Body-->
-                        <div class="card-body">
-                            <span class="card-title fw-bolder text-muted text-hover-primary fs-4">主站商品</span>
-                            <div class="fw-bolder fs-1 text-info my-6">#{$main}</div>
-                        </div>
-                        <!--end::Body-->
-                    </div>
-                    <!--end::Statistics Widget 1-->
+                <div class="polaris-stat-card">
+                    <div class="stat-label">主站商品</div>
+                    <div class="stat-value text-info">#{$main}</div>
                 </div>
-                <div class="col-xl-2">
-                    <!--begin::Statistics Widget 1-->
-                    <div class="card bgi-no-repeat card-xl-stretch mb-5 mb-xl-8"
-                         style="background-position: right top; background-size: 30% auto; background-image: url(/assets/admin/images/svg/shapes/abstract-4.svg)">
-                        <!--begin::Body-->
-                        <div class="card-body">
-                            <span class="card-title fw-bolder text-muted text-hover-primary fs-4">子站商品</span>
-                            <div class="fw-bolder fs-1 text-dark my-6">#{$child}</div>
-                        </div>
-                        <!--end::Body-->
-                    </div>
-                    <!--end::Statistics Widget 1-->
+                <div class="polaris-stat-card">
+                    <div class="stat-label">子站商品</div>
+                    <div class="stat-value">#{$child}</div>
                 </div>
-                <div class="col-xl-2">
-                    <!--begin::Statistics Widget 1-->
-                    <div class="card bgi-no-repeat card-xl-stretch mb-5 mb-xl-8"
-                         style="background-position: right top; background-size: 30% auto; background-image: url(/assets/admin/images/svg/shapes/abstract-4.svg)">
-                        <!--begin::Body-->
-                        <div class="card-body">
-                            <span class="card-title fw-bolder text-muted text-hover-primary fs-4">子站上架</span>
-                            <div class="fw-bolder fs-1 text-success my-6">#{$child_shelves}</div>
-                        </div>
-                        <!--end::Body-->
-                    </div>
-                    <!--end::Statistics Widget 1-->
+                <div class="polaris-stat-card">
+                    <div class="stat-label">子站上架</div>
+                    <div class="stat-value text-success">#{$child_shelves}</div>
                 </div>
             </div>
-            <!--end::Row-->
 
-            <!--begin::Tables Widget 9-->
+            <!-- Table -->
             <div class="card mb-5 mb-xl-8">
                 <!--begin::Header-->
                 <div class="card-header border-0">
@@ -121,8 +65,6 @@
                     <table id="commodity-table"></table>
                 </div>
             </div>
-
-            <!--end::Tables Widget 9-->
         </div>
         <!--end::Container-->
     </div>

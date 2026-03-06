@@ -1,0 +1,1566 @@
+/*
+ * Shopify Admin 2025 — 1:1 Replica Design System
+ * This CSS defines the entire Shopify Admin layout and component styles.
+ * Replaces all existing Metronic/Bootstrap visuals.
+ */
+
+/* ================================================================
+   0. Font
+   ================================================================ */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+:root {
+    --sp-bg: #f1f1f1;
+    --sp-surface: #ffffff;
+    --sp-surface-hovered: #f7f7f7;
+    --sp-surface-active: #f0f0f0;
+    --sp-surface-secondary: #f7f7f7;
+    --sp-border: #e1e1e1;
+    --sp-border-input: #8a8a8a;
+    --sp-border-input-hover: #616161;
+    --sp-border-focus: #005bd3;
+    --sp-text: #303030;
+    --sp-text-secondary: #616161;
+    --sp-text-disabled: #b5b5b5;
+    --sp-text-on-dark: #e3e3e3;
+    --sp-text-link: #005bd3;
+    --sp-text-success: #1a7346;
+    --sp-text-critical: #d72c0d;
+    --sp-text-warning: #916a00;
+    --sp-brand: #303030;
+    --sp-brand-hover: #1a1a1a;
+    --sp-success: #29845a;
+    --sp-critical: #e51c00;
+    --sp-warning: #e39a00;
+    --sp-info: #005bd3;
+    --sp-nav-bg: #1a1a1a;
+    --sp-nav-surface: rgba(255, 255, 255, 0.06);
+    --sp-nav-surface-hover: rgba(255, 255, 255, 0.10);
+    --sp-nav-surface-active: rgba(255, 255, 255, 0.14);
+    --sp-nav-text: #b5b5b5;
+    --sp-nav-text-hover: #e3e3e3;
+    --sp-nav-text-active: #ffffff;
+    --sp-radius-100: 6px;
+    --sp-radius-200: 10px;
+    --sp-radius-300: 16px;
+    --sp-radius-400: 20px;
+    --sp-radius-full: 9999px;
+    --sp-shadow-card: 0 0 0 1px rgba(0, 0, 0, .04), 0 2px 8px 0 rgba(0, 0, 0, .06);
+    --sp-shadow-card-hover: 0 0 0 1px rgba(0, 0, 0, .04), 0 8px 24px -4px rgba(0, 0, 0, .12);
+    --sp-shadow-bevel: 1px 0 0 0 rgba(0, 0, 0, .1) inset, -1px 0 0 0 rgba(0, 0, 0, .1) inset, 0 -1px 0 0 rgba(0, 0, 0, .06) inset, 0 1px 0 0 rgba(255, 255, 255, .4) inset;
+    --sp-shadow-dropdown: 0 8px 24px -4px rgba(0, 0, 0, .15), 0 0 0 1px rgba(0, 0, 0, .04);
+    --sp-shadow-lifted: 0 12px 40px -8px rgba(0, 0, 0, .18);
+    --sp-accent-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --sp-sidebar-width: 240px;
+    --sp-topbar-height: 56px;
+    --sp-ease: cubic-bezier(0.25, 0.1, 0.25, 1);
+    --sp-font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+}
+
+/* ================================================================
+   1. Reset / Body
+   ================================================================ */
+* {
+    box-sizing: border-box;
+}
+
+body.shopify-admin {
+    margin: 0 !important;
+    padding: 0 !important;
+    background: var(--sp-bg) !important;
+    background-image: none !important;
+    font-family: var(--sp-font) !important;
+    color: var(--sp-text) !important;
+    font-size: 13px !important;
+    line-height: 20px !important;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow: hidden !important;
+    height: 100vh !important;
+}
+
+/* Hide all Metronic structural elements */
+body.shopify-admin .page,
+body.shopify-admin .wrapper,
+body.shopify-admin #kt_aside,
+body.shopify-admin #kt_header,
+body.shopify-admin #kt_wrapper,
+body.shopify-admin .aside,
+body.shopify-admin .header {
+    all: unset !important;
+    display: none !important;
+}
+
+/* ================================================================
+   2. Shopify Admin Shell Layout
+   ================================================================ */
+.sp-shell {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    overflow: hidden;
+}
+
+/* --- Top Bar --- */
+.sp-topbar {
+    background: var(--sp-nav-bg);
+    height: var(--sp-topbar-height);
+    min-height: var(--sp-topbar-height);
+    display: flex;
+    align-items: center;
+    padding: 0 12px;
+    z-index: 100;
+    flex-shrink: 0;
+}
+
+.sp-topbar-inner {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    gap: 16px;
+}
+
+/* Top Bar Left */
+.sp-topbar-left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+.sp-mobile-toggle {
+    display: none;
+    background: none;
+    border: none;
+    color: var(--sp-nav-text);
+    cursor: pointer;
+    padding: 8px;
+    border-radius: var(--sp-radius-200);
+    transition: background 100ms var(--sp-ease);
+}
+
+.sp-mobile-toggle:hover {
+    background: var(--sp-nav-surface-hover);
+}
+
+.sp-logo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none !important;
+    padding: 6px 8px;
+    border-radius: var(--sp-radius-200);
+    transition: background 100ms var(--sp-ease);
+}
+
+.sp-logo:hover {
+    background: var(--sp-nav-surface-hover);
+}
+
+.sp-logo svg {
+    flex-shrink: 0;
+}
+
+.sp-logo svg path {
+    fill: #95bf47;
+}
+
+.sp-logo-text {
+    color: var(--sp-nav-text-active);
+    font-size: 15px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+/* Top Bar Center - Search */
+.sp-topbar-center {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    max-width: 580px;
+    margin: 0 auto;
+}
+
+.sp-search-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    max-width: 480px;
+    height: 36px;
+    padding: 0 14px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: var(--sp-radius-full);
+    color: var(--sp-nav-text);
+    font-family: var(--sp-font);
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 200ms var(--sp-ease);
+}
+
+.sp-search-btn:hover {
+    background: rgba(255, 255, 255, 0.14);
+    border-color: rgba(255, 255, 255, 0.22);
+    color: var(--sp-nav-text-hover);
+    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.05);
+}
+
+.sp-search-btn span {
+    flex: 1;
+    text-align: left;
+    color: inherit;
+}
+
+.sp-search-btn kbd {
+    background: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: var(--sp-radius-100);
+    padding: 1px 6px;
+    font-family: var(--sp-font);
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.5);
+    line-height: 18px;
+}
+
+/* Top Bar Right */
+.sp-topbar-right {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    flex-shrink: 0;
+}
+
+.sp-topbar-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: var(--sp-radius-200);
+    color: var(--sp-nav-text);
+    text-decoration: none !important;
+    transition: all 100ms var(--sp-ease);
+}
+
+.sp-topbar-icon:hover {
+    background: var(--sp-nav-surface-hover);
+    color: var(--sp-nav-text-hover);
+}
+
+.sp-user-avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: var(--sp-radius-full);
+    overflow: hidden;
+    background: #36a3ff;
+    text-decoration: none !important;
+    margin-left: 4px;
+}
+
+.sp-user-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: var(--sp-radius-full);
+}
+
+.sp-user-avatar .sp-user-initial {
+    display: none;
+    color: #fff;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+/* --- Layout --- */
+.sp-layout {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+    height: calc(100vh - var(--sp-topbar-height));
+}
+
+/* --- Sidebar --- */
+.sp-sidebar {
+    width: var(--sp-sidebar-width);
+    min-width: var(--sp-sidebar-width);
+    background: var(--sp-nav-bg);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    flex-shrink: 0;
+    border-right: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.sp-sidebar-inner {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 8px 0;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.1) transparent;
+}
+
+.sp-sidebar-inner::-webkit-scrollbar {
+    width: 4px;
+}
+
+.sp-sidebar-inner::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.sp-sidebar-inner::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 2px;
+}
+
+/* Nav Items */
+.sp-nav {
+    list-style: none;
+    margin: 0;
+    padding: 0 8px;
+    flex: 1;
+}
+
+.sp-nav-item {
+    margin: 1px 0;
+}
+
+.sp-nav-link {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 10px;
+    color: var(--sp-nav-text);
+    text-decoration: none !important;
+    border-radius: var(--sp-radius-200);
+    font-size: 13px;
+    font-weight: 500;
+    transition: all 150ms var(--sp-ease);
+    cursor: pointer;
+    line-height: 20px;
+}
+
+.sp-nav-link:hover {
+    color: var(--sp-nav-text-hover);
+    background: var(--sp-nav-surface-hover);
+    transform: translateX(2px);
+}
+
+.sp-nav-link.sp-active {
+    color: var(--sp-nav-text-active);
+    background: var(--sp-nav-surface-active);
+    font-weight: 600;
+    box-shadow: inset 3px 0 0 0 rgba(255, 255, 255, 0.6);
+}
+
+.sp-nav-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+    color: inherit;
+    opacity: 0.85;
+}
+
+.sp-nav-link.sp-active .sp-nav-icon {
+    opacity: 1;
+}
+
+.sp-nav-text {
+    color: inherit;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Nav Section Header */
+.sp-nav-section {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 8px 4px;
+    margin: 0;
+    list-style: none;
+}
+
+.sp-nav-section span {
+    font-size: 12px;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.4);
+    text-transform: none;
+    letter-spacing: 0;
+}
+
+.sp-section-arrow {
+    color: rgba(255, 255, 255, 0.3);
+    cursor: pointer;
+}
+
+/* Sidebar Bottom */
+.sp-sidebar-bottom {
+    padding: 0 8px 8px;
+    flex-shrink: 0;
+}
+
+.sp-sidebar-divider {
+    height: 1px;
+    background: rgba(255, 255, 255, 0.08);
+    margin: 6px 0;
+}
+
+.sp-settings-link {
+    margin-top: 4px;
+}
+
+.sp-version-info {
+    padding: 4px 8px;
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.25);
+}
+
+/* --- Main Content --- */
+.sp-main {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    background: var(--sp-bg);
+    scroll-behavior: smooth;
+    padding: 0;
+}
+
+/* ================================================================
+   3. Override Metronic content containers — Shopify-style content
+   ================================================================ */
+.content {
+    background: transparent !important;
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+.post {
+    background: transparent !important;
+}
+
+.container-fluid,
+.container-xxl {
+    max-width: 100% !important;
+    padding: 0 24px 24px !important;
+}
+
+/* Toolbar */
+.toolbar {
+    background: transparent !important;
+    padding: 20px 0 12px !important;
+    box-shadow: none !important;
+    border: none !important;
+}
+
+.toolbar .page-title h1,
+.toolbar .page-heading,
+.toolbar h1 {
+    color: var(--sp-text) !important;
+    font-size: 20px !important;
+    font-weight: 600 !important;
+    line-height: 28px !important;
+}
+
+.breadcrumb-item a {
+    color: var(--sp-text-secondary) !important;
+    font-size: 13px !important;
+    text-decoration: none !important;
+}
+
+.breadcrumb-item a:hover {
+    color: var(--sp-text-link) !important;
+}
+
+/* ================================================================
+   3b. Shopify-style page content areas
+   ================================================================ */
+
+/* Card base — rounded with hover lift */
+.card {
+    background: var(--sp-surface) !important;
+    border: none !important;
+    border-radius: var(--sp-radius-300) !important;
+    box-shadow: var(--sp-shadow-card) !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    transition: box-shadow 200ms var(--sp-ease), transform 200ms var(--sp-ease) !important;
+}
+
+.card:hover {
+    box-shadow: var(--sp-shadow-card-hover) !important;
+    transform: translateY(-1px) !important;
+}
+
+/* Card header rounded top */
+.card-header {
+    border-bottom: 1px solid var(--sp-border) !important;
+    background: transparent !important;
+    padding: 16px 20px !important;
+    min-height: auto !important;
+    border-radius: var(--sp-radius-300) var(--sp-radius-300) 0 0 !important;
+}
+
+.card-header.border-0 {
+    border-bottom: none !important;
+}
+
+/* Card footer rounded bottom */
+.card-footer {
+    border-top: 1px solid var(--sp-border) !important;
+    background: var(--sp-surface-secondary) !important;
+    padding: 16px 20px !important;
+    border-radius: 0 0 var(--sp-radius-300) var(--sp-radius-300) !important;
+}
+
+/* Rounded card body */
+.card-body {
+    padding: 20px !important;
+}
+
+/* Make table container inside card rounded */
+.card-body table {
+    border-radius: var(--sp-radius-200) !important;
+    overflow: hidden !important;
+}
+
+/* Form sections — clean Shopify-style */
+.card-body .row.mb-6 {
+    padding: 12px 0 !important;
+    border-bottom: 1px solid var(--sp-border) !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+}
+
+.card-body .row.mb-6:last-child {
+    border-bottom: none !important;
+}
+
+/* Form label column */
+.col-form-label {
+    color: var(--sp-text) !important;
+    font-weight: 500 !important;
+    font-size: 13px !important;
+}
+
+/* Form hint text */
+.form-text {
+    color: var(--sp-text-secondary) !important;
+    font-size: 12px !important;
+    margin-top: 6px !important;
+}
+
+/* Input solid variant — same round treatment */
+.form-control-solid,
+.form-select-solid {
+    background-color: var(--sp-surface-secondary) !important;
+    border: 1px solid var(--sp-border) !important;
+    border-radius: var(--sp-radius-200) !important;
+}
+
+.form-control-solid:focus,
+.form-select-solid:focus {
+    background-color: var(--sp-surface) !important;
+    border-color: var(--sp-border-focus) !important;
+    box-shadow: 0 0 0 2px rgba(0, 91, 211, 0.25) !important;
+}
+
+/* Collapse container */
+.collapse.show,
+.collapsing {
+    border-radius: 0 0 var(--sp-radius-300) var(--sp-radius-300) !important;
+}
+
+/* Image input wrapper — more rounded */
+.image-input-wrapper {
+    border-radius: var(--sp-radius-300) !important;
+    border: 1px solid var(--sp-border) !important;
+}
+
+.image-input .btn-icon {
+    border-radius: var(--sp-radius-full) !important;
+}
+
+/* Editor wrapper */
+.editor-wrapper {
+    border: 1px solid var(--sp-border) !important;
+    border-radius: var(--sp-radius-200) !important;
+    overflow: hidden !important;
+}
+
+.editor-wrapper .button-switch-notice {
+    background: var(--sp-surface-secondary) !important;
+    border: none !important;
+    border-bottom: 1px solid var(--sp-border) !important;
+    border-radius: var(--sp-radius-200) var(--sp-radius-200) 0 0 !important;
+    color: var(--sp-text-secondary) !important;
+    font-size: 12px !important;
+    padding: 8px 12px !important;
+}
+
+/* Form check / switch — rounded */
+.form-check-input {
+    border-radius: var(--sp-radius-100) !important;
+    border: 1px solid var(--sp-border-input) !important;
+}
+
+.form-switch .form-check-input {
+    border-radius: var(--sp-radius-full) !important;
+}
+
+/* Card title */
+.card-title,
+.card-title h3,
+.card-title h5,
+.card-title h6 {
+    color: var(--sp-text) !important;
+    font-weight: 600 !important;
+    font-size: 14px !important;
+    margin-bottom: 0 !important;
+}
+
+/* Remove Metronic background decorations */
+.card[style*="background-image"],
+.card.bgi-no-repeat {
+    background-image: none !important;
+}
+
+/* ================================================================
+   5. Polaris Stat Card
+   ================================================================ */
+.polaris-stat-card {
+    background: var(--sp-surface) !important;
+    border: none !important;
+    border-radius: var(--sp-radius-300) !important;
+    box-shadow: var(--sp-shadow-card) !important;
+    padding: 20px !important;
+    transition: all 200ms var(--sp-ease) !important;
+    position: relative !important;
+    overflow: hidden !important;
+}
+
+.polaris-stat-card::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    background: var(--sp-accent-gradient);
+    opacity: 0;
+    transition: opacity 200ms var(--sp-ease);
+    border-radius: 0 2px 2px 0;
+}
+
+.polaris-stat-card:hover {
+    box-shadow: var(--sp-shadow-card-hover) !important;
+    transform: translateY(-2px) !important;
+}
+
+.polaris-stat-card:hover::before {
+    opacity: 1;
+}
+
+.polaris-stat-card .stat-label {
+    font-size: 13px !important;
+    font-weight: 450 !important;
+    color: var(--sp-text-secondary) !important;
+    margin-bottom: 8px !important;
+}
+
+.polaris-stat-card .stat-value {
+    font-size: 24px !important;
+    font-weight: 600 !important;
+    color: var(--sp-text) !important;
+    line-height: 28px !important;
+    letter-spacing: -0.02em;
+}
+
+.polaris-stat-card .stat-value.text-success {
+    color: var(--sp-text-success) !important;
+}
+
+.polaris-stat-card .stat-value.text-critical {
+    color: var(--sp-text-critical) !important;
+}
+
+.polaris-stat-card .stat-value.text-warning {
+    color: var(--sp-text-warning) !important;
+}
+
+.polaris-stat-card .stat-value.text-info {
+    color: var(--sp-info) !important;
+}
+
+/* ================================================================
+   6. Buttons — Polaris Bevel Style
+   ================================================================ */
+.btn {
+    border-radius: var(--sp-radius-200) !important;
+    font-family: var(--sp-font) !important;
+    font-weight: 500 !important;
+    font-size: 13px !important;
+    padding: 6px 14px !important;
+    transition: all 200ms var(--sp-ease) !important;
+    box-shadow: var(--sp-shadow-bevel) !important;
+    min-height: 32px !important;
+    line-height: 20px !important;
+    cursor: pointer !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    white-space: nowrap !important;
+}
+
+.btn:active {
+    transform: scale(0.97) !important;
+}
+
+.btn-primary {
+    background-color: var(--sp-brand) !important;
+    border-color: transparent !important;
+    color: #fff !important;
+}
+
+.btn-primary:hover {
+    background-color: var(--sp-brand-hover) !important;
+}
+
+.btn-light,
+.btn-light-primary,
+.btn-outline-light,
+.btn-outline-secondary {
+    background-color: var(--sp-surface) !important;
+    border: 1px solid var(--sp-border) !important;
+    color: var(--sp-text) !important;
+}
+
+.btn-light:hover,
+.btn-light-primary:hover {
+    background-color: var(--sp-surface-hovered) !important;
+    border-color: var(--sp-border-input-hover) !important;
+}
+
+.btn-danger {
+    background-color: var(--sp-critical) !important;
+    border-color: transparent !important;
+    color: #fff !important;
+}
+
+.btn-light-danger {
+    background-color: #ffe5e5 !important;
+    border: 1px solid #fcc !important;
+    color: var(--sp-text-critical) !important;
+}
+
+.btn-success {
+    background-color: var(--sp-success) !important;
+    border-color: transparent !important;
+    color: #fff !important;
+}
+
+.btn-light-success {
+    background-color: #cdfee1 !important;
+    border: 1px solid #b4deb1 !important;
+    color: var(--sp-text-success) !important;
+}
+
+.btn-warning {
+    background-color: var(--sp-warning) !important;
+    border-color: transparent !important;
+    color: #1a1a1a !important;
+}
+
+.btn-light-warning {
+    background-color: #fff5d6 !important;
+    border: 1px solid #ffd98e !important;
+    color: var(--sp-text-warning) !important;
+}
+
+.btn-light-dark {
+    background-color: var(--sp-surface) !important;
+    border: 1px solid var(--sp-border) !important;
+    color: var(--sp-text) !important;
+}
+
+.btn-light-dark:hover {
+    background-color: var(--sp-surface-hovered) !important;
+}
+
+.btn-sm {
+    padding: 4px 8px !important;
+    font-size: 12px !important;
+    min-height: 28px !important;
+}
+
+.btn-lg {
+    padding: 8px 20px !important;
+    font-size: 14px !important;
+    min-height: 40px !important;
+}
+
+.btn i {
+    font-size: 14px !important;
+}
+
+/* ================================================================
+   7. Badge
+   ================================================================ */
+.badge {
+    border-radius: var(--sp-radius-full) !important;
+    font-weight: 500 !important;
+    font-size: 12px !important;
+    padding: 3px 10px !important;
+    border: none !important;
+    display: inline-flex !important;
+    align-items: center !important;
+}
+
+.badge-primary,
+.badge-light-primary {
+    background-color: #e4efff !important;
+    color: var(--sp-info) !important;
+}
+
+.badge-success,
+.badge-light-success {
+    background-color: #cdfee1 !important;
+    color: var(--sp-text-success) !important;
+}
+
+.badge-danger,
+.badge-light-danger {
+    background-color: #ffe5e5 !important;
+    color: var(--sp-text-critical) !important;
+}
+
+.badge-warning,
+.badge-light-warning {
+    background-color: #fff5d6 !important;
+    color: var(--sp-text-warning) !important;
+}
+
+/* ================================================================
+   8. Form Inputs
+   ================================================================ */
+.form-control,
+.form-select,
+.form-control-solid,
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+input[type="url"],
+input[type="search"],
+input[type="tel"],
+textarea,
+select {
+    border: 1px solid var(--sp-border-input) !important;
+    border-radius: var(--sp-radius-200) !important;
+    background-color: var(--sp-surface) !important;
+    color: var(--sp-text) !important;
+    font-family: var(--sp-font) !important;
+    font-size: 13px !important;
+    padding: 8px 12px !important;
+    transition: border-color 100ms var(--sp-ease), box-shadow 100ms var(--sp-ease) !important;
+    box-shadow: none !important;
+    min-height: 36px !important;
+}
+
+.form-control:hover,
+input:hover,
+textarea:hover,
+select:hover {
+    border-color: var(--sp-border-input-hover) !important;
+}
+
+.form-control:focus,
+.form-select:focus,
+input:focus,
+textarea:focus,
+select:focus {
+    border-color: var(--sp-border-focus) !important;
+    box-shadow: 0 0 0 2px rgba(0, 91, 211, 0.25) !important;
+    outline: none !important;
+}
+
+.form-control::placeholder,
+input::placeholder,
+textarea::placeholder {
+    color: var(--sp-text-disabled) !important;
+}
+
+.form-label,
+label:not(.form-check-label):not(.btn) {
+    color: var(--sp-text) !important;
+    font-weight: 500 !important;
+    font-size: 13px !important;
+    margin-bottom: 4px !important;
+}
+
+.form-check-input:checked {
+    background-color: var(--sp-brand) !important;
+    border-color: var(--sp-brand) !important;
+}
+
+.form-switch .form-check-input {
+    border-radius: var(--sp-radius-full) !important;
+}
+
+.form-switch .form-check-input:checked {
+    background-color: var(--sp-success) !important;
+    border-color: var(--sp-success) !important;
+}
+
+/* ================================================================
+   9. Tables
+   ================================================================ */
+.table,
+.bootstrap-table table,
+table {
+    border-collapse: separate !important;
+    border-spacing: 0 !important;
+}
+
+.table thead th,
+.bootstrap-table thead th {
+    background-color: var(--sp-surface-secondary) !important;
+    color: var(--sp-text-secondary) !important;
+    font-weight: 600 !important;
+    font-size: 12px !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.4px !important;
+    border-bottom: 1px solid var(--sp-border) !important;
+    border-top: none !important;
+    padding: 10px 16px !important;
+}
+
+.table tbody td,
+.bootstrap-table tbody td {
+    color: var(--sp-text) !important;
+    font-size: 13px !important;
+    border-bottom: 1px solid var(--sp-border) !important;
+    padding: 12px 16px !important;
+    vertical-align: middle !important;
+}
+
+.table tbody tr:hover,
+.bootstrap-table tbody tr:hover {
+    background-color: var(--sp-surface-hovered) !important;
+}
+
+/* ================================================================
+   10. Pagination
+   ================================================================ */
+.page-link {
+    border: 1px solid var(--sp-border) !important;
+    color: var(--sp-text) !important;
+    border-radius: var(--sp-radius-200) !important;
+    margin: 0 2px !important;
+    font-size: 13px !important;
+    padding: 4px 10px !important;
+}
+
+.page-item.active .page-link {
+    background-color: var(--sp-brand) !important;
+    border-color: transparent !important;
+    color: #fff !important;
+}
+
+/* ================================================================
+   11. Modals
+   ================================================================ */
+.modal-content {
+    border-radius: var(--sp-radius-400) !important;
+    border: none !important;
+    box-shadow: var(--sp-shadow-lifted) !important;
+    overflow: hidden !important;
+}
+
+.modal-header {
+    border-bottom: 1px solid var(--sp-border) !important;
+    padding: 20px 24px !important;
+    background: var(--sp-surface) !important;
+}
+
+.modal-header .modal-title {
+    font-size: 18px !important;
+    font-weight: 600 !important;
+    color: var(--sp-text) !important;
+}
+
+.modal-body {
+    padding: 24px !important;
+    background: var(--sp-surface) !important;
+}
+
+.modal-footer {
+    border-top: 1px solid var(--sp-border) !important;
+    padding: 16px 24px !important;
+    background: var(--sp-surface-secondary) !important;
+}
+
+/* ================================================================
+   12. Text / Background Utilities
+   ================================================================ */
+.text-primary {
+    color: var(--sp-info) !important;
+}
+
+.text-success {
+    color: var(--sp-text-success) !important;
+}
+
+.text-danger {
+    color: var(--sp-text-critical) !important;
+}
+
+.text-warning {
+    color: var(--sp-text-warning) !important;
+}
+
+.text-info {
+    color: var(--sp-info) !important;
+}
+
+.text-muted {
+    color: var(--sp-text-secondary) !important;
+}
+
+.text-dark {
+    color: var(--sp-text) !important;
+}
+
+.fw-bolder,
+.fw-bold {
+    font-weight: 600 !important;
+}
+
+/* ================================================================
+   13. Third-party Overrides
+   ================================================================ */
+/* Select2 */
+.select2-container--default .select2-selection--single {
+    border: 1px solid var(--sp-border-input) !important;
+    border-radius: var(--sp-radius-200) !important;
+    height: 36px !important;
+    background: var(--sp-surface) !important;
+}
+
+.select2-container--default .select2-results__option--highlighted[aria-selected] {
+    background-color: var(--sp-brand) !important;
+}
+
+.select2-dropdown {
+    border: 1px solid var(--sp-border) !important;
+    border-radius: var(--sp-radius-200) !important;
+    box-shadow: var(--sp-shadow-dropdown) !important;
+}
+
+/* Layer — Smooth center scale animation */
+.layui-layer {
+    border-radius: var(--sp-radius-400) !important;
+    border: none !important;
+    box-shadow: var(--sp-shadow-lifted) !important;
+    overflow: hidden !important;
+}
+
+/* Override ALL layer.js animations to use center scale */
+@keyframes sp-layer-appear {
+    from {
+        opacity: 0;
+        transform: scale(0.92) translateY(8px);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+@keyframes sp-layer-close {
+    from {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+
+    to {
+        opacity: 0;
+        transform: scale(0.92) translateY(8px);
+    }
+}
+
+/* Apply to all layer animation classes */
+.layer-anim {
+    animation-name: sp-layer-appear !important;
+    animation-duration: 250ms !important;
+    animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1) !important;
+    animation-fill-mode: both !important;
+}
+
+.layer-anim-close {
+    animation-name: sp-layer-close !important;
+    animation-duration: 200ms !important;
+    animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1) !important;
+    animation-fill-mode: both !important;
+}
+
+/* Override individual layer animation keyframes */
+.layer-anim-00,
+.layer-anim-01,
+.layer-anim-02,
+.layer-anim-03,
+.layer-anim-04,
+.layer-anim-05,
+.layer-anim-06 {
+    animation-name: sp-layer-appear !important;
+    animation-duration: 250ms !important;
+    animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1) !important;
+}
+
+/* Shade overlay — modern blur */
+.layui-layer-shade {
+    background: rgba(0, 0, 0, 0.35) !important;
+    backdrop-filter: blur(2px) !important;
+    -webkit-backdrop-filter: blur(2px) !important;
+}
+
+/* Close button — modern */
+.layui-layer-close {
+    border-radius: var(--sp-radius-full) !important;
+    transition: all 150ms var(--sp-ease) !important;
+}
+
+.layui-layer-close:hover {
+    background: var(--sp-surface-hovered) !important;
+}
+
+.layui-layer-title {
+    background: var(--sp-surface) !important;
+    border-bottom: 1px solid var(--sp-border) !important;
+    color: var(--sp-text) !important;
+    font-weight: 600 !important;
+}
+
+.layui-layer-btn a {
+    border-radius: var(--sp-radius-200) !important;
+}
+
+/* Toast */
+.toast-success {
+    background-color: var(--sp-success) !important;
+}
+
+.toast-error {
+    background-color: var(--sp-critical) !important;
+}
+
+.toast-info {
+    background-color: var(--sp-info) !important;
+}
+
+.toast-warning {
+    background-color: var(--sp-warning) !important;
+}
+
+#toast-container>div {
+    border-radius: var(--sp-radius-200) !important;
+    box-shadow: var(--sp-shadow-dropdown) !important;
+    font-family: var(--sp-font) !important;
+}
+
+/* Dropdown */
+.dropdown-menu {
+    border: 1px solid var(--sp-border) !important;
+    border-radius: var(--sp-radius-300) !important;
+    box-shadow: var(--sp-shadow-dropdown) !important;
+    background: var(--sp-surface) !important;
+}
+
+.dropdown-item {
+    border-radius: var(--sp-radius-200) !important;
+    color: var(--sp-text) !important;
+    padding: 8px 12px !important;
+    font-size: 13px !important;
+}
+
+.dropdown-item:hover {
+    background-color: var(--sp-surface-hovered) !important;
+}
+
+/* Alert */
+.alert {
+    border-radius: var(--sp-radius-200) !important;
+    font-size: 13px !important;
+}
+
+.alert-primary,
+.alert-info {
+    background: #e4efff !important;
+    border: 1px solid #b4d5ff !important;
+    color: var(--sp-info) !important;
+}
+
+.alert-success {
+    background: #cdfee1 !important;
+    border: 1px solid #99ddb3 !important;
+    color: var(--sp-text-success) !important;
+}
+
+.alert-danger {
+    background: #ffe5e5 !important;
+    border: 1px solid #f9b3b3 !important;
+    color: var(--sp-text-critical) !important;
+}
+
+.alert-warning {
+    background: #fff5d6 !important;
+    border: 1px solid #ffd98e !important;
+    color: var(--sp-text-warning) !important;
+}
+
+/* Tabs */
+.nav-tabs {
+    border-bottom: 1px solid var(--sp-border) !important;
+}
+
+.nav-tabs .nav-link {
+    border: none !important;
+    border-bottom: 3px solid transparent !important;
+    color: var(--sp-text-secondary) !important;
+    font-weight: 500 !important;
+    font-size: 13px !important;
+    padding: 12px 16px !important;
+    margin-bottom: -1px !important;
+}
+
+.nav-tabs .nav-link:hover {
+    color: var(--sp-text) !important;
+    border-bottom-color: #b5b5b5 !important;
+    background: transparent !important;
+}
+
+.nav-tabs .nav-link.active {
+    color: var(--sp-text) !important;
+    border-bottom-color: var(--sp-brand) !important;
+    background: transparent !important;
+    font-weight: 600 !important;
+}
+
+/* Separator */
+.separator {
+    border-color: var(--sp-border) !important;
+}
+
+/* ================================================================
+   14. Grid Utilities
+   ================================================================ */
+.polaris-grid {
+    display: grid;
+    gap: 16px;
+}
+
+.polaris-grid-2 {
+    grid-template-columns: repeat(2, 1fr);
+}
+
+.polaris-grid-3 {
+    grid-template-columns: repeat(3, 1fr);
+}
+
+.polaris-grid-4 {
+    grid-template-columns: repeat(4, 1fr);
+}
+
+.polaris-grid-6 {
+    grid-template-columns: repeat(6, 1fr);
+}
+
+@media (max-width: 1200px) {
+    .polaris-grid-6 {
+        grid-template-columns: repeat(4, 1fr);
+    }
+
+    .polaris-grid-4 {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 992px) {
+    .polaris-grid-6 {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .polaris-grid-4 {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .polaris-grid-3 {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 576px) {
+
+    .polaris-grid-6,
+    .polaris-grid-4,
+    .polaris-grid-3 {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .polaris-grid-2 {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ================================================================
+   15. Scrollbar
+   ================================================================ */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #a1a1a1;
+}
+
+/* Scroll top */
+#kt_scrolltop {
+    background: var(--sp-brand) !important;
+    border-radius: var(--sp-radius-full) !important;
+    box-shadow: var(--sp-shadow-card) !important;
+    position: fixed !important;
+    bottom: 20px !important;
+    right: 20px !important;
+    z-index: 1000 !important;
+}
+
+/* Image input */
+.image-input-wrapper {
+    border-radius: var(--sp-radius-300) !important;
+    border: 1px solid var(--sp-border) !important;
+}
+
+/* ================================================================
+   16. Mobile Overlay
+   ================================================================ */
+.sp-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 98;
+    opacity: 0;
+    transition: opacity 200ms var(--sp-ease);
+    display: none;
+}
+
+.sp-overlay.sp-overlay-show {
+    opacity: 1;
+    display: block;
+}
+
+/* ================================================================
+   17. Responsive
+   ================================================================ */
+@media (max-width: 768px) {
+    .sp-sidebar {
+        position: fixed;
+        left: -260px;
+        top: var(--sp-topbar-height);
+        height: calc(100vh - var(--sp-topbar-height));
+        z-index: 99;
+        transition: left 200ms var(--sp-ease);
+        border-right: none;
+        box-shadow: 4px 0 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .sp-sidebar.sp-sidebar-open {
+        left: 0;
+    }
+
+    .sp-mobile-toggle {
+        display: flex !important;
+    }
+
+    .sp-search-btn kbd {
+        display: none;
+    }
+
+    .sp-logo-text {
+        display: none;
+    }
+
+    .container-fluid,
+    .container-xxl {
+        padding: 0 12px 12px !important;
+    }
+
+    .polaris-stat-card .stat-value {
+        font-size: 20px !important;
+    }
+}
+
+/* ================================================================
+   18. Animations / Micro-interactions
+   ================================================================ */
+@keyframes sp-fade-in {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes sp-slide-in {
+    from {
+        opacity: 0;
+        transform: translateX(-6px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes sp-scale-in {
+    from {
+        opacity: 0;
+        transform: scale(0.96);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.sp-main .content {
+    animation: sp-fade-in 250ms var(--sp-ease);
+}
+
+/* Staggered card appear */
+.polaris-stat-card {
+    animation: sp-fade-in 300ms var(--sp-ease) backwards;
+}
+
+.polaris-stat-card:nth-child(1) {
+    animation-delay: 0ms;
+}
+
+.polaris-stat-card:nth-child(2) {
+    animation-delay: 40ms;
+}
+
+.polaris-stat-card:nth-child(3) {
+    animation-delay: 80ms;
+}
+
+.polaris-stat-card:nth-child(4) {
+    animation-delay: 120ms;
+}
+
+.polaris-stat-card:nth-child(5) {
+    animation-delay: 160ms;
+}
+
+.polaris-stat-card:nth-child(6) {
+    animation-delay: 200ms;
+}
+
+/* Sidebar nav enter */
+.sp-nav-item {
+    animation: sp-slide-in 200ms var(--sp-ease) backwards;
+}
+
+.sp-nav-item:nth-child(1) {
+    animation-delay: 20ms;
+}
+
+.sp-nav-item:nth-child(2) {
+    animation-delay: 40ms;
+}
+
+.sp-nav-item:nth-child(3) {
+    animation-delay: 60ms;
+}
+
+.sp-nav-item:nth-child(4) {
+    animation-delay: 80ms;
+}
+
+.sp-nav-item:nth-child(5) {
+    animation-delay: 100ms;
+}
+
+.sp-nav-item:nth-child(6) {
+    animation-delay: 120ms;
+}
+
+.sp-nav-item:nth-child(7) {
+    animation-delay: 140ms;
+}
+
+/* Modal scale in */
+.modal.show .modal-dialog {
+    animation: sp-scale-in 200ms var(--sp-ease) !important;
+}
+
+/* Smooth hover on interactive elements */
+.sp-nav-link,
+.sp-topbar-icon,
+.sp-search-btn,
+.dropdown-item,
+.page-link {
+    transition: all 150ms var(--sp-ease);
+}
+
+/* Dashboard data type select */
+.dashboard-data-type {
+    min-height: 32px !important;
+    padding: 4px 28px 4px 10px !important;
+    font-size: 13px !important;
+}
+
+/* ================================================================
+   19. Focus ring (accessibility + modern feel)
+   ================================================================ */
+.btn:focus-visible,
+.sp-nav-link:focus-visible,
+a:focus-visible {
+    outline: 2px solid var(--sp-border-focus) !important;
+    outline-offset: 2px !important;
+    box-shadow: 0 0 0 4px rgba(0, 91, 211, 0.15) !important;
+}
+
+/* ================================================================
+   20. Smooth scrollbar for main content
+   ================================================================ */
+.sp-main {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0, 0, 0, 0.12) transparent;
+}

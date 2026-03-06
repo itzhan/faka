@@ -4,6 +4,10 @@
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
     <title>登录 - #{$config.title}</title>
+    <link rel="shortcut icon" href="/favicon.ico"/>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     #{css(
     [
     "/assets/common/css/_.css",
@@ -23,54 +27,58 @@
 
     #{js("/assets/common/js/ready.js")}
 </head>
-<body class="ay-bg" style="background-image: linear-gradient(180deg, rgb(255 255 255 / 0%), rgb(255 255 255 / 71%)), url('#{$config.background_url}')">
-<div class="ay-dim" aria-hidden="true"></div>
-<div class="ay-petals" aria-hidden="true">
-    <i style="left:6%; top:-8vh; animation-duration:11s"></i>
-    <i style="left:24%; top:-12vh; animation-duration:13s"></i>
-    <i style="left:52%; top:-16vh; animation-duration:12s"></i>
-    <i style="left:72%; top:-10vh; animation-duration:10s"></i>
-    <i style="left:86%; top:-18vh; animation-duration:14s"></i>
-</div>
+<body class="polaris-login-page">
 
-<main class="ay-wrap">
+<main class="polaris-login-wrap">
+    <section class="polaris-login-card">
+        <!-- Shopify green accent bar -->
+        <div class="polaris-login-accent"></div>
 
-
-    <section class="ay-card" role="dialog" aria-labelledby="ay-title" aria-describedby="ay-sub">
-        <header class="ay-head">
-            <div class="ay-logo" aria-hidden="true"></div>
-            <h1 id="ay-title" class="ay-title">欢迎回来，指挥官</h1>
-            <p id="ay-sub" class="ay-sub">正在验证您的管理员身份</p>
+        <header class="polaris-login-header">
+            <div class="polaris-login-logo">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
+                    <path d="M12 2L2 7V17L12 22L22 17V7L12 2Z" fill="#303030" opacity="0.9"/>
+                    <path d="M12 6L7 8.5V15.5L12 18L17 15.5V8.5L12 6Z" fill="#303030" opacity="0.4"/>
+                </svg>
+            </div>
+            <h1 class="polaris-login-title">管理员登录</h1>
+            <p class="polaris-login-subtitle">请输入您的账号和密码</p>
         </header>
 
-        <div class="ay-body">
+        <div class="polaris-login-body">
             <form id="ay-form" novalidate>
-                <div class="ay-field">
-                    <input id="ay-user" name="username" class="ay-input" type="text" placeholder=" "
+                <div class="polaris-field">
+                    <label class="polaris-field-label" for="ay-user">邮箱</label>
+                    <input id="ay-user" name="username" class="polaris-input" type="text"
+                           placeholder="请输入您的邮箱"
                            autocomplete="username" required>
-                    <span class="ay-label">邮箱</span>
                 </div>
-                <div class="ay-field">
-                    <input id="ay-pass" name="password" class="ay-input" type="password" placeholder=" "
-                           autocomplete="current-password" required>
-                    <span class="ay-label">密码</span>
-                    <button type="button" class="ay-eye" id="ay-eye" aria-label="显示密码" aria-controls="ay-pass">
-                        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#cfe1ff" stroke-width="2"
-                             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                            <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12Z"/>
-                            <circle cx="12" cy="12" r="3"/>
-                        </svg>
-                    </button>
-                </div>
-
-                <div class="ay-row">
-                    <label class="ay-check"><input type="checkbox" id="ay-remember" name="remember" value="1">保持登录(365天)</label>
-                    <a class="ay-link" href="javascript:void(0)" onclick="message.info('查看官方文档重置密码方法');">忘记密码？</a>
+                <div class="polaris-field">
+                    <label class="polaris-field-label" for="ay-pass">密码</label>
+                    <div class="polaris-input-wrap">
+                        <input id="ay-pass" name="password" class="polaris-input" type="password"
+                               placeholder="请输入密码"
+                               autocomplete="current-password" required>
+                        <button type="button" class="polaris-eye-btn" id="ay-eye" aria-label="显示密码">
+                            <svg viewBox="0 0 20 20" width="18" height="18" fill="none">
+                                <path d="M10 4.5C5.5 4.5 2 10 2 10s3.5 5.5 8 5.5 8-5.5 8-5.5-3.5-5.5-8-5.5z" stroke="#8a8a8a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                <circle cx="10" cy="10" r="2.5" stroke="#8a8a8a" stroke-width="1.5"/>
+                            </svg>
+                        </button>
+                    </div>
                 </div>
 
-                <button class="ay-btn" type="submit" id="ay-submit">确认登入</button>
+                <div class="polaris-login-options">
+                    <label class="polaris-checkbox">
+                        <input type="checkbox" id="ay-remember" name="remember" value="1">
+                        <span>保持登录(365天)</span>
+                    </label>
+                    <a class="polaris-link" href="javascript:void(0)" onclick="message.info('查看官方文档重置密码方法');">忘记密码？</a>
+                </div>
+
+                <button class="polaris-login-btn" type="submit" id="ay-submit">确认登入</button>
             </form>
-            <div class="ay-foot">© #{$config.shop_name}</div>
+            <div class="polaris-login-footer">© #{$config.shop_name}</div>
         </div>
     </section>
 </main>

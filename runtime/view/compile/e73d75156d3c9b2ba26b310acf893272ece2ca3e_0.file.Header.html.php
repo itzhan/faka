@@ -1,0 +1,262 @@
+<?php
+/* Smarty version 3.1.46, created on 2026-03-06 14:38:35
+  from '/var/www/html/app/View/Admin/Header.html' */
+
+/* @var Smarty_Internal_Template $_smarty_tpl */
+if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
+  'version' => '3.1.46',
+  'unifunc' => 'content_69aa766b7c08b2_73492307',
+  'has_nocache_code' => false,
+  'file_dependency' => 
+  array (
+    'e73d75156d3c9b2ba26b310acf893272ece2ca3e' => 
+    array (
+      0 => '/var/www/html/app/View/Admin/Header.html',
+      1 => 1772779068,
+      2 => 'file',
+    ),
+  ),
+  'includes' => 
+  array (
+  ),
+),false)) {
+function content_69aa766b7c08b2_73492307 (Smarty_Internal_Template $_smarty_tpl) {
+?><!DOCTYPE html>
+<html lang="zh-CN">
+<!--begin::Head-->
+<head>
+    <title><?php echo $_smarty_tpl->tpl_vars['title']->value;?>
+-<?php echo $_smarty_tpl->tpl_vars['config']->value['title'];?>
+</title>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <link rel="shortcut icon" href="/favicon.ico"/>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <?php echo css(array("/assets/admin/css/_admin.css","/assets/common/css/_.css","/assets/admin/css/polaris-admin.css"),array("/assets/admin/css/style.bundle.css","/assets/common/css/font.min.css","/assets/common/js/layui/css/layui.css","/assets/common/css/select2.min.css","/assets/common/css/component.css","/assets/common/css/toastr.min.css","/assets/common/js/table/bootstrap-table.css","/assets/common/js/layer/theme/default/layer.css","/assets/admin/css/polaris-admin.css"));?>
+
+
+    <?php echo js("/assets/common/js/ready.js");?>
+
+
+    <?php echo admin_var();?>
+
+    <!--start::HOOK-->
+    <?php echo hook(\App\Consts\Hook::ADMIN_VIEW_HEADER);?>
+
+    <!--end::HOOK-->
+</head>
+<!--end::Head-->
+
+<!--begin::Body-->
+<body id="kt_body" class="shopify-admin">
+
+<!--begin::Shopify Admin Shell-->
+<div class="sp-shell">
+
+    <!--=== TOP BAR (dark) ===-->
+    <header class="sp-topbar">
+        <div class="sp-topbar-inner">
+            <!-- Left: Logo + hamburger -->
+            <div class="sp-topbar-left">
+                <button class="sp-mobile-toggle" id="sp_sidebar_toggle" aria-label="菜单">
+                    <svg viewBox="0 0 20 20" width="20" height="20"><path d="M19 11h-18a1 1 0 0 1 0-2h18a1 1 0 0 1 0 2zm0-7h-18a1 1 0 0 1 0-2h18a1 1 0 0 1 0 2zm0 14h-18a1 1 0 0 1 0-2h18a1 1 0 0 1 0 2z" fill="currentColor"/></svg>
+                </button>
+                <a href="/admin/dashboard/index" class="sp-logo">
+                    <svg viewBox="0 0 93 26" width="74" height="21" fill="none">
+                        <path d="M21.1 5.3c-.1-.1-.3-.2-.4-.2s-.3 0-.4 0c0 0-2.2.6-3.2.9L15.5 1c-.3-.7-1-1-1.8-1l-4 .2s-1.3.1-2.4.3S4.8 1.5 4.8 1.5 3.3 2 2.5 3.3C1.8 4.5 1.1 5.3 1.1 5.3L.3 18.9l14.4 2.7 6.4-2.3c-.1-.1-0-14-.1-14zM14.1 6.5l-1.6.5.1-2.3c.6.2 1.1.8 1.5 1.8zm-2.5-2.8V4l.1 2.7-3.5 1c.5-1.9 1.7-3.3 3.4-4zm-1.4-1.5c.1 0 .3 0 .4.1-2.2.7-4.5 3.4-5 7l-2.6.8C3.6 7.4 6 2.2 10.2 2.2z" fill="#95BF47"/>
+                        <path d="M20.7 5.1c-.1 0-.3 0-.4 0 0 0-2.2.6-3.2.9-.2-.7-.5-1.3-.9-1.9 1.3 2.5-.1 3.1-.1 3.1L14 7.8l-.7 10.8 7 1.3 6.4-2.3S21 5.4 20.7 5.1z" fill="#5E8E3E"/>
+                        <path d="M11.6 8.8l-.7 2.7s-.8-.4-1.7-.4c-1.4.1-1.4 1-1.4 1.2 0 1.3 3.4 1.8 3.4 4.9 0 2.4-1.5 4-3.6 4a4.8 4.8 0 0 1-3.6-1.5l.6-2.2s1.3 1.1 2.4 1.1c.7 0 1-.6 1-1 0-1.7-2.8-1.8-2.8-4.6 0-2.4 1.7-4.7 5.1-4.7.7.1 1.3.5 1.3.5z" fill="white"/>
+                    </svg>
+                    <span class="sp-logo-text"><?php echo $_smarty_tpl->tpl_vars['config']->value['shop_name'];?>
+</span>
+                </a>
+            </div>
+
+            <!-- Center: Search -->
+            <div class="sp-topbar-center">
+                <button class="sp-search-btn" id="sp_search_trigger">
+                    <svg viewBox="0 0 20 20" width="16" height="16"><path d="M8 12a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm9.707 4.293-4.82-4.82a5.968 5.968 0 1 0-1.414 1.414l4.82 4.82a1 1 0 0 0 1.414-1.414z" fill="currentColor"/></svg>
+                    <span>搜索</span>
+                    <kbd>⌘K</kbd>
+                </button>
+            </div>
+
+            <!-- Right: Store + User -->
+            <div class="sp-topbar-right">
+                <?php if ($_smarty_tpl->tpl_vars['_store_initialize']->value) {?>
+                <a href="/admin/store/home" class="sp-topbar-icon" title="应用商店">
+                    <svg viewBox="0 0 20 20" width="18" height="18"><path d="M10 0C4.5 0 0 4.5 0 10s4.5 10 10 10 10-4.5 10-10S15.5 0 10 0zm1 17.93V11h3l-4-7v6.07H7l4 7v.93z" fill="currentColor"/></svg>
+                </a>
+                <?php }?>
+                <a href="/admin/manage/set" class="sp-user-avatar">
+                    <img src="<?php if ($_smarty_tpl->tpl_vars['user']->value['avatar']) {
+echo $_smarty_tpl->tpl_vars['user']->value['avatar'];
+} else { ?>/favicon.ico<?php }?>" alt="<?php echo $_smarty_tpl->tpl_vars['user']->value['nickname'];?>
+"/>
+                    <span class="sp-user-initial"><?php echo substr($_smarty_tpl->tpl_vars['user']->value['nickname'],0,1);?>
+</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!--=== LAYOUT: Sidebar + Content ===-->
+    <div class="sp-layout">
+        <!--=== SIDEBAR (dark) ===-->
+        <nav class="sp-sidebar" id="sp_sidebar">
+            <div class="sp-sidebar-inner">
+                <ul class="sp-nav">
+                    <!-- Home -->
+                    <li class="sp-nav-item">
+                        <a href="/admin/dashboard/index" class="sp-nav-link <?php if ($_smarty_tpl->tpl_vars['title']->value == '控制台') {?>sp-active<?php }?>">
+                            <span class="sp-nav-icon"><svg viewBox="0 0 20 20" width="20" height="20"><path d="M10 2l-7.5 6v10h5v-6h5v6h5V8z" fill="currentColor"/></svg></span>
+                            <span class="sp-nav-text">控制台</span>
+                        </a>
+                    </li>
+                    <li class="sp-nav-item">
+                        <a href="/admin/order/index" class="sp-nav-link <?php if ($_smarty_tpl->tpl_vars['title']->value == '商品订单') {?>sp-active<?php }?>">
+                            <span class="sp-nav-icon"><svg viewBox="0 0 20 20" width="20" height="20"><path d="M4 2a1 1 0 0 0-1 1v14a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V3a1 1 0 0 0-1-1H4zm2 3h8v2H6V5zm0 4h8v2H6V9zm0 4h5v2H6v-2z" fill="currentColor"/></svg></span>
+                            <span class="sp-nav-text">商品订单</span>
+                        </a>
+                    </li>
+                    <li class="sp-nav-item">
+                        <a href="/admin/commodity/index" class="sp-nav-link <?php if ($_smarty_tpl->tpl_vars['title']->value == '商品管理') {?>sp-active<?php }?>">
+                            <span class="sp-nav-icon"><svg viewBox="0 0 20 20" width="20" height="20"><path d="M8 3a2 2 0 0 0-2 2H4a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2a2 2 0 0 0-2-2H8zm0 2h4v1H8V5zm-4 4h12v6H4V9z" fill="currentColor"/></svg></span>
+                            <span class="sp-nav-text">商品管理</span>
+                        </a>
+                    </li>
+                    <li class="sp-nav-item">
+                        <a href="/admin/user/index" class="sp-nav-link <?php if ($_smarty_tpl->tpl_vars['title']->value == '会员管理') {?>sp-active<?php }?>">
+                            <span class="sp-nav-icon"><svg viewBox="0 0 20 20" width="20" height="20"><path d="M10 10a4 4 0 1 0 0-8 4 4 0 0 0 0 8zm-7 8a7 7 0 0 1 14 0H3z" fill="currentColor"/></svg></span>
+                            <span class="sp-nav-text">会员管理</span>
+                        </a>
+                    </li>
+                    <li class="sp-nav-item">
+                        <a href="/admin/category/index" class="sp-nav-link <?php if ($_smarty_tpl->tpl_vars['title']->value == '分类管理') {?>sp-active<?php }?>">
+                            <span class="sp-nav-icon"><svg viewBox="0 0 20 20" width="20" height="20"><path d="M2 4a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V4zm0 5a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V9zm1 4a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1H3z" fill="currentColor"/></svg></span>
+                            <span class="sp-nav-text">分类管理</span>
+                        </a>
+                    </li>
+                    <li class="sp-nav-item">
+                        <a href="/admin/recharge/order" class="sp-nav-link <?php if ($_smarty_tpl->tpl_vars['title']->value == '充值订单') {?>sp-active<?php }?>">
+                            <span class="sp-nav-icon"><svg viewBox="0 0 20 20" width="20" height="20"><path d="M17 7a3 3 0 0 0-3-3H6a3 3 0 0 0-3 3v6a3 3 0 0 0 3 3h8a3 3 0 0 0 3-3V7zm-7 5a2 2 0 1 1 0-4 2 2 0 0 1 0 4z" fill="currentColor"/></svg></span>
+                            <span class="sp-nav-text">充值订单</span>
+                        </a>
+                    </li>
+                    <li class="sp-nav-item">
+                        <a href="/admin/user/bill" class="sp-nav-link <?php if ($_smarty_tpl->tpl_vars['title']->value == '账单管理') {?>sp-active<?php }?>">
+                            <span class="sp-nav-icon"><svg viewBox="0 0 20 20" width="20" height="20"><path d="M3 3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v14l-3-2-2 2-2-2-2 2-2-2-3 2V3zm3 3v2h8V6H6zm0 4v2h5v-2H6z" fill="currentColor"/></svg></span>
+                            <span class="sp-nav-text">账单管理</span>
+                        </a>
+                    </li>
+
+                    <!-- Section: 销售渠道 -->
+                    <li class="sp-nav-section">
+                        <span>销售渠道</span>
+                    </li>
+                    <li class="sp-nav-item">
+                        <a href="/admin/card/index" class="sp-nav-link <?php if ($_smarty_tpl->tpl_vars['title']->value == '卡密管理') {?>sp-active<?php }?>">
+                            <span class="sp-nav-icon"><svg viewBox="0 0 20 20" width="20" height="20"><path d="M15 3H5a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2zm-5 10H7v-2h3v2zm3-4H7V7h6v2z" fill="currentColor"/></svg></span>
+                            <span class="sp-nav-text">卡密管理</span>
+                        </a>
+                    </li>
+                    <li class="sp-nav-item">
+                        <a href="/admin/coupon/index" class="sp-nav-link <?php if ($_smarty_tpl->tpl_vars['title']->value == '优惠卷') {?>sp-active<?php }?>">
+                            <span class="sp-nav-icon"><svg viewBox="0 0 20 20" width="20" height="20"><path d="M2 5a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v3a2 2 0 0 0 0 4v3a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1v-3a2 2 0 0 0 0-4V5zm5 2v2h6V7H7zm0 4v2h4v-2H7z" fill="currentColor"/></svg></span>
+                            <span class="sp-nav-text">优惠卷</span>
+                        </a>
+                    </li>
+                    <li class="sp-nav-item">
+                        <a href="/admin/store/index" class="sp-nav-link <?php if ($_smarty_tpl->tpl_vars['title']->value == '店铺共享') {?>sp-active<?php }?>">
+                            <span class="sp-nav-icon"><svg viewBox="0 0 20 20" width="20" height="20"><path d="M10 2a2 2 0 0 0-2 2v1H4a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-4V4a2 2 0 0 0-2-2zm0 2h0v1h0V4z" fill="currentColor"/></svg></span>
+                            <span class="sp-nav-text">店铺共享</span>
+                        </a>
+                    </li>
+                    <li class="sp-nav-item">
+                        <a href="/admin/cash/index" class="sp-nav-link <?php if ($_smarty_tpl->tpl_vars['title']->value == '提现管理') {?>sp-active<?php }?>">
+                            <span class="sp-nav-icon"><svg viewBox="0 0 20 20" width="20" height="20"><path d="M5 4a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2H5zm5 8a2 2 0 1 1 0-4 2 2 0 0 1 0 4z" fill="currentColor"/></svg></span>
+                            <span class="sp-nav-text">提现管理</span>
+                        </a>
+                    </li>
+
+                    <!-- Section: 应用 -->
+                    <li class="sp-nav-section">
+                        <span>应用</span>
+                        <svg viewBox="0 0 20 20" width="16" height="16" class="sp-section-arrow"><path d="M14 8l-4 4-4-4" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/></svg>
+                    </li>
+                    <?php if ($_smarty_tpl->tpl_vars['_store_initialize']->value) {?>
+                    <li class="sp-nav-item">
+                        <a href="/admin/store/home" class="sp-nav-link <?php if ($_smarty_tpl->tpl_vars['title']->value == '应用商店') {?>sp-active<?php }?>">
+                            <span class="sp-nav-icon"><svg viewBox="0 0 20 20" width="20" height="20"><path d="M10 2a8 8 0 1 0 0 16 8 8 0 0 0 0-16zm1 11H9V9h2v4zm0-6H9V5h2v2z" fill="currentColor"/></svg></span>
+                            <span class="sp-nav-text">应用商店</span>
+                        </a>
+                    </li>
+                    <?php }?>
+                    <li class="sp-nav-item">
+                        <a href="/admin/plugin/index" class="sp-nav-link <?php if ($_smarty_tpl->tpl_vars['title']->value == '通用插件') {?>sp-active<?php }?>">
+                            <span class="sp-nav-icon"><svg viewBox="0 0 20 20" width="20" height="20"><path d="M14 3h-2V2a1 1 0 0 0-2 0v1H8a1 1 0 0 0-1 1v4a4 4 0 0 0 3 3.87V16H7v2h6v-2h-3v-4.13A4 4 0 0 0 13 8V4a1 1 0 0 0-1-1h2z" fill="currentColor"/></svg></span>
+                            <span class="sp-nav-text">通用插件</span>
+                        </a>
+                    </li>
+                    <li class="sp-nav-item">
+                        <a href="/admin/pay/plugin" class="sp-nav-link <?php if (in_array($_smarty_tpl->tpl_vars['title']->value,array('支付插件','支付设置'))) {?>sp-active<?php }?>">
+                            <span class="sp-nav-icon"><svg viewBox="0 0 20 20" width="20" height="20"><path d="M4 4a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2H4zm0 4h12v2H4V8z" fill="currentColor"/></svg></span>
+                            <span class="sp-nav-text">支付管理</span>
+                        </a>
+                    </li>
+
+                    <!--start::HOOK-->
+                    <?php if (getHookNum(\App\Consts\Hook::ADMIN_VIEW_MENU) > 0) {?>
+                    <li class="sp-nav-section"><span>Plugin</span></li>
+                    <?php }?>
+                    <?php echo hook(\App\Consts\Hook::ADMIN_VIEW_MENU);?>
+
+                    <!--end::HOOK-->
+                </ul>
+
+                <!-- Bottom fixed area -->
+                <div class="sp-sidebar-bottom">
+                    <?php if ($_smarty_tpl->tpl_vars['user']->value['type'] == 0 || $_smarty_tpl->tpl_vars['user']->value['type'] == 1) {?>
+                    <a href="/admin/manage/index" class="sp-nav-link <?php if ($_smarty_tpl->tpl_vars['title']->value == '管理员') {?>sp-active<?php }?>">
+                        <span class="sp-nav-icon"><svg viewBox="0 0 20 20" width="20" height="20"><path d="M14.5 10a4.5 4.5 0 1 0-9 0 4.5 4.5 0 0 0 9 0zM10 4a6 6 0 1 1 0 12A6 6 0 0 1 10 4z" fill="currentColor"/></svg></span>
+                        <span class="sp-nav-text">管理员</span>
+                    </a>
+                    <?php }?>
+                    <?php if ($_smarty_tpl->tpl_vars['user']->value['type'] == 0) {?>
+                    <a href="/admin/log/index" class="sp-nav-link <?php if ($_smarty_tpl->tpl_vars['title']->value == '操作日志') {?>sp-active<?php }?>">
+                        <span class="sp-nav-icon"><svg viewBox="0 0 20 20" width="20" height="20"><path d="M10 2a8 8 0 1 0 0 16 8 8 0 0 0 0-16zm1 8.4l-3.2 1.9-.8-1.4L10 9V5h1.5v3.6L10 10z" fill="currentColor"/></svg></span>
+                        <span class="sp-nav-text">操作日志</span>
+                    </a>
+                    <?php }?>
+                    <a href="/admin/user/group" class="sp-nav-link <?php if ($_smarty_tpl->tpl_vars['title']->value == '会员等级') {?>sp-active<?php }?>">
+                        <span class="sp-nav-icon"><svg viewBox="0 0 20 20" width="20" height="20"><path d="M13 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0zM3 16a7 7 0 0 1 14 0H3zm11-8a2 2 0 1 0 4 0 2 2 0 0 0-4 0zm-12 0a2 2 0 1 0 4 0 2 2 0 0 0-4 0z" fill="currentColor"/></svg></span>
+                        <span class="sp-nav-text">会员等级</span>
+                    </a>
+                    <a href="/admin/user/businessLevel" class="sp-nav-link <?php if ($_smarty_tpl->tpl_vars['title']->value == '商户等级') {?>sp-active<?php }?>">
+                        <span class="sp-nav-icon"><svg viewBox="0 0 20 20" width="20" height="20"><path d="M3 3l2 5h10l2-5H3zm2 7v7h10v-7H5z" fill="currentColor"/></svg></span>
+                        <span class="sp-nav-text">商户等级</span>
+                    </a>
+
+                    <div class="sp-sidebar-divider"></div>
+
+                    <a href="/admin/config/index" class="sp-nav-link sp-settings-link <?php if (in_array($_smarty_tpl->tpl_vars['title']->value,array('网站设置','短信设置','邮箱设置','其他设置'))) {?>sp-active<?php }?>">
+                        <span class="sp-nav-icon"><svg viewBox="0 0 20 20" width="20" height="20"><path d="M10 13a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm7.6-1.6l-1.2-.7c.1-.4.1-.9 0-1.4l1.2-.7c.2-.2.3-.5.2-.8l-.8-1.4c-.2-.3-.5-.4-.8-.3L15 7l-1-1 .5-1.2c.1-.3 0-.6-.3-.8L12.8 3c-.3-.2-.6-.1-.8.2l-.7 1.2c-.4-.1-.9-.1-1.4 0L9.2 3.2C9 3 8.7 2.9 8.4 3l-1.4.8c-.3.2-.4.5-.3.8L7.2 6l-1 1-1.2-.5c-.3-.1-.6 0-.8.3L3.4 8.2c-.2.3-.1.6.2.8L4.8 9.7c-.1.4-.1.9 0 1.4l-1.2.7c-.2.2-.3.5-.2.8l.8 1.4c.2.3.5.4.8.3l1.2-.5 1 1-.5 1.2c-.1.3 0 .6.3.8l1.4.8c.3.2.6.1.8-.2l.7-1.2c.4.1.9.1 1.4 0l.7 1.2c.2.2.5.3.8.2l1.4-.8c.3-.2.4-.5.3-.8L14.8 14l1-1 1.2.5c.3.1.6 0 .8-.3l.8-1.4c.2-.3.1-.6-.2-.8z" fill="currentColor"/></svg></span>
+                        <span class="sp-nav-text">设置</span>
+                    </a>
+
+                    <div class="sp-version-info">
+                        <span class="local-version">v<?php echo $_smarty_tpl->tpl_vars['app']->value['version'];?>
+</span>
+                        <b class="latest-version"></b>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!--=== MAIN CONTENT ===-->
+        <main class="sp-main" id="pjax-container">
+<?php }
+}

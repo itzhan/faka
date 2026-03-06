@@ -1,0 +1,30 @@
+# ============ 依赖 ============
+/vendor/
+
+# ============ 运行时 ============
+/runtime/
+runtime.log
+
+# ============ 配置（含数据库密码等敏感信息） ============
+/config/database.php
+/config/store.php
+
+# ============ IDE / 编辑器 ============
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# ============ Docker（可选，按需取消注释） ============
+# docker-compose.yml
+# docker-compose.dev.yml
+# Dockerfile
+# Dockerfile.dev
+
+# ============ 系统 / 临时文件 ============
+*.log
+*.cache
+*.tmp

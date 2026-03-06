@@ -6,6 +6,7 @@
 runtime.log
 
 # ============ 配置（含数据库密码等敏感信息） ============
+.env
 /config/database.php
 /config/store.php
 

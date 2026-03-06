@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   # PHP + Apache 开发环境（Xdebug + 错误显示 + opcache关闭）
   web:
@@ -8,7 +6,7 @@ services:
       dockerfile: Dockerfile.dev
     container_name: acg-faka-web-dev
     ports:
-      - "8081:80"
+      - "${WEB_DEV_PORT:-8081}:80"
     volumes:
       # 代码热更新：本地修改 → 容器内实时生效
       - .:/var/www/html
@@ -31,7 +29,7 @@ services:
     image: redis:7-alpine
     container_name: acg-faka-redis-dev
     ports:
-      - "6379:6379"
+      - "${REDIS_DEV_PORT:-6379}:6379"
     volumes:
       - redis_dev_data:/data
     command: redis-server --appendonly yes
@@ -44,12 +42,12 @@ services:
     image: mysql:8.0
     container_name: acg-faka-mysql-dev
     ports:
-      - "3308:3306"
+      - "${MYSQL_DEV_PORT:-3308}:3306"
     environment:
-      MYSQL_ROOT_PASSWORD: Ab123168.
-      MYSQL_DATABASE: qiumingfaka
-      MYSQL_USER: qiuming
-      MYSQL_PASSWORD: Ab123168.
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
     volumes:
       - mysql_dev_data:/var/lib/mysql
     command:
@@ -57,7 +55,7 @@ services:
       - --collation-server=utf8mb4_unicode_ci
       - --default-authentication-plugin=mysql_native_password
     healthcheck:
-      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-pAb123168." ]
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD}" ]
       interval: 5s
       timeout: 3s
       retries: 10
@@ -70,11 +68,11 @@ services:
     image: phpmyadmin:latest
     container_name: acg-faka-phpmyadmin
     ports:
-      - "8082:80"
+      - "${PHPMYADMIN_PORT:-8082}:80"
     environment:
       PMA_HOST: mysql
       PMA_USER: root
-      PMA_PASSWORD: Ab123168.
+      PMA_PASSWORD: ${MYSQL_ROOT_PASSWORD}
     depends_on:
       mysql:
         condition: service_healthy

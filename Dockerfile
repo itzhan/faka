@@ -17,6 +17,7 @@ RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
     gd \
     zip \
     curl \
+    bcmath \
     opcache
 
 # 安装 Redis 扩展（用于 session 存储，消除文件锁瓶颈）
@@ -37,7 +38,12 @@ COPY . /var/www/html/
 # 设置目录权限
 RUN chown -R www-data:www-data /var/www/html \
     && chmod -R 755 /var/www/html \
-    && chmod -R 777 /var/www/html/assets 2>/dev/null || true
+    && chmod -R 777 /var/www/html/assets 2>/dev/null || true \
+    && chmod -R 777 /var/www/html/runtime 2>/dev/null || true \
+    && chmod -R 777 /var/www/html/config 2>/dev/null || true
+
+# 删除安装锁文件，确保首次访问进入安装页面
+RUN rm -f /var/www/html/kernel/Install/Lock
 
 # PHP 配置优化
 RUN echo "upload_max_filesize=64M" > /usr/local/etc/php/conf.d/custom.ini \
@@ -49,4 +55,10 @@ RUN echo "upload_max_filesize=64M" > /usr/local/etc/php/conf.d/custom.ini \
 RUN echo "session.save_handler = redis" > /usr/local/etc/php/conf.d/session-redis.ini \
     && echo 'session.save_path = "tcp://redis:6379"' >> /usr/local/etc/php/conf.d/session-redis.ini
 
+# 复制并设置启动脚本（修复 volume 挂载后的权限问题）
+COPY docker-entrypoint.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+
 EXPOSE 80
+ENTRYPOINT ["docker-entrypoint.sh"]
+CMD ["apache2-foreground"]

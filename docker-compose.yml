@@ -6,15 +6,14 @@ services:
     ports:
       - "${WEB_PORT:-8080}:80"
     volumes:
-      # 挂载项目目录，方便开发时修改代码实时生效
-      - .:/var/www/html
+      # 持久化运行时日志和上传文件
+      - runtime_data:/var/www/html/runtime
+      - assets_data:/var/www/html/assets
     depends_on:
       mysql:
         condition: service_healthy
       redis:
         condition: service_started
-    environment:
-      - APACHE_DOCUMENT_ROOT=/var/www/html
     restart: unless-stopped
     networks:
       - acg-network
@@ -61,6 +60,10 @@ volumes:
   mysql_data:
     driver: local
   redis_data:
+    driver: local
+  runtime_data:
+    driver: local
+  assets_data:
     driver: local
 
 networks:

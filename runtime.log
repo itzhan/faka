@@ -2,3 +2,4 @@
 [2026-03-06 09:52:21]:/var/www/html/vendor/guzzlehttp/guzzle/src/Exception/RequestException.php:113<br>Client error: `POST https://tencent.3rd.mcycdn.com/store/plugins` resulted in a `418 Unknown Status` response
 [2026-03-06 09:52:21]:/var/www/html/vendor/guzzlehttp/guzzle/src/Exception/RequestException.php:113<br>Client error: `POST https://tencent.3rd.mcycdn.com/store/service` resulted in a `418 Unknown Status` response
 [2026-03-06 15:21:24]:/var/www/html/kernel/Util/Decimal.php:58<br>Call to undefined function Kernel\Util\bcmul()
+[2026-03-06 15:23:24]:/var/www/html/kernel/Util/Decimal.php:58<br>Call to undefined function Kernel\Util\bcmul()

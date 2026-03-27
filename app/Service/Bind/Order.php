@@ -28,6 +28,7 @@ use App\Util\PayConfig;
 use App\Util\Str;
 use Illuminate\Database\Capsule\Manager as DB;
 use Kernel\Annotation\Inject;
+use Kernel\Waf\Firewall;
 use Kernel\Container\Di;
 use Kernel\Exception\JSONException;
 use Kernel\Exception\RuntimeException;
@@ -952,10 +953,16 @@ class Order implements \App\Service\Order
      * @return string
      * @throws JSONException
      * @throws RuntimeException
+     * @throws \HTMLPurifier_Exception
      * @throws \ReflectionException
      */
     public function callback(string $handle, array $map): string
     {
+        $handle = Firewall::inst()->xssKiller($handle);
+        if (!Str::isValid($handle) || !PayConfig::isValid($handle)) {
+            throw new JSONException("handle not found");
+        }
+
         $callback = $this->callbackInitialize($handle, $map);
         $json = json_encode($map, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
         DB::connection()->getPdo()->exec("set session transaction isolation level serializable");

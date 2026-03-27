@@ -33,9 +33,14 @@ class ManageSession implements InterceptorInterface
     #[NoReturn] public function handle(int $type): void
     {
         if ($type == Interceptor::TYPE_API) {
-            list($p1, $p2) = [(array)parse_url((string)$_SERVER['HTTP_REFERER']), parse_url(Client::getUrl())];
-            if ($p1['host'] != $p2['host']) {
-                throw new JSONException("当前页面会话失效，请刷新网页..");
+            $referer = (string)$_SERVER['HTTP_REFERER'];
+            if (!empty($referer)) {
+                $p1 = parse_url($referer);
+                $refHost = explode(':', (string)($p1['host'] ?? ''))[0];
+                $selfHost = explode(':', (string)$_SERVER['HTTP_HOST'])[0];
+                if ($refHost !== '' && $refHost !== $selfHost) {
+                    throw new JSONException("当前页面会话失效，请刷新网页..");
+                }
             }
         }
 

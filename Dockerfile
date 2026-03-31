@@ -42,9 +42,6 @@ RUN chown -R www-data:www-data /var/www/html \
     && chmod -R 777 /var/www/html/runtime 2>/dev/null || true \
     && chmod -R 777 /var/www/html/config 2>/dev/null || true
 
-# 删除安装锁文件，确保首次访问进入安装页面
-RUN rm -f /var/www/html/kernel/Install/Lock
-
 # PHP 配置优化
 RUN echo "upload_max_filesize=64M" > /usr/local/etc/php/conf.d/custom.ini \
     && echo "post_max_size=64M" >> /usr/local/etc/php/conf.d/custom.ini \

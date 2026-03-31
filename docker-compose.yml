@@ -6,9 +6,7 @@ services:
     ports:
       - "${WEB_PORT:-8080}:80"
     volumes:
-      # 持久化运行时日志和上传文件
-      - runtime_data:/var/www/html/runtime
-      - assets_data:/var/www/html/assets
+      - app_data:/var/www/html
     depends_on:
       mysql:
         condition: service_healthy
@@ -18,7 +16,7 @@ services:
     networks:
       - acg-network
 
-  # Redis - Session 存储（替代文件锁，提速 1000%）
+  # Redis - Session 存储
   redis:
     image: redis:7-alpine
     container_name: acg-faka-redis
@@ -41,7 +39,6 @@ services:
       MYSQL_USER: ${MYSQL_USER}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
     volumes:
-      # 数据持久化
       - mysql_data:/var/lib/mysql
     command:
       - --character-set-server=utf8mb4
@@ -61,9 +58,7 @@ volumes:
     driver: local
   redis_data:
     driver: local
-  runtime_data:
-    driver: local
-  assets_data:
+  app_data:
     driver: local
 
 networks:

@@ -496,6 +496,144 @@ class Form {
         });
     }
 
+    /**
+     * 弹出裁剪对话框，裁剪后上传
+     */
+    showCropper(file, opt) {
+        const _this = this;
+        const imageContainer = $(opt.container);
+        const inputContainer = $(opt.input);
+        const reader = new FileReader();
+
+        reader.onload = function (e) {
+            const imgSrc = e.target.result;
+
+            const cropperHtml = `
+                <div style="padding:16px;text-align:center;">
+                    <div style="max-height:60vh;overflow:hidden;display:inline-block;">
+                        <img id="cropper-image" src="${imgSrc}" style="max-width:100%;display:block;">
+                    </div>
+                    <div style="margin-top:12px;display:flex;gap:8px;justify-content:center;">
+                        <button type="button" class="layui-btn layui-btn-sm" id="crop-rotate-left" title="左旋转"><i class="fa-duotone fa-regular fa-rotate-left"></i></button>
+                        <button type="button" class="layui-btn layui-btn-sm" id="crop-rotate-right" title="右旋转"><i class="fa-duotone fa-regular fa-rotate-right"></i></button>
+                        <button type="button" class="layui-btn layui-btn-sm" id="crop-flip-h" title="水平翻转"><i class="fa-duotone fa-regular fa-arrows-left-right"></i></button>
+                        <button type="button" class="layui-btn layui-btn-sm" id="crop-flip-v" title="垂直翻转"><i class="fa-duotone fa-regular fa-arrows-up-down"></i></button>
+                        <button type="button" class="layui-btn layui-btn-sm" id="crop-reset" title="重置"><i class="fa-duotone fa-regular fa-arrows-rotate"></i></button>
+                    </div>
+                </div>`;
+
+            const cropperIndex = layer.open({
+                type: 1,
+                title: '裁剪图片',
+                area: ['640px', '520px'],
+                content: cropperHtml,
+                btn: ['确认裁剪', '跳过裁剪', '取消'],
+                yes: function (index) {
+                    // 确认裁剪
+                    const canvas = cropper.getCroppedCanvas({
+                        imageSmoothingEnabled: true,
+                        imageSmoothingQuality: 'high'
+                    });
+                    canvas.toBlob(function (blob) {
+                        const formData = new FormData();
+                        formData.append('file', blob, file.name || 'cropped.png');
+                        imageContainer.html('<div class="layui-progress layui-progress-fileUpload" lay-showpercent="true"><div class="layui-progress-bar" lay-percent="50%" style="width:50%;"><span class="layui-progress-text">上传中..</span></div></div>');
+
+                        $.ajax({
+                            url: util.appendParamToUrl(opt.uploadUrl, "mime=image"),
+                            type: 'POST',
+                            data: formData,
+                            processData: false,
+                            contentType: false,
+                            success: function (res) {
+                                if (res.code === 200) {
+                                    opt.imageUrl = res.data.url;
+                                    inputContainer.val(res.data.url);
+                                    opt.change && opt.change(res.data.url, res.data);
+                                } else {
+                                    opt.imageUrl = null;
+                                    layer.msg(res.msg);
+                                }
+                                _this.uploadImage(opt);
+                            },
+                            error: function () {
+                                opt.imageUrl = null;
+                                layer.msg('上传失败');
+                                _this.uploadImage(opt);
+                            }
+                        });
+                        layer.close(index);
+                    }, file.type || 'image/png', 0.92);
+                },
+                btn2: function (index) {
+                    // 跳过裁剪 - 直接上传原文件
+                    const formData = new FormData();
+                    formData.append('file', file);
+                    imageContainer.html('<div class="layui-progress layui-progress-fileUpload" lay-showpercent="true"><div class="layui-progress-bar" lay-percent="50%" style="width:50%;"><span class="layui-progress-text">上传中..</span></div></div>');
+
+                    $.ajax({
+                        url: util.appendParamToUrl(opt.uploadUrl, "mime=image"),
+                        type: 'POST',
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                        success: function (res) {
+                            if (res.code === 200) {
+                                opt.imageUrl = res.data.url;
+                                inputContainer.val(res.data.url);
+                                opt.change && opt.change(res.data.url, res.data);
+                            } else {
+                                opt.imageUrl = null;
+                                layer.msg(res.msg);
+                            }
+                            _this.uploadImage(opt);
+                        },
+                        error: function () {
+                            opt.imageUrl = null;
+                            layer.msg('上传失败');
+                            _this.uploadImage(opt);
+                        }
+                    });
+                    layer.close(index);
+                },
+                btn3: function () {
+                    // 取消
+                },
+                end: function () {
+                    if (cropper) {
+                        cropper.destroy();
+                    }
+                }
+            });
+
+            // 初始化 Cropper
+            const cropImg = document.getElementById('cropper-image');
+            const cropper = new Cropper(cropImg, {
+                viewMode: 1,
+                dragMode: 'move',
+                autoCropArea: 1,
+                responsive: true,
+                background: true,
+                guides: true
+            });
+
+            // 绑定工具按钮
+            $('#crop-rotate-left').click(() => cropper.rotate(-90));
+            $('#crop-rotate-right').click(() => cropper.rotate(90));
+            $('#crop-flip-h').click(() => {
+                const d = cropper.getData();
+                cropper.scaleX(d.scaleX === -1 ? 1 : -1);
+            });
+            $('#crop-flip-v').click(() => {
+                const d = cropper.getData();
+                cropper.scaleY(d.scaleY === -1 ? 1 : -1);
+            });
+            $('#crop-reset').click(() => cropper.reset());
+        };
+
+        reader.readAsDataURL(file);
+    }
+
     uploadImage(opt = {}) {
         const layUpload = layui.upload;
         const imageContainer = $(opt.container);
@@ -512,6 +650,22 @@ class Form {
             , acceptMime: 'image/*'
             , exts: 'jpg|png|gif|bmp|jpeg|ico|webp'
             , size: 1024 * 50
+            , auto: false
+            , choose: (obj) => {
+                const files = obj.pushFile();
+                const fileKeys = Object.keys(files);
+                if (fileKeys.length === 0) return;
+                const file = files[fileKeys[fileKeys.length - 1]];
+                // 清空 pushFile 防止重复
+                for (let k in files) delete files[k];
+
+                if (typeof Cropper !== 'undefined') {
+                    this.showCropper(file, opt);
+                } else {
+                    // Cropper 未加载则直接上传
+                    obj.upload(fileKeys[fileKeys.length - 1], file);
+                }
+            }
             , done: res => {
                 if (res.code === 200) {
                     opt.imageUrl = res.data.url;

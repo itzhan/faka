@@ -1,18 +1,18 @@
 <?php
-/* Smarty version 3.1.46, created on 2026-03-06 14:38:35
+/* Smarty version 3.1.46, created on 2026-03-31 20:49:47
   from '/var/www/html/app/View/Admin/Header.html' */
 
 /* @var Smarty_Internal_Template $_smarty_tpl */
 if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
   'version' => '3.1.46',
-  'unifunc' => 'content_69aa766b7c08b2_73492307',
+  'unifunc' => 'content_69cbc2ebd54027_60355409',
   'has_nocache_code' => false,
   'file_dependency' => 
   array (
     'e73d75156d3c9b2ba26b310acf893272ece2ca3e' => 
     array (
       0 => '/var/www/html/app/View/Admin/Header.html',
-      1 => 1772779068,
+      1 => 1774961286,
       2 => 'file',
     ),
   ),
@@ -20,7 +20,7 @@ if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
   array (
   ),
 ),false)) {
-function content_69aa766b7c08b2_73492307 (Smarty_Internal_Template $_smarty_tpl) {
+function content_69cbc2ebd54027_60355409 (Smarty_Internal_Template $_smarty_tpl) {
 ?><!DOCTYPE html>
 <html lang="zh-CN">
 <!--begin::Head-->
@@ -34,6 +34,11 @@ function content_69aa766b7c08b2_73492307 (Smarty_Internal_Template $_smarty_tpl)
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cropperjs@1.6.2/dist/cropper.min.css">
+    <?php echo '<script'; ?>
+ src="https://cdn.jsdelivr.net/npm/cropperjs@1.6.2/dist/cropper.min.js"><?php echo '</script'; ?>
+>
 
     <?php echo css(array("/assets/admin/css/_admin.css","/assets/common/css/_.css","/assets/admin/css/polaris-admin.css"),array("/assets/admin/css/style.bundle.css","/assets/common/css/font.min.css","/assets/common/js/layui/css/layui.css","/assets/common/css/select2.min.css","/assets/common/css/component.css","/assets/common/css/toastr.min.css","/assets/common/js/table/bootstrap-table.css","/assets/common/js/layer/theme/default/layer.css","/assets/admin/css/polaris-admin.css"));?>
 

@@ -117,23 +117,30 @@ body {
 .chip {
     display: inline-flex;
     align-items: center;
-    padding: .4rem 1rem;
-    border-radius: 999px;
-    background: rgb(255 248 248 / 23%);
-    color: #707070;
-    border: none;
+    padding: .45rem 1.1rem;
+    border-radius: 10px;
+    background: #f3f4f6;
+    color: #5a5a5a;
+    border: 1.5px solid transparent;
     text-decoration: none;
     white-space: nowrap;
-    transition: transform .18s ease, box-shadow .18s ease, background-color .18s ease;
+    transition: all .2s ease;
     transform-origin: center;
-    box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
-    font-size: 1.231rem;
+    box-shadow: none;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.chip:hover {
+    background: #e8eaed;
+    color: #333;
 }
 
 .chip.is-primary {
-    color: #fff;
-    background: linear-gradient(90deg, var(--acg-primary), var(--acg-secondary));
-    border-color: transparent;
+    color: var(--acg-primary);
+    background: rgba(122, 140, 255, 0.1);
+    border-color: var(--acg-primary);
+    font-weight: 600;
 }
 
 /* 商品卡片（简洁，无动态特效） */
@@ -151,9 +158,14 @@ body {
 }
 
 .acg-thumb {
-    height: 160px;
+    aspect-ratio: 3 / 4;
+    width: 100%;
     position: relative;
     transition: transform .25s ease;
+    background-size: contain !important;
+    background-position: center !important;
+    background-repeat: no-repeat !important;
+    background-color: #f5f5f5;
 }
 
 /* 内容容器弹性布局，底部元素对齐 */
@@ -323,24 +335,19 @@ body {
     }
 }
 
-/* 响应式卡片封面高度调整 */
+/* 响应式卡片封面比例调整 */
 @media (max-width: 575.98px) {
     .acg-thumb {
-        height: 120px;
-    }
-}
-
-@media (min-width: 576px) and (max-width: 991.98px) {
-    .acg-thumb {
-        height: 140px;
+        aspect-ratio: 4 / 5;
     }
 }
 
 /* 移动端 chip 紧凑化，保持单行显示 */
 @media (max-width: 575.98px) {
     .chip {
-        padding: .35rem .6rem;
+        padding: .35rem .75rem;
         font-size: 13px;
+        border-radius: 8px;
     }
 
     .chip .chip-icon {
@@ -363,10 +370,6 @@ body {
 
 /* 仅在支持 hover 的设备启用动效，避免手机耗电与误触 */
 @media (hover: hover) and (pointer: fine) {
-    .chip:hover {
-        transform: scale(1.02);
-    }
-
     .sku:hover {
         transform: scale(1.02);
     }

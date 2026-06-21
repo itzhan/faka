@@ -5,17 +5,12 @@ namespace App\Controller\Admin\Api;
 
 
 use App\Controller\Base\API\Manage;
-use App\Entity\CreateObjectEntity;
-use App\Entity\DeleteBatchEntity;
 use App\Entity\Query\Delete;
 use App\Entity\Query\Get;
 use App\Entity\Query\Save;
-use App\Entity\QueryTemplateEntity;
 use App\Interceptor\ManageSession;
-use App\Interceptor\Waf;
 use App\Model\ManageLog;
 use App\Service\Query;
-use Illuminate\Database\Eloquent\Relations\Relation;
 use Kernel\Annotation\Inject;
 use Kernel\Annotation\Interceptor;
 use Kernel\Annotation\Post;
@@ -104,8 +99,24 @@ class Pay extends Manage
                 $plugins[$index]['icon'] = "/favicon.ico";
             } else {
                 $plugins[$index]['icon'] = \App\Service\App::APP_URL . $appStore[$plugin["id"]]['icon'];
+                if ($plugin['info']['version'] !== $appStore[$plugin['id']]["version"]) {
+                    $plugins[$index]['have_update'] = true;
+                }
             }
         }
+
+        $plugins = array_values($plugins);
+
+        usort($plugins, function ($a, $b) {
+            $aTop = ($a['config']['top'] ?? 0) == 1 ? 1 : 0;
+            $bTop = ($b['config']['top'] ?? 0) == 1 ? 1 : 0;
+            return $bTop <=> $aTop;
+        });
+
+        usort($plugins, function ($a, $b) {
+            return ($b['have_update'] ?? false) <=> ($a['have_update'] ?? false);
+        });
+
         return $this->json(data: ["list" => $plugins]);
     }
 
@@ -114,7 +125,7 @@ class Pay extends Manage
      * @param string $handle
      * @return array
      */
-    public function getPluginLog(#[Post] string $handle): array
+    public function getPluginLog(string $handle): array
     {
         $pluginLog = $this->pay->getPluginLog($handle);
         return $this->json(200, 'success', ['log' => $pluginLog]);
@@ -124,7 +135,7 @@ class Pay extends Manage
      * @param string $handle
      * @return array
      */
-    public function ClearPluginLog(#[Post] string $handle): array
+    public function ClearPluginLog(string $handle): array
     {
         $this->pay->ClearPluginLog($handle);
         ManageLog::log($this->getManage(), "清空了支付插件({$handle})的日志");
@@ -137,13 +148,22 @@ class Pay extends Manage
     public function setPluginConfig(Request $request): array
     {
         $map = $request->post(flags: Filter::NORMAL);
-        if (!$map['id'] === "" || !isset($map['id'])) {
+        $id = $request->get("id") ?: $request->post("id");
+        if (!$id) {
             throw new JSONException("插件不存在");
         }
-        $id = $map['id'];
-        unset($map['id']);
-        setConfig($map, BASE_PATH . '/app/Pay/' . $id . '/Config/Config.php');
+        $id = trim($id);
+        $path = BASE_PATH . '/app/Pay/' . $id;
 
+        if (!is_dir($path)) {
+            throw new JSONException("插件不存在");
+        }
+
+        if (isset($map['id'])) {
+            unset($map['id']);
+        }
+
+        setConfig($map, $path . '/Config/Config.php');
         ManageLog::log($this->getManage(), "修改了支付插件({$id})的配置信息");
         return $this->json(200, '修改成功');
     }

@@ -8,6 +8,7 @@ use App\Model\Business;
 use App\Model\Config;
 use App\Util\Client;
 use App\Util\Theme;
+use Kernel\Exception\JSONException;
 use Kernel\Exception\ViewException;
 use Kernel\Util\View;
 
@@ -18,13 +19,21 @@ use Kernel\Util\View;
 abstract class User extends \App\Controller\Base\User
 {
     /**
+     * @var array|string[]
+     */
+    protected array $indexTemplateList = [
+        'INDEX', 'ITEM', 'QUERY', 'CLOSED'
+    ];
+
+    /**
      * @param string $title
      * @param string $template
      * @param array $data
      * @return string
      * @throws ViewException
+     * @throws JSONException
      */
-    public function render(string $title, string $template, array $data = []): string
+    protected function render(string $title, string $template, array $data = []): string
     {
         try {
             //加载helper
@@ -49,10 +58,11 @@ abstract class User extends \App\Controller\Base\User
      * @param string $default
      * @param array $data
      * @return string
+     * @throws JSONException
      * @throws ViewException
      * @throws \ReflectionException
      */
-    public function theme(string $title, string $template, string $default, array $data = []): string
+    protected function theme(string $title, string $template, string $default, array $data = []): string
     {
         try {
             //加载helper
@@ -68,20 +78,24 @@ abstract class User extends \App\Controller\Base\User
                 $data["config"][$k] = $v;
             }
 
-            if (Client::isMobile()) {
-                $theme = $cfg['user_mobile_theme'];
-                if ($data['config']['background_mobile_url']) {
-                    $data['config']['background_url'] = $data['config']['background_mobile_url'];
+            if (in_array($template, $this->indexTemplateList)) {
+                if (Client::isMobile()) {
+                    $theme = $cfg['user_mobile_theme'];
+                    if ($data['config']['background_mobile_url']) {
+                        $data['config']['background_url'] = $data['config']['background_mobile_url'];
+                    }
+
+                } else {
+                    $theme = $cfg['user_theme'];
                 }
 
+                if ($theme == "0") {
+                    $theme = $cfg['user_theme'];
+                }
             } else {
-                $theme = $cfg['user_theme'];
+                $theme = $cfg['user_center_theme'] ?: "Cartoon";
             }
 
-
-            if ($theme == "0") {
-                $theme = $cfg['user_theme'];
-            }
             //模板静态路径
             $data['static'] = "/app/View/User/Theme/" . $theme;
 
@@ -109,7 +123,7 @@ abstract class User extends \App\Controller\Base\User
             $system = true;
 
             //判断路径是否存在
-            if (key_exists($template, $config['theme'])) {
+            if (!empty($config['theme']) && key_exists($template, $config['theme'])) {
                 $path = $themePath . $config['theme'][$template];
                 $system = false;
             }

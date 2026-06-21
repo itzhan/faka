@@ -6,7 +6,6 @@ namespace App\Controller\User\Api;
 
 use App\Controller\Base\API\User;
 use App\Entity\Query\Get;
-use App\Entity\QueryTemplateEntity;
 use App\Interceptor\UserSession;
 use App\Interceptor\Waf;
 use App\Model\Config;
@@ -71,11 +70,16 @@ class Cash extends User
                 throw new JSONException("您还没有绑定微信");
             }
         } elseif ($type == 2) {
-
             if (Config::get("cash_type_balance") != 1) {
                 throw new JSONException("未启用兑现到可消费余额");
             }
-
+        } elseif ($type == 3) {
+            if (Config::get("cash_type_usdt") != 1) {
+                throw new JSONException("未启用USDT兑换");
+            }
+            if ($u->wallet_address == "") {
+                throw new JSONException("您还没有绑定钱包地址");
+            }
         }
 
         $userId = $u->id;

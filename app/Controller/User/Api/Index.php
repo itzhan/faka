@@ -19,7 +19,6 @@ use App\Service\Query;
 use App\Service\Shared;
 use App\Service\Shop;
 use App\Util\Client;
-use App\Util\Tree;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Kernel\Annotation\Inject;
@@ -49,7 +48,7 @@ class Index extends User
      */
     public function data(): array
     {
-        $category = Tree::generate($this->shop->getCategory($this->getUserGroup()));
+        $category = $this->shop->getCategory($this->getUserGroup());
         hook(Hook::USER_API_INDEX_CATEGORY_LIST, $category);
         return $this->json(200, "success", $category);
     }

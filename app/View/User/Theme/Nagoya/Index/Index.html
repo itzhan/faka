@@ -1,0 +1,81 @@
+#{include file="./Header.html"}
+<main class="nagoya-main nagoya-page"
+      data-default-category="#{if $categoryId}#{$categoryId}#{else}recommend#{/if}"
+      data-user-logged-in="#{if $user}1#{else}0#{/if}"
+      data-show-sold="#{if $setting.show_sold == 1}1#{else}0#{/if}">
+    #{if $config.notice}
+    <section class="nagoya-shell nagoya-notice-shell">
+        <section class="nagoya-notice-stage" id="nagoya-notice-board">
+            <div class="nagoya-section-head nagoya-notice-stage-head">
+                <div>
+                    <span class="nagoya-section-kicker">Site Notice</span>
+                    <h2 class="nagoya-section-title">网站公告</h2>
+                </div>
+            </div>
+            <div class="nagoya-notice-stage-body">
+                #{$config.notice}
+            </div>
+        </section>
+    </section>
+    #{/if}
+
+    <section class="nagoya-shell nagoya-catalog-shell">
+        <section class="nagoya-category-stage">
+            <div class="nagoya-section-head">
+                <div>
+                    <span class="nagoya-section-kicker">Navigator</span>
+                    <h2 class="nagoya-section-title">商品分类</h2>
+                </div>
+            </div>
+            <button type="button" class="nagoya-mobile-category-trigger" id="nagoya-mobile-category-trigger">
+                <i class="fa-duotone fa-regular fa-sliders"></i>
+                <span>筛选分类</span>
+            </button>
+            <div class="nagoya-mobile-category-backdrop" id="nagoya-mobile-category-backdrop" hidden></div>
+            <div class="nagoya-category-browser">
+                <div class="nagoya-mobile-category-head">
+                    <div class="nagoya-mobile-category-copy">
+                        <span class="nagoya-section-kicker">Navigator</span>
+                        <strong>商品分类</strong>
+                    </div>
+                    <button type="button" class="nagoya-mobile-category-close" id="nagoya-mobile-category-close" aria-label="关闭分类筛选">
+                        <i class="fa-duotone fa-regular fa-xmark"></i>
+                    </button>
+                </div>
+                <div class="nagoya-category-dropdown" id="nagoya-category-dropdown">
+                    <div class="nagoya-root-rail" id="nagoya-root-rail">
+                        <div class="nagoya-level-empty">正在加载主分类...</div>
+                    </div>
+                    <div class="nagoya-category-flyout" id="nagoya-category-flyout" hidden>
+                        <div class="nagoya-category-flyout-head">
+                            <div class="nagoya-category-flyout-head-row">
+                                <span class="nagoya-category-summary-label" id="nagoya-category-summary-label">请选择主分类</span>
+                                <button type="button" class="nagoya-flyout-close" id="nagoya-flyout-close" aria-label="关闭分类选择">
+                                    <i class="fa-duotone fa-regular fa-xmark"></i>
+                                </button>
+                            </div>
+                            <div class="nagoya-branch-crumbs" id="nagoya-category-crumbs"></div>
+                        </div>
+                        <div class="nagoya-category-levels" id="nagoya-category-levels">
+                            <div class="nagoya-level-empty">正在加载分类目录...</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="nagoya-products-stage" id="nagoya-products-stage">
+            <div class="nagoya-section-head nagoya-products-head">
+                <div>
+                    <span class="nagoya-section-kicker">Products</span>
+                    <h2 class="nagoya-section-title nagoya-products-title">当前商品</h2>
+                </div>
+            </div>
+            <div class="nagoya-product-grid item-list" id="nagoya-product-grid">
+                <div class="nagoya-products-empty">请选择分类开始浏览商品。</div>
+            </div>
+        </section>
+    </section>
+</main>
+#{ready("#{$static}/Assets/Index.js")}
+#{include file="./Footer.html"}

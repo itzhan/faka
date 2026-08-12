@@ -1,0 +1,152 @@
+#{include file="./Header.html"}
+#{item_var($item)}
+<main class="nagoya-main">
+    <section class="nagoya-shell">
+        <div class="nagoya-item-panel">
+            <div class="nagoya-item-grid">
+                <div class="nagoya-item-media">
+                    <div class="nagoya-item-cover-card">
+                        <button type="button" class="nagoya-item-cover-trigger" data-image="#{$item.cover}" data-title="#{$item.name}" aria-label="查看原图">
+                            <img src="#{$item.cover}" alt="#{$item.name}" class="item-cover">
+                            <span class="nagoya-item-cover-hint">
+                                <i class="fa-duotone fa-regular fa-expand"></i>
+                                <span>查看原图</span>
+                            </span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="nagoya-item-content">
+                    <div class="nagoya-item-content-inner">
+                        <h1 class="nagoya-item-title">#{$item.name}</h1>
+
+                        <div class="nagoya-item-badges">
+                            #{if $item.seckill_status == 1}
+                                <span class="nagoya-badge snap-up" style="display: none;"></span>
+                            #{/if}
+                            <span class="nagoya-badge nagoya-badge-blue">#{if $item.delivery_way == 0}自动发货#{else}在线发货#{/if}</span>
+                            <span class="nagoya-badge nagoya-badge-muted">已售 #{$item.order_sold}</span>
+                            <span class="nagoya-badge badge-soft-success item-stock">库存 #{$item.stock}</span>
+                            <span class="nagoya-badge nagoya-badge-link shared-button">
+                                <i class="fa-duotone fa-regular fa-share-from-square"></i>
+                                <span>分享</span>
+                            </span>
+                        </div>
+
+                        <div class="nagoya-item-price abacus">
+                            <div class="price"><i class="fa-duotone fa-regular fa-spinner-third icon-spin fs-6"></i></div>
+                        </div>
+
+                        <form class="vstack gap-3 nagoya-form-stack">
+                            #{if !empty($item.config.category)}
+                                <div class="nagoya-field">
+                                    <label class="form-label mb-1">宝贝类型</label>
+                                    <div class="sku-list">
+                                        #{foreach $item.config.category as $race => $price}
+                                            <a class="switch-race sku #{if $price@first}is-primary#{/if}"
+                                               data-sku="#{$race}" data-price="#{$price}"
+                                               href="javascript:void(0);">#{$race}<span class="badge-money">¥#{$price}</span></a>
+                                        #{/foreach}
+                                    </div>
+                                </div>
+                            #{/if}
+
+                            #{if !empty($item.config.sku)}
+                                #{foreach $item.config.sku as $name => $sku}
+                                    <div class="nagoya-field">
+                                        <label class="form-label mb-1">#{$name}</label>
+                                        <div class="sku-list">
+                                            #{foreach $sku as $key => $price}
+                                                <a class="switch-sku sku #{if $price@first}is-primary#{/if}"
+                                                   data-sku="#{$name}" data-value="#{$key}" data-price="#{$price}"
+                                                   href="javascript:void(0);">#{$key}#{if $price > 0}<span class="badge-money">+¥#{$price}</span>#{/if}</a>
+                                            #{/foreach}
+                                        </div>
+                                    </div>
+                                #{/foreach}
+                            #{/if}
+
+                            #{if $item.draft_status == 1}
+                                <div class="nagoya-field">
+                                    <input type="hidden" name="card_id" class="form-control">
+                                    <label class="form-label mb-1">自选账号</label>
+                                    <button type="button" class="optional-card">未自选,将随机发货</button>
+                                </div>
+                            #{/if}
+
+                            #{if !$user}
+                                <div class="nagoya-field">
+                                    <label class="form-label mb-1">#{contact_type_msg($item.contact_type)}</label>
+                                    <input type="text" name="contact" class="form-control"
+                                           placeholder="请输入您的#{contact_type_msg($item.contact_type)}">
+                                </div>
+                            #{/if}
+
+                            #{if $item.coupon == 1}
+                                <div class="nagoya-field">
+                                    <label class="form-label mb-1">优惠券</label>
+                                    <input type="text" class="form-control" name="coupon" placeholder="优惠券代码，没有则不填">
+                                </div>
+                            #{/if}
+
+                            #{widget_render($item.widget)}
+
+                            #{if $item.password_status == 1}
+                                <div class="nagoya-field">
+                                    <label class="form-label mb-1">查询密码</label>
+                                    <input type="password" class="form-control" name="password" placeholder="设置查询订单的密码">
+                                </div>
+                            #{/if}
+
+                            <div class="nagoya-field">
+                                <label class="form-label mb-1">购买数量</label>
+                                <div class="input-group qty-group">
+                                    <button type="button" class="change-num-sub">
+                                        <i class="fa-duotone fa-regular fa-minus"></i>
+                                    </button>
+                                    <input type="number" class="form-control text-center" name="num"
+                                           value="#{if $item.minimum > 0}#{$item.minimum}#{else}1#{/if}">
+                                    <button type="button" class="change-num-add">
+                                        <i class="fa-duotone fa-regular fa-plus"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            #{if $item.trade_captcha == 1}
+                                <div class="nagoya-field">
+                                    <label class="form-label mb-1">人机验证</label>
+                                    <div class="input-group nagoya-captcha-group">
+                                        <input type="text" class="form-control captcha-input" placeholder="图形验证码" name="captcha">
+                                        <div class="input-group-append">
+                                            <img class="input-group-text captcha-img" src="/user/captcha/image?action=trade"/>
+                                        </div>
+                                    </div>
+                                </div>
+                            #{/if}
+
+                            <div class="cash-pay" style="display: none;">
+                                <label class="form-label mb-2">付款</label>
+                                <div class="pay-list"></div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="nagoya-description-panel">
+            <div class="nagoya-section-head">
+                <div>
+                    <span class="nagoya-section-kicker">Description</span>
+                    <h2 class="nagoya-section-title">宝贝详情</h2>
+                </div>
+            </div>
+            <div class="nagoya-description-body">
+                #{$item.description}
+            </div>
+        </div>
+    </section>
+</main>
+#{ready("/assets/user/controller/index/item.js")}
+#{ready("#{$static}/Assets/Item.js")}
+#{include file="./Footer.html"}

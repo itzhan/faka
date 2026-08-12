@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="keywords" content="#{$config.keywords}"/>
+    <meta name="description" content="#{$config.description}"/>
+    <link href="#{$favicon}?v=#{$app.version}" rel="icon">
+    <title>#{$title} - #{$config.shop_name}</title>
+    #{css(
+    [
+    "/assets/common/css/bootstrap.min.css",
+    "/assets/common/css/_.css",
+    "#{$static}/Assets/Style.css"
+    ],
+    [
+    "/assets/common/css/font.min.css",
+    "/assets/common/js/layui/css/layui.css",
+    "/assets/common/css/select2.min.css",
+    "/assets/common/css/component.css",
+    "/assets/common/js/table/bootstrap-table.css",
+    "/assets/common/js/layer/theme/default/layer.css",
+    "/assets/common/css/bootstrap.min.css",
+    "/assets/common/css/toastr.min.css",
+    "#{$static}/Assets/Style.css"
+    ])}
+    #{js("/assets/common/js/ready.js")}
+    #{index_var()}
+    #{ready("#{$static}/Assets/Header.js")}
+    <!--start::HOOK-->
+    #{hook(\App\Consts\Hook::USER_GLOBAL_VIEW_HEADER)}
+    #{hook(\App\Consts\Hook::USER_VIEW_INDEX_HEADER)}
+    <!--end::HOOK-->
+</head>
+<body class="tokyo-theme">
+<div class="tokyo-page-frame">
+    <header class="tokyo-nav-shell">
+        <div class="tokyo-nav-wrap">
+            <nav class="navbar navbar-expand-xl tokyo-nav">
+                <div class="tokyo-brand-wrap">
+                    <a class="tokyo-brand" href="/">
+                        <img src="#{$favicon}" alt="#{$config.shop_name}" class="tokyo-brand-mark">
+                        <span class="tokyo-brand-chip">
+                            <span class="tokyo-brand-name">#{$config.shop_name}</span>
+                        </span>
+                    </a>
+
+                    <button class="navbar-toggler tokyo-nav-toggle" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#tokyoNavMenu" aria-controls="tokyoNavMenu" aria-expanded="false"
+                            aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                </div>
+
+                <div class="collapse navbar-collapse" id="tokyoNavMenu">
+                    <div class="tokyo-nav-main">
+                        <ul class="navbar-nav tokyo-nav-links">
+                            <li class="nav-item">
+                                <a class="nav-link tokyo-nav-link #{if $title == '购物' || $title == '首页'}is-active#{/if}" href="/">
+                                    <i class="fa-duotone fa-regular fa-cart-shopping"></i>
+                                    <span>购物</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link tokyo-nav-link #{if $title == '订单查询'}is-active#{/if}"
+                                   href="/user/index/query">
+                                    <i class="fa-duotone fa-regular fa-folders"></i>
+                                    <span>订单查询</span>
+                                </a>
+                            </li>
+                            #{if $config.notice}
+                            <li class="nav-item">
+                                <button type="button" class="nav-link tokyo-nav-link tokyo-notice-trigger">
+                                    <i class="fa-duotone fa-regular fa-megaphone"></i>
+                                    <span>公告</span>
+                                </button>
+                            </li>
+                            #{/if}
+                        </ul>
+
+                        <div class="tokyo-nav-tools">
+                            #{if $user}
+                            <div class="dropdown tokyo-user-dropdown">
+                                <button class="tokyo-user-chip dropdown-toggle" type="button" id="tokyoUserDropdown"
+                                        data-bs-toggle="dropdown" aria-expanded="false">
+                                    <img class="tokyo-user-avatar" src="#{$user.avatar}" alt="#{$user.username}">
+                                    <span class="tokyo-user-meta">
+                                        <span class="tokyo-user-name">#{$user.username}</span>
+                                        <span class="tokyo-user-balance">余额 ¥#{$user.balance}</span>
+                                    </span>
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-end tokyo-dropdown-menu" aria-labelledby="tokyoUserDropdown">
+                                    <li><a class="dropdown-item" href="/user/dashboard/index"><i class="fa-duotone fa-regular fa-user"></i>个人中心</a></li>
+                                    <li><a class="dropdown-item" href="/user/recharge/index"><i class="fa-duotone fa-regular fa-wallet"></i>钱包充值</a></li>
+                                    <li class="tokyo-dropdown-divider-wrap"><hr class="dropdown-divider"></li>
+                                    <li><a class="dropdown-item" href="/user/personal/purchaseRecord"><i class="fa-duotone fa-regular fa-receipt"></i>我的订单</a></li>
+                                    <li><a class="dropdown-item" href="/user/security/personal"><i class="fa-duotone fa-regular fa-gear"></i>设置</a></li>
+                                    <li class="tokyo-dropdown-divider-wrap"><hr class="dropdown-divider"></li>
+                                    <li class="tokyo-dropdown-entry-danger"><a class="dropdown-item" href="/user/authentication/logout"><i class="fa-duotone fa-regular fa-right-from-bracket"></i>退出登录</a></li>
+                                </ul>
+                            </div>
+                            #{else}
+                            <div class="tokyo-auth-actions">
+                                <a class="tokyo-button tokyo-button-light" href="/user/authentication/login">
+                                    <i class="fa-duotone fa-regular fa-right-to-bracket"></i>
+                                    <span>登录</span>
+                                </a>
+                                <a class="tokyo-button tokyo-button-dark" href="/user/authentication/register">
+                                    <i class="fa-duotone fa-regular fa-user-plus"></i>
+                                    <span>创建账号</span>
+                                </a>
+                            </div>
+                            #{/if}
+                        </div>
+                    </div>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    #{if $config.notice}
+    <div id="tokyo-notice-popup" style="display: none;">
+        <div class="tokyo-notice-popup-inner">
+            #{$config.notice}
+        </div>
+    </div>
+    #{/if}
+
+    <div id="pjax-container">

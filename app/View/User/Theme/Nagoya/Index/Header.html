@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="keywords" content="#{$config.keywords}"/>
+    <meta name="description" content="#{$config.description}"/>
+    <link href="#{$favicon}?v=#{$app.version}" rel="icon">
+    <title>#{$title} - #{$config.shop_name}</title>
+    #{css(
+    [
+    "/assets/common/css/bootstrap.min.css",
+    "/assets/common/css/_.css",
+    "#{$static}/Assets/Style.css"
+    ],
+    [
+    "/assets/common/css/font.min.css",
+    "/assets/common/js/layui/css/layui.css",
+    "/assets/common/css/select2.min.css",
+    "/assets/common/css/component.css",
+    "/assets/common/js/table/bootstrap-table.css",
+    "/assets/common/js/layer/theme/default/layer.css",
+    "/assets/common/css/bootstrap.min.css",
+    "/assets/common/css/toastr.min.css",
+    "#{$static}/Assets/Style.css"
+    ])}
+    #{js("/assets/common/js/ready.js")}
+    #{index_var()}
+    #{ready("#{$static}/Assets/Header.js")}
+    <!--start::HOOK-->
+    #{hook(\App\Consts\Hook::USER_GLOBAL_VIEW_HEADER)}
+    #{hook(\App\Consts\Hook::USER_VIEW_INDEX_HEADER)}
+    <!--end::HOOK-->
+</head>
+<body class="nagoya-theme">
+<div class="nagoya-page-frame">
+    <header class="nagoya-nav-shell">
+        <div class="nagoya-nav-wrap">
+            <nav class="navbar navbar-expand-xl nagoya-nav">
+                <a class="nagoya-brand" href="/">
+                    <img src="#{$favicon}" alt="#{$config.shop_name}" class="nagoya-brand-mark">
+                    <span class="nagoya-brand-copy">
+                        <span class="nagoya-brand-title">#{$config.shop_name}</span>
+                    </span>
+                </a>
+
+                <button class="navbar-toggler nagoya-nav-toggle" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#nagoyaNavMenu" aria-controls="nagoyaNavMenu" aria-expanded="false"
+                        aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="collapse navbar-collapse" id="nagoyaNavMenu">
+                    <div class="nagoya-nav-main">
+                        <div class="nagoya-nav-primary">
+                            <ul class="navbar-nav nagoya-nav-links">
+                                <li class="nav-item">
+                                    <a class="nav-link nagoya-nav-link #{if $title == '购物' || $title == '首页'}is-active#{/if}" href="/">
+                                        <span>购物</span>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link nagoya-nav-link #{if $title == '订单查询'}is-active#{/if}" href="/user/index/query">
+                                        <span>订单查询</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div class="nagoya-nav-search-slot">
+                            <form class="nagoya-nav-search-form" action="/" method="get">
+                                <label class="nagoya-nav-search-field">
+                                    <i class="fa-duotone fa-regular fa-magnifying-glass"></i>
+                                    <input class="nagoya-nav-search-input item-search-input" type="search" name="nagoya_search" placeholder="搜索商品关键词" autocomplete="off">
+                                </label>
+                                <button type="submit" class="nagoya-nav-search-button item-search-trigger">搜索</button>
+                            </form>
+                        </div>
+
+                        <div class="nagoya-nav-tools">
+                            #{if $user}
+                            <div class="dropdown nagoya-user-dropdown">
+                                <button class="nagoya-user-chip dropdown-toggle" type="button" id="nagoyaUserDropdown"
+                                        data-bs-toggle="dropdown" aria-expanded="false">
+                                    <img class="nagoya-user-avatar" src="#{$user.avatar}" alt="#{$user.username}">
+                                    <span class="nagoya-user-meta">
+                                        <span class="nagoya-user-name">#{$user.username}</span>
+                                        <span class="nagoya-user-balance">余额 ¥#{$user.balance}</span>
+                                    </span>
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-end nagoya-dropdown-menu" aria-labelledby="nagoyaUserDropdown">
+                                    <li><a class="dropdown-item" href="/user/dashboard/index"><i class="fa-duotone fa-regular fa-user"></i>个人中心</a></li>
+                                    <li><a class="dropdown-item" href="/user/recharge/index"><i class="fa-duotone fa-regular fa-wallet"></i>钱包充值</a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><a class="dropdown-item" href="/user/personal/purchaseRecord"><i class="fa-duotone fa-regular fa-receipt"></i>我的订单</a></li>
+                                    <li><a class="dropdown-item" href="/user/security/personal"><i class="fa-duotone fa-regular fa-gear"></i>设置</a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><a class="dropdown-item" href="/user/authentication/logout"><i class="fa-duotone fa-regular fa-right-from-bracket"></i>退出登录</a></li>
+                                </ul>
+                            </div>
+                            #{else}
+                            <div class="nagoya-auth-actions">
+                                <a class="nagoya-button nagoya-button-ghost" href="/user/authentication/login">
+                                    <span>登录</span>
+                                </a>
+                                <a class="nagoya-button nagoya-button-blue" href="/user/authentication/register">
+                                    <span>创建账号</span>
+                                </a>
+                            </div>
+                            #{/if}
+                        </div>
+                    </div>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <div id="pjax-container">

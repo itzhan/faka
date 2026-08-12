@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="#{$favicon}?v=#{$app.version}" rel="icon">
+    <title>#{$title} - #{$config.shop_name}</title>
+    #{css(["/assets/common/css/bootstrap.min.css","/assets/common/css/_.css","#{$static}/Assets/Style.css"],[])}
+</head>
+<body class="tokyo-theme">
+<div class="tokyo-page-frame">
+    <main class="tokyo-main">
+        <section class="tokyo-shell tokyo-shell--narrow" style="padding-top:80px;">
+            <div class="panel">
+                <div class="panel-body tokyo-empty-state">
+                    <i class="fa-duotone fa-regular fa-screwdriver-wrench"></i>
+                    <h3>店铺维护中</h3>
+                    <p>#{$config.closed_message|default:'店主正在维护店铺，请稍后再来看看。'}</p>
+                    <a class="tokyo-button tokyo-button-dark" href="/">返回首页</a>
+                </div>
+            </div>
+        </section>
+    </main>
+</div>
+</body>
+</html>

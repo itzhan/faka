@@ -143,30 +143,32 @@ body.shopify-admin .header {
     background: var(--sp-nav-surface-hover);
 }
 
-.sp-logo {
+body.shopify-admin a.sp-logo {
     display: flex;
     align-items: center;
     gap: 8px;
+    color: var(--sp-nav-text-active) !important;
     text-decoration: none !important;
     padding: 6px 8px;
     border-radius: var(--sp-radius-200);
     transition: background 100ms var(--sp-ease);
 }
 
-.sp-logo:hover {
+body.shopify-admin a.sp-logo:hover {
     background: var(--sp-nav-surface-hover);
+    color: var(--sp-nav-text-active) !important;
 }
 
-.sp-logo svg {
+body.shopify-admin .sp-logo svg {
     flex-shrink: 0;
 }
 
-.sp-logo svg path {
-    fill: #95bf47;
+body.shopify-admin .sp-logo svg path {
+    fill: #95bf47 !important;
 }
 
-.sp-logo-text {
-    color: var(--sp-nav-text-active);
+body.shopify-admin .sp-logo-text {
+    color: var(--sp-nav-text-active) !important;
     font-size: 15px;
     font-weight: 600;
     white-space: nowrap;
@@ -231,21 +233,27 @@ body.shopify-admin .header {
     flex-shrink: 0;
 }
 
-.sp-topbar-icon {
+body.shopify-admin a.sp-topbar-icon {
     display: flex;
     align-items: center;
     justify-content: center;
     width: 32px;
     height: 32px;
     border-radius: var(--sp-radius-200);
-    color: var(--sp-nav-text);
+    color: var(--sp-nav-text) !important;
     text-decoration: none !important;
     transition: all 100ms var(--sp-ease);
 }
 
-.sp-topbar-icon:hover {
+body.shopify-admin a.sp-topbar-icon:hover {
     background: var(--sp-nav-surface-hover);
-    color: var(--sp-nav-text-hover);
+    color: var(--sp-nav-text-hover) !important;
+}
+
+body.shopify-admin a.sp-topbar-icon svg,
+body.shopify-admin a.sp-topbar-icon svg path {
+    fill: currentColor !important;
+    color: inherit !important;
 }
 
 .sp-user-avatar {
@@ -331,12 +339,14 @@ body.shopify-admin .header {
     margin: 1px 0;
 }
 
-.sp-nav-link {
+/* 提高优先级，压过上游 md-components `:root[data-theme] a { color: primary }` 的蓝色链接 */
+body.shopify-admin .sp-sidebar a.sp-nav-link,
+body.shopify-admin .sp-sidebar-bottom a.sp-nav-link {
     display: flex;
     align-items: center;
     gap: 8px;
     padding: 7px 10px;
-    color: var(--sp-nav-text);
+    color: var(--sp-nav-text) !important;
     text-decoration: none !important;
     border-radius: var(--sp-radius-200);
     font-size: 13px;
@@ -346,36 +356,46 @@ body.shopify-admin .header {
     line-height: 20px;
 }
 
-.sp-nav-link:hover {
-    color: var(--sp-nav-text-hover);
+body.shopify-admin .sp-sidebar a.sp-nav-link:hover,
+body.shopify-admin .sp-sidebar-bottom a.sp-nav-link:hover {
+    color: var(--sp-nav-text-hover) !important;
     background: var(--sp-nav-surface-hover);
     transform: translateX(2px);
 }
 
-.sp-nav-link.sp-active {
-    color: var(--sp-nav-text-active);
+body.shopify-admin .sp-sidebar a.sp-nav-link.sp-active,
+body.shopify-admin .sp-sidebar-bottom a.sp-nav-link.sp-active {
+    color: var(--sp-nav-text-active) !important;
     background: var(--sp-nav-surface-active);
     font-weight: 600;
     box-shadow: inset 3px 0 0 0 rgba(255, 255, 255, 0.6);
 }
 
-.sp-nav-icon {
+body.shopify-admin .sp-nav-icon {
     display: flex;
     align-items: center;
     justify-content: center;
     width: 20px;
     height: 20px;
     flex-shrink: 0;
-    color: inherit;
+    color: inherit !important;
     opacity: 0.85;
 }
 
-.sp-nav-link.sp-active .sp-nav-icon {
+body.shopify-admin .sp-nav-icon svg,
+body.shopify-admin .sp-nav-icon svg path {
+    fill: currentColor !important;
+    color: inherit !important;
+}
+
+body.shopify-admin a.sp-nav-link.sp-active .sp-nav-icon {
     opacity: 1;
 }
 
-.sp-nav-text {
-    color: inherit;
+body.shopify-admin .sp-nav-text,
+body.shopify-admin a.sp-nav-link .sp-nav-text,
+body.shopify-admin a.sp-nav-link .md-ticket-menu-badge {
+    color: inherit !important;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -1563,4 +1583,79 @@ a:focus-visible {
 .sp-main {
     scrollbar-width: thin;
     scrollbar-color: rgba(0, 0, 0, 0.12) transparent;
+}
+
+/* ================================================================
+   21. Sidebar/topbar link color kill-switch
+   压过上游 md-components `:root[data-theme] a { color: primary }`
+   ================================================================ */
+html[data-theme] body.shopify-admin .sp-sidebar a,
+html[data-theme] body.shopify-admin .sp-sidebar a:link,
+html[data-theme] body.shopify-admin .sp-sidebar a:visited,
+html[data-theme] body.shopify-admin .sp-sidebar a:hover,
+html[data-theme] body.shopify-admin .sp-sidebar a:active,
+html[data-theme] body.shopify-admin .sp-sidebar-bottom a,
+html[data-theme] body.shopify-admin .sp-sidebar-bottom a:link,
+html[data-theme] body.shopify-admin .sp-sidebar-bottom a:visited,
+html[data-theme] body.shopify-admin .sp-sidebar-bottom a:hover,
+html[data-theme] body.shopify-admin .sp-sidebar-bottom a:active,
+html body.shopify-admin .sp-sidebar a,
+html body.shopify-admin .sp-sidebar-bottom a {
+    color: #b5b5b5 !important;
+    text-decoration: none !important;
+}
+
+html[data-theme] body.shopify-admin .sp-sidebar a:hover,
+html[data-theme] body.shopify-admin .sp-sidebar-bottom a:hover,
+html body.shopify-admin .sp-sidebar a:hover,
+html body.shopify-admin .sp-sidebar-bottom a:hover {
+    color: #e3e3e3 !important;
+}
+
+html[data-theme] body.shopify-admin .sp-sidebar a.sp-active,
+html[data-theme] body.shopify-admin .sp-sidebar-bottom a.sp-active,
+html body.shopify-admin .sp-sidebar a.sp-active,
+html body.shopify-admin .sp-sidebar-bottom a.sp-active {
+    color: #ffffff !important;
+}
+
+html[data-theme] body.shopify-admin .sp-sidebar a *,
+html[data-theme] body.shopify-admin .sp-sidebar-bottom a *,
+html body.shopify-admin .sp-sidebar a *,
+html body.shopify-admin .sp-sidebar-bottom a * {
+    color: inherit !important;
+}
+
+html[data-theme] body.shopify-admin .sp-sidebar a svg,
+html[data-theme] body.shopify-admin .sp-sidebar a svg path,
+html[data-theme] body.shopify-admin .sp-sidebar-bottom a svg,
+html[data-theme] body.shopify-admin .sp-sidebar-bottom a svg path,
+html body.shopify-admin .sp-sidebar a svg,
+html body.shopify-admin .sp-sidebar a svg path,
+html body.shopify-admin .sp-sidebar-bottom a svg,
+html body.shopify-admin .sp-sidebar-bottom a svg path {
+    fill: currentColor !important;
+    color: inherit !important;
+}
+
+html[data-theme] body.shopify-admin a.sp-logo,
+html[data-theme] body.shopify-admin a.sp-logo:hover,
+html body.shopify-admin a.sp-logo,
+html body.shopify-admin a.sp-logo:hover {
+    color: #ffffff !important;
+}
+
+html[data-theme] body.shopify-admin a.sp-logo .sp-logo-text,
+html body.shopify-admin a.sp-logo .sp-logo-text {
+    color: #ffffff !important;
+}
+
+html[data-theme] body.shopify-admin a.sp-topbar-icon,
+html body.shopify-admin a.sp-topbar-icon {
+    color: #b5b5b5 !important;
+}
+
+html[data-theme] body.shopify-admin a.sp-topbar-icon:hover,
+html body.shopify-admin a.sp-topbar-icon:hover {
+    color: #e3e3e3 !important;
 }

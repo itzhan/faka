@@ -184,6 +184,35 @@
     accent-color: #303030;
 }
 
+/* ---- Captcha row ---- */
+.polaris-captcha-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.polaris-captcha-row .polaris-input {
+    flex: 1;
+    min-width: 0;
+}
+
+.polaris-captcha-img {
+    height: 38px;
+    width: auto;
+    min-width: 96px;
+    border-radius: 10px;
+    border: 1px solid #c9cccf;
+    background: #f6f6f7;
+    cursor: pointer;
+    flex-shrink: 0;
+    object-fit: contain;
+}
+
+.polaris-captcha-img:hover {
+    opacity: .88;
+    border-color: #8a8a8a;
+}
+
 .polaris-link {
     color: #005bd3;
     text-decoration: none;

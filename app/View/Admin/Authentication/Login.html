@@ -71,18 +71,20 @@
                         </button>
                     </div>
                 </div>
-                <div class="ay-field">
-                    <input id="ay-captcha" name="captcha" class="ay-input" type="text" inputmode="numeric"
-                           maxlength="4" autocomplete="off" placeholder=" " required>
-                    <span class="ay-label">验证码</span>
-                    <img id="ay-captcha-img" class="ay-captcha" src="/user/captcha/image?action=adminLogin"
-                         onclick="this.src='/user/captcha/image?action=adminLogin&t='+Date.now()"
-                         title="看不清？点我刷新" alt="验证码">
+                <div class="polaris-field">
+                    <label class="polaris-field-label" for="ay-captcha">验证码</label>
+                    <div class="polaris-captcha-row">
+                        <input id="ay-captcha" name="captcha" class="polaris-input" type="text" inputmode="numeric"
+                               maxlength="4" autocomplete="off" placeholder="请输入图形验证码" required>
+                        <img id="ay-captcha-img" class="polaris-captcha-img" src="/user/captcha/image?action=adminLogin"
+                             onclick="this.src='/user/captcha/image?action=adminLogin&t='+Date.now()"
+                             title="看不清？点我刷新" alt="验证码">
+                    </div>
                 </div>
-                <div class="ay-field">
-                    <input id="ay-code" name="code" class="ay-input" type="text" inputmode="numeric"
-                           autocomplete="one-time-code" maxlength="6" placeholder=" ">
-                    <span class="ay-label">谷歌验证码（未绑定可留空）</span>
+                <div class="polaris-field">
+                    <label class="polaris-field-label" for="ay-code">谷歌验证码（未绑定可留空）</label>
+                    <input id="ay-code" name="code" class="polaris-input" type="text" inputmode="numeric"
+                           autocomplete="one-time-code" maxlength="6" placeholder="6位动态码，未开启可不填">
                 </div>
 
                 <div class="polaris-login-options">

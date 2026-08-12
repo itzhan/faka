@@ -1,6 +1,7 @@
 <?php
 declare(strict_types=1);
 
+use App\Util\AdminEntrance;
 use Illuminate\Database\Capsule\Manager;
 use Kernel\Annotation\Collector;
 use Kernel\Consts\Base;
@@ -100,12 +101,19 @@ try {
     //插件库
     if (Context::get(Base::STORE_STATUS) && Context::get(Base::IS_INSTALL)) {
         require("Plugin.php");
-        //插件初始化
         Hook::inst()->load();
-        //插件初始化
         hook(\App\Consts\Hook::KERNEL_INIT);
+        AdminEntrance::guard();
     }
 
+
+    //安全响应头
+    if (!headers_sent()) {
+        header("X-Content-Type-Options: nosniff");
+        header("X-Frame-Options: SAMEORIGIN");
+        header("Referrer-Policy: strict-origin-when-cross-origin");
+        header("Content-Security-Policy: frame-ancestors 'self'; object-src 'none'; base-uri 'self'");
+    }
 
     //记录日志
     RequestLogger::logCurrentRequest(Context::get(\Kernel\Context\Interface\Request::class));
@@ -151,7 +159,16 @@ try {
         header('content-type:application/json;charset=utf-8');
         echo json_encode($result, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
     } else {
-        header("Content-type: text/html; charset=utf-8");
+        $hasContentType = false;
+        foreach (headers_list() as $responseHeader) {
+            if (str_starts_with(strtolower($responseHeader), 'content-type:')) {
+                $hasContentType = true;
+                break;
+            }
+        }
+        if (!$hasContentType) {
+            header("Content-type: text/html; charset=utf-8");
+        }
         echo $result;
     }
 } catch (Throwable $e) {

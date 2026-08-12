@@ -2,9 +2,10 @@
 <html lang="zh-CN">
 <!--begin::Head-->
 <head>
-    <title>#{$title}-#{$config.title}</title>
     <meta charset="utf-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+    <script>(function(){var e=document.documentElement;try{var p=localStorage.getItem('admin-theme')||'auto';var d=p==='auto'?(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'):p;e.setAttribute('data-theme',d);e.setAttribute('data-theme-pref',p);var m=localStorage.getItem('admin-layout-mode')==='desktop'?'desktop':((window.innerWidth||screen.width)<992?'mobile':'desktop');e.setAttribute('data-admin-layout',m);}catch(_){e.setAttribute('data-theme','light');e.setAttribute('data-admin-layout',(window.innerWidth||screen.width)<992?'mobile':'desktop');}})();</script>
+    <title>#{$title}-#{$config.title}</title>
     <link rel="shortcut icon" href="/favicon.ico"/>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -17,6 +18,11 @@
     [
     "/assets/admin/css/_admin.css",
     "/assets/common/css/_.css",
+    "/assets/static/codemirror/lib/codemirror.css",
+    "/assets/common/css/_material.css",
+    "/assets/common/fonts/material-icons.css",
+    "/assets/admin/css/_material.css",
+    "/assets/admin/css/_mobile.css",
     "/assets/admin/css/polaris-admin.css"
     ],
     [
@@ -28,6 +34,13 @@
     "/assets/common/css/toastr.min.css",
     "/assets/common/js/table/bootstrap-table.css",
     "/assets/common/js/layer/theme/default/layer.css",
+    "/assets/static/codemirror/lib/codemirror.css",
+    "/assets/common/css/md-tokens.css",
+    "/assets/common/css/md-components.css",
+    "/assets/admin/css/material.css",
+    "/assets/common/fonts/material-icons.css",
+    "/assets/common/css/mdicon.css",
+    "/assets/admin/css/mobile.css",
     "/assets/admin/css/polaris-admin.css"
     ])}
 
@@ -117,6 +130,18 @@
                         <a href="/admin/user/index" class="sp-nav-link #{if $title == '会员管理'}sp-active#{/if}">
                             <span class="sp-nav-icon"><svg viewBox="0 0 20 20" width="20" height="20"><path d="M10 10a4 4 0 1 0 0-8 4 4 0 0 0 0 8zm-7 8a7 7 0 0 1 14 0H3z" fill="currentColor"/></svg></span>
                             <span class="sp-nav-text">会员管理</span>
+                        </a>
+                    </li>
+                    <li class="sp-nav-item">
+                        <a href="/admin/ticket/index" class="sp-nav-link #{if $title == '工单管理'}sp-active#{/if}">
+                            <span class="sp-nav-icon"><svg viewBox="0 0 20 20" width="20" height="20"><path d="M4 3a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h3l3 3 3-3h3a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2H4zm2 4h8v2H6V7zm0 3h5v2H6v-2z" fill="currentColor"/></svg></span>
+                            <span class="sp-nav-text">工单管理<span class="md-ticket-menu-badge ticket-admin-badge" hidden>0</span></span>
+                        </a>
+                    </li>
+                    <li class="sp-nav-item">
+                        <a href="/admin/message/index" class="sp-nav-link #{if $title == '消息管理'}sp-active#{/if}">
+                            <span class="sp-nav-icon"><svg viewBox="0 0 20 20" width="20" height="20"><path d="M2 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H7l-4 3v-3H4a2 2 0 0 1-2-2V4zm3 2v2h10V6H5zm0 4v2h6v-2H5z" fill="currentColor"/></svg></span>
+                            <span class="sp-nav-text">消息管理</span>
                         </a>
                     </li>
                     <li class="sp-nav-item">
@@ -210,6 +235,10 @@
                     </a>
                     #{/if}
                     #{if $user.type == 0}
+                    <a href="/admin/file/index" class="sp-nav-link #{if $title == '文件管理'}sp-active#{/if}">
+                        <span class="sp-nav-icon"><svg viewBox="0 0 20 20" width="20" height="20"><path d="M4 2a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7l-5-5H4zm7 1.5L16.5 9H11V3.5zM6 11h8v2H6v-2zm0 3h5v2H6v-2z" fill="currentColor"/></svg></span>
+                        <span class="sp-nav-text">文件管理</span>
+                    </a>
                     <a href="/admin/log/index" class="sp-nav-link #{if $title == '操作日志'}sp-active#{/if}">
                         <span class="sp-nav-icon"><svg viewBox="0 0 20 20" width="20" height="20"><path d="M10 2a8 8 0 1 0 0 16 8 8 0 0 0 0-16zm1 8.4l-3.2 1.9-.8-1.4L10 9V5h1.5v3.6L10 10z" fill="currentColor"/></svg></span>
                         <span class="sp-nav-text">操作日志</span>

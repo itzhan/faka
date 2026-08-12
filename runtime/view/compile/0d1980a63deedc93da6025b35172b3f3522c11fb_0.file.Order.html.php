@@ -1,18 +1,18 @@
 <?php
-/* Smarty version 3.1.46, created on 2026-03-06 14:05:52
+/* Smarty version 3.1.46, created on 2026-06-21 15:08:46
   from '/var/www/html/app/View/Admin/Trade/Order.html' */
 
 /* @var Smarty_Internal_Template $_smarty_tpl */
 if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
   'version' => '3.1.46',
-  'unifunc' => 'content_69aa6ec0ae8395_48079021',
+  'unifunc' => 'content_6a378dfe258226_21808746',
   'has_nocache_code' => false,
   'file_dependency' => 
   array (
     '0d1980a63deedc93da6025b35172b3f3522c11fb' => 
     array (
       0 => '/var/www/html/app/View/Admin/Trade/Order.html',
-      1 => 1772697582,
+      1 => 1782004971,
       2 => 'file',
     ),
   ),
@@ -23,7 +23,7 @@ if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
     'file:../Footer.html' => 1,
   ),
 ),false)) {
-function content_69aa6ec0ae8395_48079021 (Smarty_Internal_Template $_smarty_tpl) {
+function content_6a378dfe258226_21808746 (Smarty_Internal_Template $_smarty_tpl) {
 $_smarty_tpl->_subTemplateRender("file:../Header.html", $_smarty_tpl->cache_id, $_smarty_tpl->compile_id, 0, $_smarty_tpl->cache_lifetime, array(), 0, false);
 ?>
 
@@ -60,6 +60,9 @@ $_smarty_tpl->_subTemplateRender("file:../Header.html", $_smarty_tpl->cache_id, 
                     <div class="card-toolbar">
                         <button class="btn btn-sm btn-light-primary clear me-3"><i class="fa-duotone fa-regular fa-trash-can-clock"></i>
                             一键清理无用订单
+                        </button>
+                        <button class="btn btn-sm btn-light-success btn-app-export me-3"><i class="fa-duotone fa-regular fa-down-to-line"></i>
+                            导出筛选订单
                         </button>
                         <!--start::HOOK-->
                         <?php echo hook(\App\Consts\Hook::ADMIN_VIEW_ORDER_TOOLBAR);?>

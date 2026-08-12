@@ -38,6 +38,35 @@ use Kernel\Util\Decimal;
 
 class Order implements \App\Service\Order
 {
+    /**
+     * Fields which have already participated in price, input or delivery
+     * decisions before trade() enters its database transaction. If one of
+     * them changes while the request is being prepared, fail safely instead
+     * of creating an order from a mixed old/new commodity snapshot.
+     */
+    private const ORDER_COMMODITY_SNAPSHOT_FIELDS = [
+        'category_id',
+        'factory_price',
+        'price',
+        'user_price',
+        'delivery_way',
+        'delivery_auto_mode',
+        'delivery_message',
+        'contact_type',
+        'password_status',
+        'coupon',
+        'shared_id',
+        'shared_code',
+        'shared_premium',
+        'shared_premium_type',
+        'draft_status',
+        'draft_premium',
+        'widget',
+        'level_price',
+        'level_disable',
+        'config',
+    ];
+
     #[Inject]
     private Shared $shared;
 
@@ -480,6 +509,73 @@ class Order implements \App\Service\Order
     }
 
     /**
+     * The commodity row must always be the first business row locked by an
+     * order-creation transaction. Commodity deletion uses the same leading
+     * lock, so an order can no longer be inserted after the deletion check.
+     *
+     * @throws JSONException
+     */
+    private function lockCommodityForOrder(Commodity $expected): Commodity
+    {
+        /** @var Commodity|null $locked */
+        $locked = Commodity::query()
+            ->whereKey((int)$expected->id)
+            ->lockForUpdate()
+            ->first();
+
+        if (!$locked) {
+            throw new JSONException('商品不存在或已被删除，请刷新后重试');
+        }
+        if ((int)$locked->owner !== (int)$expected->owner) {
+            throw new JSONException('商品归属已经变更，请刷新后重试');
+        }
+
+        // Load the related platform only after the commodity row is locked.
+        $locked->load('shared');
+        return $locked;
+    }
+
+    /**
+     * @throws JSONException
+     */
+    private function assertTradeCommoditySnapshot(Commodity $expected, Commodity $locked): void
+    {
+        foreach (self::ORDER_COMMODITY_SNAPSHOT_FIELDS as $field) {
+            if ((string)$expected->getRawOriginal($field) !== (string)$locked->getRawOriginal($field)) {
+                throw new JSONException('商品信息已经更新，请刷新后重新下单');
+            }
+        }
+    }
+
+    /**
+     * Revalidate and lock a local preselected card inside the order transaction.
+     * This prevents an administrator deletion from racing a new unpaid order
+     * into retaining a card ID which no longer exists.
+     *
+     * @throws JSONException
+     */
+    private function lockLocalDraftCardForOrder(Commodity $commodity, int $cardId): void
+    {
+        if ($cardId <= 0 || (int)$commodity->draft_status !== 1 || (int)$commodity->shared_id > 0) {
+            return;
+        }
+
+        $card = Card::query()
+            ->whereKey($cardId)
+            ->lockForUpdate()
+            ->first(['id', 'commodity_id', 'status']);
+        if (!$card) {
+            throw new JSONException('预选的宝贝不存在');
+        }
+        if ((int)$card->commodity_id !== (int)$commodity->id) {
+            throw new JSONException('此预选卡密不属于当前商品');
+        }
+        if ((int)$card->status !== 0) {
+            throw new JSONException('此宝贝已被他人抢走');
+        }
+    }
+
+    /**
      * @param User|null $user
      * @param UserGroup|null $userGroup
      * @param array $map
@@ -700,6 +796,42 @@ class Order implements \App\Service\Order
 
         DB::connection()->getPdo()->exec("set session transaction isolation level serializable");
         $result = Db::transaction(function () use ($commodity, $rent, $rebate, $divideAmount, $business, $sku, $requestNo, $user, $userGroup, $num, $contact, $device, $amount, $owner, $pay, $cardId, $password, $coupon, $from, $widget, $race, $callbackDomain, $clientDomain) {
+            // Keep this as the first business-row lock in the transaction.
+            $lockedCommodity = $this->lockCommodityForOrder($commodity);
+
+            if ((int)$lockedCommodity->status !== 1) {
+                throw new JSONException('当前商品已停售');
+            }
+            $this->assertTradeCommoditySnapshot($commodity, $lockedCommodity);
+            $this->lockLocalDraftCardForOrder($lockedCommodity, $cardId);
+
+            if (((int)$lockedCommodity->only_user === 1 || (int)$lockedCommodity->purchase_count > 0) && $owner === 0) {
+                throw new JSONException('请先登录后再购买哦');
+            }
+            if ((int)$lockedCommodity->minimum > 0 && $num < (int)$lockedCommodity->minimum) {
+                throw new JSONException("本商品最少购买{$lockedCommodity->minimum}个");
+            }
+            if ((int)$lockedCommodity->maximum > 0 && $num > (int)$lockedCommodity->maximum) {
+                throw new JSONException("本商品单次最多购买{$lockedCommodity->maximum}个");
+            }
+            if ((int)$lockedCommodity->seckill_status === 1) {
+                if (time() < strtotime((string)$lockedCommodity->seckill_start_time)) {
+                    throw new JSONException('抢购还未开始');
+                }
+                if (time() > strtotime((string)$lockedCommodity->seckill_end_time)) {
+                    throw new JSONException('抢购已结束');
+                }
+            }
+            if ((int)$lockedCommodity->purchase_count > 0 && $owner > 0) {
+                $orderCount = \App\Model\Order::query()
+                    ->where('owner', $owner)
+                    ->where('commodity_id', $lockedCommodity->id)
+                    ->count();
+                if ($orderCount >= (int)$lockedCommodity->purchase_count) {
+                    throw new JSONException("该商品每人只能购买{$lockedCommodity->purchase_count}件");
+                }
+            }
+
             //生成联系方式
             if ($user) {
                 $contact = Str::generateRandStr(16);
@@ -716,7 +848,7 @@ class Order implements \App\Service\Order
             $order->owner = $owner;
             $order->trade_no = Str::generateTradeNo();
             $order->amount = (new Decimal($amount, 2))->getAmount();
-            $order->commodity_id = $commodity->id;
+            $order->commodity_id = $lockedCommodity->id;
             $order->pay_id = $pay->id;
             $order->create_time = $date;
             $order->create_ip = Client::getAddress();
@@ -725,13 +857,13 @@ class Order implements \App\Service\Order
             $order->contact = trim((string)$contact);
             $order->delivery_status = 0;
             $order->card_num = $num;
-            $order->user_id = (int)$commodity->owner;
+            $order->user_id = (int)$lockedCommodity->owner;
             $order->rent = $rent;
 
             if ($requestNo) $order->request_no = $requestNo;
             if (!empty($race)) $order->race = $race;
             if (!empty($sku)) $order->sku = $sku;
-            if ($commodity->draft_status == 1 && $cardId != 0) $order->card_id = $cardId;
+            if ($lockedCommodity->draft_status == 1 && $cardId != 0) $order->card_id = $cardId;
             if ($password != "") $order->password = $password;
             if ($business) $order->substation_user_id = $business->user_id;
             if ($rebate > 0) $order->rebate = $rebate;
@@ -741,7 +873,7 @@ class Order implements \App\Service\Order
 
             //优惠券
             if (!empty($coupon)) {
-                $voucher = Coupon::query()->where("code", $coupon)->first();
+                $voucher = Coupon::query()->where("code", $coupon)->lockForUpdate()->first();
                 if (!$voucher) {
                     throw new JSONException("优惠券不存");
                 }
@@ -761,7 +893,7 @@ class Order implements \App\Service\Order
 
             $secret = null;
 
-            hook(Hook::USER_API_ORDER_TRADE_PAY_BEGIN, $commodity, $order, $pay);
+            hook(Hook::USER_API_ORDER_TRADE_PAY_BEGIN, $lockedCommodity, $order, $pay);
 
             if ($order->amount == 0) {
                 //免费赠送
@@ -850,7 +982,7 @@ class Order implements \App\Service\Order
 
             $order->save();
 
-            hook(Hook::USER_API_ORDER_TRADE_AFTER, $commodity, $order, $pay);
+            hook(Hook::USER_API_ORDER_TRADE_AFTER, $lockedCommodity, $order, $pay);
             return ['url' => $url, 'amount' => $order->amount, 'tradeNo' => $order->trade_no, 'secret' => $secret];
         });
         $result["stock"] = $shopService->getItemStock($commodity, $race, $sku);
@@ -875,6 +1007,12 @@ class Order implements \App\Service\Order
 
         //检测签名验证是否开启
         if ($callback[\App\Consts\Pay::IS_SIGN]) {
+            //核心兜底：验签已开启，但插件未配置任何凭据（密钥/密文/公钥）时直接拒绝，
+            //防止空密钥导致 md5(data.'') 之类可被伪造的回调通过验签。
+            if (!self::payCredentialConfigured($payConfig)) {
+                PayConfig::log($handle, "CALLBACK", "支付凭据未配置，拒绝回调");
+                throw new JSONException("pay credential not configured");
+            }
             $class = "\\App\\Pay\\{$handle}\\Impl\\Signature";
             if (!class_exists($class)) {
                 PayConfig::log($handle, "CALLBACK", "插件未实现接口");
@@ -899,6 +1037,33 @@ class Order implements \App\Service\Order
 
         //拿到订单号和金额
         return ["trade_no" => $map[$callback[\App\Consts\Pay::FIELD_ORDER_KEY]], "amount" => $map[$callback[\App\Consts\Pay::FIELD_AMOUNT_KEY]], "success" => $callback[\App\Consts\Pay::FIELD_RESPONSE]];
+    }
+
+
+    /**
+     * 判断支付插件是否配置了可用于验签的凭据（密钥/密文/公钥）。
+     * 凭据字段名按各插件配置动态识别，不写死为 key。
+     * 仅当"存在凭据字段但全部为空"时返回 false（拒绝回调）；若插件根本没有凭据字段，
+     * 则不干预（返回 true，交由插件自身 verification 判定），避免误伤非常规插件。
+     * @param array|null $config
+     * @return bool
+     */
+    private static function payCredentialConfigured(?array $config): bool
+    {
+        if (empty($config)) {
+            return true; //无配置则不干预，交由插件自身判定
+        }
+        $pattern = '/(secret|token|private_?key|public_?key|app_?secret|api_?key|mch_?key|md5_?key|(^|_)key$)/i';
+        $found = false;
+        foreach ($config as $k => $v) {
+            if (is_string($k) && preg_match($pattern, $k)) {
+                $found = true;
+                if (is_string($v) && trim($v) !== '') {
+                    return true; //至少有一个非空凭据
+                }
+            }
+        }
+        return !$found; //有凭据字段但全空→false(拒绝)；无凭据字段→true(不干预)
     }
 
 
@@ -1322,13 +1487,18 @@ class Order implements \App\Service\Order
     public function giftOrder(Commodity $commodity, string $race = "", int $num = 1, string $contact = "", string $password = "", ?int $cardId = null, int $userId = 0, string $widget = "[]"): array
     {
         return DB::transaction(function () use ($race, $widget, $contact, $password, $num, $cardId, $commodity, $userId) {
+            // Preserve gift-order semantics (including intentional gifts for a
+            // stopped item), but serialize creation against physical deletion.
+            $lockedCommodity = $this->lockCommodityForOrder($commodity);
+            $this->lockLocalDraftCardForOrder($lockedCommodity, (int)$cardId);
+
             //创建订单
             $date = Date::current();
             $order = new  \App\Model\Order();
             $order->owner = $userId;
             $order->trade_no = Str::generateTradeNo();
             $order->amount = 0;
-            $order->commodity_id = $commodity->id;
+            $order->commodity_id = $lockedCommodity->id;
             $order->card_id = $cardId;
             $order->card_num = $num;
             $order->pay_id = 1;
@@ -1342,7 +1512,8 @@ class Order implements \App\Service\Order
             $order->widget = $widget;
             $order->rent = 0;
             $order->race = $race;
-            $order->user_id = $commodity->owner;
+            $order->user_id = $lockedCommodity->owner;
+            $order->setRelation('commodity', $lockedCommodity);
             $order->save();
             $secret = $this->orderSuccess($order);
             return [

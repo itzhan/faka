@@ -1,10 +1,132 @@
 !function () {
-    let table, _createForms = [];
+    let table;
+    const namespace = '.mdTradeCommodityController';
+    let controllerActive = true;
+    const mobileAdminEnabled = () => Boolean(window.AdminMobile && window.AdminMobile.isEnabled && window.AdminMobile.isEnabled());
+    const escapeHtml = value => $('<div>').text(String(value ?? '')).html();
+    const commodityDeleteNames = (values, fallback) => Array.isArray(values) && values.length
+        ? values.map(escapeHtml).join('、')
+        : escapeHtml(fallback || '所选商品');
+    const commodityDeleteDetail = impact => {
+        const groupNames = Array.isArray(impact.commodity_group_names) && impact.commodity_group_names.length
+            ? `（${impact.commodity_group_names.map(escapeHtml).join('、')}）`
+            : '';
+        return `卡密 ${Number(impact.card_count || 0)} 张、订单 ${Number(impact.order_count || 0)} 笔、优惠券 ${Number(impact.coupon_count || 0)} 张、商户映射 ${Number(impact.merchant_mapping_count || 0)} 条、工单 ${Number(impact.ticket_count || 0)} 条、商品分组 ${Number(impact.commodity_group_count || 0)} 个${groupNames}`;
+    };
+    const commodityDeleteSkipReason = impact => {
+        const reasons = [];
+        const blockedCount = Number(impact.blocked_count || 0);
+        const missingCount = Number(impact.missing_count || 0);
+        if (blockedCount > 0) {
+            const names = commodityDeleteNames(impact.blocked_names, '有关联业务的商品');
+            reasons.push(`有关联业务 ${blockedCount} 个（${names}；${commodityDeleteDetail(impact)}）`);
+        }
+        if (missingCount > 0) {
+            reasons.push(`已不存在 ${missingCount} 个`);
+        }
+        return reasons.join('；') || '没有可删除的商品';
+    };
+    const showCommodityBatchDeleteResult = response => {
+        const result = response?.data || {};
+        const deletedCount = Number(result.deleted_count ?? result.count ?? 0);
+        const skippedCount = Number(result.skipped_count || 0);
+        if (skippedCount > 0) {
+            message.alert(
+                `批量删除完成：成功删除 <b>${deletedCount} 个</b>，自动跳过 <b>${skippedCount} 个</b>。<br><br>跳过原因：${commodityDeleteSkipReason(result)}`,
+                'warning'
+            );
+            return;
+        }
+        message.success(`已删除 ${deletedCount} 个商品`);
+    };
+    const batchSettingDefinitions = [
+        {name: 'api_status', title: 'API 对接'},
+        {name: 'password_status', title: '下单密码'},
+        {name: 'coupon', title: '优惠券'},
+        {name: 'inventory_hidden', title: '隐藏库存'},
+        {name: 'recommend', title: '推荐商品'},
+        {name: 'shared_sync', title: '远端信息同步', tips: '仅对远端商品生效'},
+        {name: 'shared_amount_sync', title: '远端价格同步', tips: '仅对远端商品生效'},
+        {name: 'shared_config_sync', title: '远端配置同步', tips: '仅对远端商品生效'},
+    ];
+    const batchSettingForm = definition => mobileAdminEnabled() ? {
+        title: definition.title,
+        name: definition.name,
+        type: 'radio',
+        default: 'keep',
+        dict: [
+            {id: 'keep', name: '保持原设置'},
+            {id: 1, name: '开启'},
+            {id: 0, name: '关闭'},
+        ],
+        tips: definition.tips
+    } : {
+        title: definition.title,
+        name: definition.name,
+        type: 'switch',
+        text: '启用',
+        tips: definition.tips
+    };
+    if (typeof window.__mdTradeCommodityDestroy === 'function') window.__mdTradeCommodityDestroy();
+    const confirmCommodityDelete = (list, fallbackName, done) => {
+        if (!controllerActive) return;
+        util.post({
+            url: '/admin/api/commodity/deleteImpact',
+            data: {list: list},
+            done: res => {
+                if (!controllerActive) return;
+                const impact = res.data || {};
+                const names = commodityDeleteNames(impact.names, fallbackName || '所选商品');
+                const detail = commodityDeleteDetail(impact);
+                const requestedCount = Number(impact.requested_count || list.length);
+                const deletableCount = Number(impact.deletable_count || 0);
+                const blockedCount = Number(impact.blocked_count || 0);
+                const missingCount = Number(impact.missing_count || 0);
+                const skippedCount = Number(impact.skipped_count || 0);
+                if (list.length === 1 && blockedCount > 0) {
+                    message.alert(`“${names}”已有业务数据（${detail}），系统已阻止物理删除。请先解除关联，或改为下架/隐藏商品。`, 'warning');
+                    return;
+                }
+                if (list.length === 1 && missingCount > 0) {
+                    message.alert('该商品已不存在，请刷新列表后重试。', 'warning');
+                    return;
+                }
+                if (deletableCount < 1) {
+                    message.alert(
+                        `所选 ${requestedCount} 个商品均无法物理删除，已全部自动跳过。<br><br>跳过原因：${commodityDeleteSkipReason(impact)}`,
+                        'warning'
+                    );
+                    return;
+                }
+                if (skippedCount > 0) {
+                    const deletableNames = commodityDeleteNames(impact.deletable_names, '可删除商品');
+                    message.ask(
+                        `选中 <b>${requestedCount} 个商品</b>，将永久删除其中 <b>${deletableCount} 个</b>：${deletableNames}<br><br>另外 <b>${skippedCount} 个无法删除的商品会自动跳过</b>。<br>跳过原因：${commodityDeleteSkipReason(impact)}<br><br>删除后无法恢复。`,
+                        done,
+                        '确认删除可删除商品',
+                        '开始删除'
+                    );
+                    return;
+                }
+                message.ask(
+                    `将永久删除 <b>${Number(impact.commodity_count || list.length)} 个未使用商品</b>：${names}<br><br>${detail}<br><br>此操作无法恢复。`,
+                    done,
+                    '确认永久删除商品',
+                    '确认删除'
+                );
+            },
+            error: res => controllerActive && message.error(res?.msg || '无法计算商品删除影响，已阻止删除'),
+            fail: () => controllerActive && message.error('网络异常，无法预览商品删除影响，已阻止删除')
+        });
+    };
     const modal = (title, assign = {}) => {
+        if (!controllerActive) return;
+        let groupRevision = 0;
 
         const owner = assign?.owner ? assign?.owner.id : 0;
 
         component.popup({
+            drawer: true,          // content-heavy product form → open as a right-side drawer
             submit: '/admin/api/commodity/save',
             tab: [
                 {
@@ -40,6 +162,8 @@
                             title: "零售价",
                             name: "price",
                             type: "input",
+                            inputmode: "decimal",
+                            enterkeyhint: "next",
                             placeholder: "零售价",
                             tips: "零售价，游客看到的价格，0=免费",
                             required: true
@@ -48,6 +172,8 @@
                             title: "会员零售价",
                             name: "user_price",
                             type: "input",
+                            inputmode: "decimal",
+                            enterkeyhint: "next",
                             tips: "会员零售价，登录后看到的价格，0=免费",
                             placeholder: "会员零售价",
                             required: true
@@ -56,10 +182,12 @@
                             title: "成本价",
                             name: "factory_price",
                             type: "input",
+                            inputmode: "decimal",
+                            enterkeyhint: "next",
                             tips: "用来统计利润，需要给出真实成本价，如果商品有SKU，需要在配置参数中继续配置SKU的成本",
                             placeholder: "成本价"
                         },
-                        {title: "排序", name: "sort", type: "input", placeholder: "排序，越小越靠前"},
+                        {title: "排序", name: "sort", type: "input", inputmode: "numeric", enterkeyhint: "done", placeholder: "排序，越小越靠前"},
                         {title: "状态", name: "status", type: "switch", text: "启用"},
                     ]
                 },
@@ -162,7 +290,7 @@
                         {
                             title: false,
                             name: "description",
-                            type: "editor",
+                            type: "editorv2",
                             placeholder: "介绍一下你的商品..",
                             required: true,
                             uploadUrl: '/admin/api/upload/send',
@@ -176,6 +304,8 @@
                             title: "最低购买数量",
                             name: "minimum",
                             type: "input",
+                            inputmode: "numeric",
+                            enterkeyhint: "next",
                             tips: "单次最低购买数量，0=不限制，默认0",
                             default: 0,
                             placeholder: "单次最低购买数量"
@@ -184,6 +314,8 @@
                             title: "最大购买数量",
                             name: "maximum",
                             type: "input",
+                            inputmode: "numeric",
+                            enterkeyhint: "next",
                             tips: "单次最大购买数量，0=不限制，默认0",
                             default: 0,
                             placeholder: "单次最大购买数量"
@@ -242,6 +374,8 @@
                             title: "预选加价",
                             name: "draft_premium",
                             type: "input",
+                            inputmode: "decimal",
+                            enterkeyhint: "next",
                             tips: "如果用户使用预选功能，则会加价购买",
                             placeholder: "加价金额",
                             hide: true
@@ -257,6 +391,8 @@
                             title: "会员限购",
                             name: "purchase_count",
                             type: "input",
+                            inputmode: "numeric",
+                            enterkeyhint: "done",
                             placeholder: "0代表不限制",
                             tips: "0代表不限制，如果限制了购买数量，那么用户必须登录才能购买",
                             default: 0,
@@ -320,9 +456,11 @@
                         },
                         {
                             name: "group_user", type: "custom", complete: (form, __) => {
+                                const revision = ++groupRevision;
                                 __.html(`<div class="mcy-card"><table id="commodity-group-table"></table></div>`);
 
                                 util.get("/admin/api/group/data", res => {
+                                    if (!controllerActive || form.isDestroyed || revision !== groupRevision) return;
                                     let raw = form.getData("level_price");
                                     let configStr = raw ? decodeURIComponent(raw) : "{}";
                                     let config = {};
@@ -505,6 +643,8 @@
                             title: "自动加价",
                             name: "shared_premium",
                             type: "input",
+                            inputmode: "decimal",
+                            enterkeyhint: "done",
                             default: "0.00",
                             hide: true
                         }
@@ -520,14 +660,17 @@
                 }
             },
             height: "auto",
-            width: "auto",
+            width: "960px",
             done: () => {
-                table.refresh();
+                if (controllerActive && table) table.refresh();
             }
         });
     }
 
     const uploadCard = (commodityId) => {
+        if (!controllerActive) return;
+        let skuRevision = 0;
+        const createForms = [];
         component.popup({
             submit: '/admin/api/card/save',
             tab: [
@@ -541,6 +684,7 @@
                             default: commodityId,
                             hide: true,
                             complete: (_, __) => {
+                                const revision = ++skuRevision;
                                 _.setRadio("race_get_mode", 0, true);
                                 _.setInput("race_input", "");
 
@@ -548,9 +692,11 @@
                                 _.hide("race_input");
                                 _.clearComponent("race");
                                 _.hide("race_get_mode");
-                                _createForms.forEach(k => _.removeForm(k));
+                                createForms.forEach(k => _.removeForm(k));
+                                createForms.length = 0;
 
                                 util.get(`/admin/api/card/sku?commodityId=${commodityId}`, data => {
+                                    if (!controllerActive || _.isDestroyed || revision !== skuRevision) return;
                                     if (!util.isEmptyOrNotJson(data?.category)) {
                                         let i = 0;
                                         for (const cKey in data.category) {
@@ -572,7 +718,7 @@
                                                 type: "radio",
                                                 dict: dict
                                             }, "race", "after");
-                                            _createForms.push(`sku-${sKey}`);
+                                            createForms.push(`sku-${sKey}`);
                                         }
                                     }
                                 });
@@ -638,18 +784,12 @@
                             name: "general_card",
                             type: "custom",
                             complete: (form, dom) => {
-                                dom.html(`<div class="card no-shadow transparent h-100  border-0">
-        <div class="card-body p-4">
-          <p class="text-muted">一行一个库存卡密，内容随意。买家购买后直接获得该行内容。</p>
-          <div class="translucent border rounded p-3">
-            <div class="fw-bold mb-2 small text-uppercase text-secondary">示例</div>
-<pre class="mb-0" style="white-space: pre-wrap; word-break: break-all;">
-ABCDEF-GHIJK-LMNOP
-VIP-2025-0821-XYZ
-</pre>
-          </div>
-        </div>
-      </div>`);
+                                dom.html(`<div class="uc-cardtip">
+          <p>一行一个库存卡密，内容随意。买家购买后直接获得该行内容。</p>
+          <div class="uc-cardtip__label">示例</div>
+          <pre class="uc-cardtip__code">ABCDEF-GHIJK-LMNOP
+VIP-2025-0821-XYZ</pre>
+        </div>`);
                             }
                         },
                         {
@@ -658,35 +798,20 @@ VIP-2025-0821-XYZ
                             name: "account_card",
                             type: "custom",
                             complete: (form, dom) => {
-                                dom.html(` <div class="card no-shadow transparent h-100 shadow border-0">
-        <div class="card-body">
-           
-          <p class="text-muted mb-3">
-            一行一个，必须使用 <code>║</code> 分隔，结构为：  
-            <span class="text-dark fw-bold">卡密本体 ║ 预告信息 ║ 自选加价金额(可选) ║ 自选加价成本(可选)</span>
-          </p>
-
-          <ul class="list-unstyled small mb-3">
-            <li class="mb-1"><span class="a-badge a-badge-dark me-1">卡密本体</span> 买家付款后实际获得的完整内容</li>
-            <li class="mb-1"><span class="a-badge a-badge-success me-1">预告信息</span> 买家下单时可见，用于自选</li>
-            <li class="mb-1"><span class="a-badge a-badge-warning text-dark me-1">自选加价金额</span> 选填，不写默认为 0</li>
-            <li><span class="a-badge a-badge-primary text-dark me-1">自选加价成本</span> 选填，不写默认为 0</li>
+                                dom.html(`<div class="uc-cardtip">
+          <p>一行一个，必须使用 <code>║</code> 分隔，结构为：<b>卡密本体 ║ 预告信息 ║ 自选加价金额(可选) ║ 自选加价成本(可选)</b></p>
+          <ul class="uc-cardtip__legend">
+            <li><span class="a-badge a-badge-dark">卡密本体</span><span>买家付款后实际获得的完整内容</span></li>
+            <li><span class="a-badge a-badge-success">预告信息</span><span>买家下单时可见，用于自选</span></li>
+            <li><span class="a-badge a-badge-warning">自选加价金额</span><span>选填，不写默认为 0</span></li>
+            <li><span class="a-badge a-badge-primary">自选加价成本</span><span>选填，不写默认为 0</span></li>
           </ul>
-
-          <div class="translucent border rounded p-3">
-            <div class="fw-bold mb-2 small text-uppercase text-secondary">示例</div>
-<pre class="mb-0" style="white-space: pre-wrap; word-break: break-all;">
-账号:testname--密码:testpassword123║大区:神境之地--等级:100║5.5║2.5
+          <div class="uc-cardtip__label">示例</div>
+          <pre class="uc-cardtip__code">账号:testname--密码:testpassword123║大区:神境之地--等级:100║5.5║2.5
 ACC_US_12M_9F2K-7QPA-88XZ║地区:美区·时长:12个月║20║8
-ACC_JP_6M_0KLD-22MM-PP31║地区:日区·时长:6个月
-</pre>
-          </div>
-
-          <div class="alert alert-warning mt-3 mb-0 small">
-            ⚠️ 必须使用特殊符号 <strong>“║”</strong>（U+2551），不要用普通竖线“|”
-          </div>
-        </div>
-      </div>`);
+ACC_JP_6M_0KLD-22MM-PP31║地区:日区·时长:6个月</pre>
+          <div class="uc-cardtip__warn"><span class="material-icons-outlined">warning_amber</span><span>必须使用特殊符号 <strong>║</strong>（U+2551），不要用普通竖线 |</span></div>
+        </div>`);
                             }
                         },
                         {
@@ -694,7 +819,9 @@ ACC_JP_6M_0KLD-22MM-PP31║地区:日区·时长:6个月
                             name: "secret",
                             type: "textarea",
                             placeholder: "卡密信息，一行一个",
-                            height: 200
+                            preserveLiteral: true,
+                            height: 200,
+                            required: true
                         },
                         {
                             title: "去除重复",
@@ -709,7 +836,7 @@ ACC_JP_6M_0KLD-22MM-PP31║地区:日区·时长:6个月
             height: "auto",
             width: "680px",
             done: () => {
-                table.refresh();
+                if (controllerActive && table) table.refresh();
             }
         });
     }
@@ -719,13 +846,17 @@ ACC_JP_6M_0KLD-22MM-PP31║地区:日区·时长:6个月
     table.setColumns([
         {checkbox: true}
         , {
-            field: 'category.name', title: '分类'
-        }
-        , {
-            field: 'cover', title: '商品图标', type: "image"
-        }
-        , {
-            field: 'name', title: '商品名称'
+            field: 'name', title: '商品', formatter: (val, item) => {
+                const cover = item.cover
+                    ? `<img src="${item.cover}" data-id="${item.id}" class="render-image md-commodity-cell__cover" alt="放大图片">`
+                    : `<span class="md-commodity-cell__cover md-commodity-cell__cover--ph"><i class="fa-duotone fa-regular fa-image"></i></span>`;
+                const path = Array.isArray(item.category_path) ? item.category_path : [];
+                const sep = `<span class="md-commodity-cell__cat-sep">›</span>`;
+                const cat = path.length
+                    ? `<span class="md-commodity-cell__cat">${path.map(s => `<span class="md-commodity-cell__cat-seg">${s}</span>`).join(sep)}</span>`
+                    : '';
+                return `<div class="md-commodity-cell">${cover}<div class="md-commodity-cell__text"><span class="md-commodity-cell__name">${val ?? ''}</span>${cat}</div></div>`;
+            }
         }
         , {
             field: 'card_count', title: '库存', class: "nowrap", formatter: function (val, item) {
@@ -733,6 +864,7 @@ ACC_JP_6M_0KLD-22MM-PP31║地区:日区·时长:6个月
                     return '-';
                 }
                 if (item.delivery_way == 0) {
+                    if (mobileAdminEnabled()) return item.card_count;
                     return item.card_count + ` <a class='add-card' data-id='${item.id}' style='color: green;' href='javascript:void(0);'>加卡</a>`;
                 }
                 return item.stock;
@@ -760,7 +892,7 @@ ACC_JP_6M_0KLD-22MM-PP31║地区:日区·时长:6个月
             ]
         }
         , {
-            field: 'owner', title: '商家', formatter: format.owner
+            field: 'owner', title: '商家', formatter: (_, __) => mdOwnerCell(_)
         }
         , {
             field: 'shared', title: '对接平台', formatter: format.shared
@@ -797,19 +929,33 @@ ACC_JP_6M_0KLD-22MM-PP31║地区:日区·时长:6个月
                     icon: 'fa-duotone fa-regular fa-trash-can',
                     class: "text-danger",
                     click: (event, value, row, index) => {
-                        message.ask("是否删除此商品？", () => {
+                        confirmCommodityDelete([row.id], row.name, () => {
                             util.post('/admin/api/commodity/del', {list: [row.id]}, res => {
+                                if (!controllerActive || !table) return;
                                 message.success("删除成功");
                                 table.refresh();
                             });
                         });
                     }
+                },
+                {
+                    icon: 'fa-duotone fa-regular fa-key text-success',
+                    class: 'admin-mobile-operation-only text-success',
+                    title: '添加卡密',
+                    show: row => mobileAdminEnabled() && Number(row.shared_id || 0) <= 0 && Number(row.delivery_way) === 0,
+                    click: (event, value, row) => uploadCard(row.id)
                 }
             ]
         },
     ]);
 
-    table.setButtonDetail([
+    // 双击「商品」列 → MUI 详情弹窗；hover 提示「双击查看详细信息」（取代原「更多信息」按钮列）
+    table.setColumnDetail({
+        column: 'name',
+        trigger: 'dblclick',
+        header: false,
+        title: (row) => row.name,
+        fields: [
         {field: 'id', title: '商品ID'},
         {
             field: 'card_success_count', title: '已出售'
@@ -880,7 +1026,8 @@ ACC_JP_6M_0KLD-22MM-PP31║地区:日区·时长:6个月
         {
             field: 'create_time', title: '创建时间'
         },
-    ]);
+        ]
+    });
 
     table.setSearch([
         {
@@ -929,11 +1076,11 @@ ACC_JP_6M_0KLD-22MM-PP31║地区:日区·时长:6个月
     table.render();
 
 
-    $('.btn-app-create').click(function () {
+    $('.btn-app-create').off(namespace).on('click' + namespace, function () {
         modal(`<i class="fa-duotone fa-regular fa-circle-plus"></i> 添加商品`);
     });
 
-    $('.delist').click(() => {
+    $('.delist').off(namespace).on('click' + namespace, () => {
         let data = table.getSelectionIds();
         if (data.length == 0) {
             layer.msg("请至少勾选1个商品进行操作！");
@@ -942,6 +1089,7 @@ ACC_JP_6M_0KLD-22MM-PP31║地区:日区·时长:6个月
 
         message.ask("您确定要下架选中的商品吗？", () => {
             util.post("/admin/api/commodity/status", {list: data, status: 0}, res => {
+                if (!controllerActive || !table) return;
                 message.success("全部下架完成");
                 table.refresh();
             });
@@ -949,7 +1097,7 @@ ACC_JP_6M_0KLD-22MM-PP31║地区:日区·时长:6个月
     });
 
 
-    $('.listed').click(() => {
+    $('.listed').off(namespace).on('click' + namespace, () => {
         let data = table.getSelectionIds();
         if (data.length == 0) {
             layer.msg("请至少勾选1个商品进行操作！");
@@ -957,6 +1105,7 @@ ACC_JP_6M_0KLD-22MM-PP31║地区:日区·时长:6个月
         }
         message.ask("您确定要上架选中的商品吗？", () => {
             util.post("/admin/api/commodity/status", {list: data, status: 1}, res => {
+                if (!controllerActive || !table) return;
                 message.success("全部上架完成");
                 table.refresh();
             });
@@ -964,22 +1113,23 @@ ACC_JP_6M_0KLD-22MM-PP31║地区:日区·时长:6个月
     });
 
 
-    $('.btn-app-del').click(() => {
+    $('.btn-app-del').off(namespace).on('click' + namespace, () => {
         let data = table.getSelectionIds();
         if (data.length == 0) {
             layer.msg("请至少勾选1个商品进行操作！");
             return;
         }
-        message.ask("您确定要删除已经选中的商品吗？这是不可恢复的操作！", () => {
-            util.post("/admin/api/commodity/del", {list: data}, () => {
-                message.success("全部删除成功");
+        confirmCommodityDelete(data, `${data.length} 个商品`, () => {
+            util.post("/admin/api/commodity/del", {list: data}, res => {
+                if (!controllerActive || !table) return;
+                showCommodityBatchDeleteResult(res);
                 table.refresh();
             });
         });
     });
 
 
-    $('.handle').click(() => {
+    $('.handle').off(namespace).on('click' + namespace, () => {
         let data = table.getSelectionIds();
         if (data.length == 0) {
             layer.msg("请至少勾选1个商品进行操作！");
@@ -987,12 +1137,53 @@ ACC_JP_6M_0KLD-22MM-PP31║地区:日区·时长:6个月
         }
 
         let join = data.join(",");
+        const useMobileBatchSettings = mobileAdminEnabled();
+        let submitting = false;
+        const submitMobileBatchSettings = (formData, index) => {
+            if (submitting) return;
+            const changes = batchSettingDefinitions.filter(item => {
+                const value = String(formData[item.name] ?? 'keep');
+                return value === '0' || value === '1';
+            });
+            if (!changes.length) {
+                message.warning('请至少选择一项需要修改的设置');
+                return;
+            }
+            const summary = changes.map(item => {
+                const enabled = String(formData[item.name]) === '1';
+                return `<li><b>${item.title}</b> → ${enabled ? '开启' : '关闭'}</li>`;
+            }).join('');
+            message.ask(
+                `将修改 <b>${data.length} 个商品</b>，仅变更以下项目，其他设置保持原值：<ul style="text-align:left;margin:14px 0 0 22px">${summary}</ul>`,
+                () => {
+                    submitting = true;
+                    util.post('/admin/api/commodity/fastEnable', formData, res => {
+                        submitting = false;
+                        if (!controllerActive || !table) return;
+                        layer.close(index);
+                        const count = Number(res.data?.selected_count || data.length);
+                        message.success(`已完成 ${count} 个商品的批量设置`);
+                        table.refresh();
+                    }, error => {
+                        submitting = false;
+                        if (!controllerActive) return;
+                        message.alert(error.msg || '批量设置失败', 'error');
+                    }, () => {
+                        submitting = false;
+                        if (!controllerActive) return;
+                        message.error('网络错误，请稍后重试');
+                    });
+                },
+                '确认批量设置',
+                '确认应用'
+            );
+        };
 
         component.popup({
-            submit: '/admin/api/commodity/fastEnable',
+            submit: useMobileBatchSettings ? submitMobileBatchSettings : '/admin/api/commodity/fastEnable',
             tab: [
                 {
-                    name: util.icon("fa-duotone fa-regular fa-sliders") + " 批量操作",
+                    name: util.icon("fa-duotone fa-regular fa-sliders") + " 批量设置",
                     form: [
                         {
                             title: "",
@@ -1001,57 +1192,7 @@ ACC_JP_6M_0KLD-22MM-PP31║地区:日区·时长:6个月
                             hide: true,
                             default: join
                         },
-                        {
-                            title: "启用API对接",
-                            name: "api_status",
-                            type: "switch",
-                            text: "启用"
-                        },
-                        {
-                            title: "下单密码",
-                            name: "password_status",
-                            type: "switch",
-                            text: "启用"
-                        },
-                        {
-                            title: "优惠卷",
-                            name: "coupon",
-                            type: "switch",
-                            text: "启用"
-                        },
-                        {
-                            title: "隐藏库存",
-                            name: "inventory_hidden",
-                            type: "switch",
-                            text: "启用"
-                        },
-                        {
-                            title: "推荐商品",
-                            name: "recommend",
-                            type: "switch",
-                            text: "启用"
-                        },
-                        {
-                            title: "远端商品开启同步",
-                            name: "shared_sync",
-                            type: "switch",
-                            text: "启用",
-                            tips: "勾选此选项后，检测到如果是远端商品，则会开启此商品的远端信息同步功能"
-                        },
-                        {
-                            title: "远端价格开启同步",
-                            name: "shared_amount_sync",
-                            type: "switch",
-                            text: "启用",
-                            tips: "勾选此选项后，检测到如果是远端商品，则会开启此商品的远端商品价格同步功能"
-                        },
-                        {
-                            title: "远端配置参数开启同步",
-                            name: "shared_config_sync",
-                            type: "switch",
-                            text: "启用",
-                            tips: "勾选此选项后，检测到如果是远端商品，则会开启此商品的远端商品配置参数同步功能"
-                        }
+                        ...batchSettingDefinitions.map(batchSettingForm)
                     ]
                 },
             ],
@@ -1060,14 +1201,27 @@ ACC_JP_6M_0KLD-22MM-PP31║地区:日区·时长:6个月
             width: "320px",
             maxmin: false,
             done: () => {
-                table.refresh();
+                if (controllerActive && table) table.refresh();
             }
         });
     });
 
-    $(document).off("click", ".add-card").on("click", ".add-card", function () {
+    $(document).off('click' + namespace, '.add-card').on('click' + namespace, '.add-card', function () {
         const id = $(this).data("id");
         uploadCard(id);
     });
+
+    function destroy() {
+        if (!controllerActive) return;
+        controllerActive = false;
+        $('.btn-app-create, .delist, .listed, .btn-app-del, .handle').off(namespace);
+        $(document).off(namespace);
+        if (table && !table.isDestroyed && typeof table.destroy === 'function') table.destroy();
+        table = null;
+        if (window.__mdTradeCommodityDestroy === destroy) delete window.__mdTradeCommodityDestroy;
+    }
+
+    window.__mdTradeCommodityDestroy = destroy;
+    $(document).off('pjax:beforeReplace' + namespace).one('pjax:beforeReplace' + namespace, destroy);
 
 }();

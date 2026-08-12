@@ -32,6 +32,7 @@
     }
 
     function _Login() {
+        localStorage.removeItem("manage_token");
         let goto = decodeURIComponent(util.getParam("goto"));
 
         if (goto == "null") {
@@ -58,17 +59,20 @@
                 loader: false,
                 done: res => {
                     btn.textContent = '登录成功！正在跳转…';
-                    localStorage.setItem("manage_token", res?.data?.token);
                     window.location.href = goto;
                 },
                 error: res => {
                     btn.disabled = false;
                     btn.textContent = "确认登入";
+                    const _c = document.getElementById('ay-captcha-img');
+                    if (_c) _c.src = '/user/captcha/image?action=adminLogin&t=' + Date.now();
                     message.error(res.msg);
                 },
                 fail: () => {
                     btn.disabled = false;
                     btn.textContent = "确认登入";
+                    const _c = document.getElementById('ay-captcha-img');
+                    if (_c) _c.src = '/user/captcha/image?action=adminLogin&t=' + Date.now();
                     message.error("网络错误");
                 }
             });

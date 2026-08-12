@@ -1,10 +1,9 @@
 /*!
  * material.js — Material UI theme controller for the acg-faka admin.
  *
- *  - Applies light / dark / auto theme (localStorage 'admin-theme', default 'auto').
+ *  - Admin UI is locked to light theme (does not follow system dark mode).
  *  - Persists the desktop aside state (localStorage 'admin-aside-minimize').
- *  - Drives the topbar switcher (icon button + 3-item menu).
- *  - Follows the OS theme live while in 'auto' (matchMedia).
+ *  - Theme switcher UI is hidden / no-op when present.
  *  - Faithful MUI floating-label state for Layui form fields.
  *
  * Loaded LAST in the footer; jQuery / layui / layer already exist. The inline
@@ -22,22 +21,21 @@
   var mql = window.matchMedia ? window.matchMedia('(prefers-color-scheme: dark)') : null;
   var asideMql = window.matchMedia ? window.matchMedia('(min-width: 992px)') : null;
 
-  /* ---------- theme state ---------- */
+  /* ---------- theme state (forced light) ---------- */
   function getPref() {
-    try { return localStorage.getItem(KEY) || 'auto'; } catch (e) { return 'auto'; }
+    return 'light';
   }
   function resolve(p) {
-    if (p === 'auto') return (mql && mql.matches) ? 'dark' : 'light';
-    return (p === 'dark') ? 'dark' : 'light';
+    return 'light';
   }
   function apply(p) {
-    root.setAttribute('data-theme', resolve(p));
-    root.setAttribute('data-theme-pref', p);
-    syncMenu(p);
+    root.setAttribute('data-theme', 'light');
+    root.setAttribute('data-theme-pref', 'light');
+    syncMenu('light');
   }
   function setPref(p) {
-    try { localStorage.setItem(KEY, p); } catch (e) {}
-    apply(p);
+    try { localStorage.setItem(KEY, 'light'); } catch (e) {}
+    apply('light');
   }
 
   apply(getPref());

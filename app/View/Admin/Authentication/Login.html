@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
     <title>登录 - #{$config.title}</title>
     <link rel="shortcut icon" href="/favicon.ico"/>
-    <script>(function(){try{var p=localStorage.getItem('admin-theme')||'auto';var d=p==='auto'?(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'):p;var e=document.documentElement;e.setAttribute('data-theme',d);e.setAttribute('data-theme-pref',p);}catch(_){document.documentElement.setAttribute('data-theme','light');}})();</script>
+    <script>(function(){try{var e=document.documentElement;e.setAttribute('data-theme','light');e.setAttribute('data-theme-pref','light');try{localStorage.setItem('admin-theme','light');}catch(__){}}catch(_){document.documentElement.setAttribute('data-theme','light');}})();</script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">

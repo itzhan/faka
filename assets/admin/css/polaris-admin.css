@@ -1595,6 +1595,67 @@ a:focus-visible {
 }
 
 /* ================================================================
+   20c. Plugin / store list icons — prevent oversized native images
+   ================================================================ */
+body.shopify-admin .md-plugin {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    max-width: 100%;
+    min-width: 0;
+    vertical-align: middle;
+}
+
+body.shopify-admin .md-plugin__icon,
+body.shopify-admin img.md-plugin__icon,
+body.shopify-admin span.md-plugin__icon {
+    width: 28px !important;
+    height: 28px !important;
+    max-width: 28px !important;
+    max-height: 28px !important;
+    min-width: 28px !important;
+    min-height: 28px !important;
+    flex: 0 0 28px !important;
+    border-radius: 8px !important;
+    object-fit: cover !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    overflow: hidden !important;
+    box-sizing: border-box !important;
+    font-size: 18px !important;
+    line-height: 1 !important;
+    vertical-align: middle !important;
+}
+
+/* bootstrap-table 单元格内图片兜底，避免原图撑破行高 */
+body.shopify-admin .bootstrap-table .fixed-table-body td img,
+body.shopify-admin table.table td img,
+body.shopify-admin #plugin-table img,
+body.shopify-admin .common-item .item-icon {
+    max-width: 36px !important;
+    max-height: 36px !important;
+    width: auto !important;
+    height: auto !important;
+    object-fit: cover !important;
+    border-radius: 8px !important;
+    vertical-align: middle !important;
+}
+
+body.shopify-admin .common-item {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+}
+
+body.shopify-admin .md-plugin__name {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* ================================================================
    21. Sidebar/topbar link color kill-switch
    压过上游 md-components `:root[data-theme] a { color: primary }`
    ================================================================ */

@@ -207,7 +207,7 @@ INSERT INTO `__PREFIX__config` VALUES (1, 'shop_name', '异次元店铺');
 INSERT INTO `__PREFIX__config` VALUES (2, 'title', '异次元店铺 - 最适合你的个人店铺系统！');
 INSERT INTO `__PREFIX__config` VALUES (3, 'description', '');
 INSERT INTO `__PREFIX__config` VALUES (4, 'keywords', '');
-INSERT INTO `__PREFIX__config` VALUES (14, 'user_theme', 'Cartoon');
+INSERT INTO `__PREFIX__config` VALUES (14, 'user_theme', 'Nagoya');
 INSERT INTO `__PREFIX__config` VALUES (5, 'registered_state', '1');
 INSERT INTO `__PREFIX__config` VALUES (6, 'registered_type', '0');
 INSERT INTO `__PREFIX__config` VALUES (7, 'registered_verification', '1');

@@ -90,9 +90,9 @@ abstract class User extends \App\Controller\Base\User
                 }
 
                 if ($theme == "0" || $theme === "" || $theme === null) {
-                    $theme = $cfg['user_theme'] ?: "Nagoya";
+                    $theme = $cfg['user_theme'] ?: "Tokyo";
                 }
-                $theme = $theme ?: "Nagoya";
+                $theme = $theme ?: "Tokyo";
 
                 // 前台主题预览/切换：?theme=Tokyo|Nagoya|Cartoon ，?theme=0 清除预览
                 // 用 cookie 保持翻页/商品详情仍为同一主题，不改动后台默认配置

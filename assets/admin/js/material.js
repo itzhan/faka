@@ -12,6 +12,26 @@
  * both js() arrays / re-run under PJAX is harmless.
  */
 (function () {
+  /* 表格列依赖这两个全局函数。必须放在主题 init 守卫外，
+     避免生产环境 _material.js 先跑、或二次加载时被 return 掉。 */
+  window.mdUserCell = function (item) {
+    if (!item) return '-';
+    var name = item.username == null ? '' : String(item.username);
+    var id = item.id == null ? '' : String(item.id);
+    var av = item.avatar
+      ? '<img src="' + item.avatar + '" class="md-user-cell__avatar" alt="">'
+      : '<span class="md-user-cell__avatar md-user-cell__avatar--ph">' + ((name.charAt(0) || '?').toUpperCase()) + '</span>';
+    return '<div class="md-user-cell">' + av +
+      '<div class="md-user-cell__text"><span class="md-user-cell__name">' + name +
+      '</span><span class="md-user-cell__id">' + id + '</span></div></div>';
+  };
+  window.mdOwnerCell = function (item) {
+    if (!item) {
+      return '<span class="text-success fw-bold">主站</span>';
+    }
+    return window.mdUserCell(item);
+  };
+
   if (window.__mdThemeInit) return;
   window.__mdThemeInit = true;
 

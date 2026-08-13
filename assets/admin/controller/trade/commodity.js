@@ -1,4 +1,17 @@
 !function () {
+    if (typeof window.mdUserCell !== 'function') {
+        window.mdUserCell = function (item) {
+            if (!item) return '-';
+            const name = item.username == null ? '' : String(item.username);
+            const id = item.id == null ? '' : String(item.id);
+            return name || id || '-';
+        };
+    }
+    if (typeof window.mdOwnerCell !== 'function') {
+        window.mdOwnerCell = function (item) {
+            return item ? window.mdUserCell(item) : '<span class="text-success fw-bold">主站</span>';
+        };
+    }
     let table;
     const namespace = '.mdTradeCommodityController';
     let controllerActive = true;

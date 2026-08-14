@@ -368,7 +368,7 @@ class Commodity extends Manage
     {
         $raw = $request->post(flags: Filter::NORMAL);
         $allowed = [
-            'id', 'category_id', 'name', 'description', 'cover', 'factory_price', 'price', 'user_price',
+            'id', 'category_id', 'name', 'description', 'cover', 'detail_image', 'factory_price', 'price', 'user_price',
             'status', 'api_status', 'delivery_way', 'delivery_auto_mode', 'delivery_message', 'contact_type',
             'password_status', 'sort', 'coupon', 'shared_id', 'shared_code', 'shared_premium',
             'shared_premium_type', 'seckill_status', 'seckill_start_time', 'seckill_end_time', 'draft_status',

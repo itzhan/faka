@@ -16,6 +16,7 @@ use Kernel\Exception\JSONException;
  * @property int $category_id
  * @property string $description
  * @property string $cover
+ * @property string $detail_image
  * @property float $factory_price
  * @property float $price
  * @property float $user_price

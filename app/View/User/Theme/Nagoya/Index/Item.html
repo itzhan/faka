@@ -6,8 +6,8 @@
             <div class="nagoya-item-grid">
                 <div class="nagoya-item-media">
                     <div class="nagoya-item-cover-card">
-                        <button type="button" class="nagoya-item-cover-trigger" data-image="#{$item.cover}" data-title="#{$item.name}" aria-label="查看原图">
-                            <img src="#{$item.cover}" alt="#{$item.name}" class="item-cover">
+                        <button type="button" class="nagoya-item-cover-trigger" data-image="#{if $item.detail_image}#{$item.detail_image}#{else}#{$item.cover}#{/if}" data-title="#{$item.name}" aria-label="查看原图">
+                            <img src="#{if $item.detail_image}#{$item.detail_image}#{else}#{$item.cover}#{/if}" alt="#{$item.name}" class="item-cover">
                             <span class="nagoya-item-cover-hint">
                                 <i class="fa-duotone fa-regular fa-expand"></i>
                                 <span>查看原图</span>

@@ -43,13 +43,21 @@
                             parent: false
                         },
                         {
-                            title: "商品图标",
+                            title: "封面图",
                             name: "cover",
                             type: "image",
-                            placeholder: "请选择图标",
+                            placeholder: "列表缩略图 / 商品图标",
                             uploadUrl: '/user/api/upload/send',
                             photoAlbumUrl: '/user/api/upload/get',
                             required: true
+                        },
+                        {
+                            title: "详情图",
+                            name: "detail_image",
+                            type: "image",
+                            placeholder: "商品详情页大图，不传则使用封面图",
+                            uploadUrl: '/user/api/upload/send',
+                            photoAlbumUrl: '/user/api/upload/get'
                         },
                         {
                             title: "商品名称",

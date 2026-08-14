@@ -9,10 +9,10 @@
                         <div class="tokyo-item-cover-card w-100">
                             <button type="button"
                                     class="tokyo-item-cover-trigger"
-                                    data-image="#{$item.cover}"
+                                    data-image="#{if $item.detail_image}#{$item.detail_image}#{else}#{$item.cover}#{/if}"
                                     data-title="#{$item.name}"
                                     aria-label="查看原图">
-                                <img src="#{$item.cover}" alt="#{$item.name}" class="item-cover">
+                                <img src="#{if $item.detail_image}#{$item.detail_image}#{else}#{$item.cover}#{/if}" alt="#{$item.name}" class="item-cover">
                                 <span class="tokyo-item-cover-hint">
                                     <i class="fa-duotone fa-regular fa-expand"></i>
                                     <span>查看原图</span>

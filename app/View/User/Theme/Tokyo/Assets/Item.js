@@ -13,18 +13,7 @@
     }
 
     function syncCoverHeight() {
-        if (!isDesktopViewport()) {
-            $coverCard.css('--tokyo-item-cover-height', '');
-            return;
-        }
-
-        const formHeight = Math.ceil($formWrap.outerHeight() || 0);
-
-        if (formHeight <= 0) {
-            return;
-        }
-
-        $coverCard.css('--tokyo-item-cover-height', `${Math.max(360, formHeight)}px`);
+        $coverCard.css('--tokyo-item-cover-height', 'auto');
     }
 
     function scheduleSync() {

@@ -144,7 +144,7 @@ class Shop implements \App\Service\Shop
             $relation->select(["id", "username", "avatar"]);
         }])
             ->select(["id", "name", "description",
-                "only_user", "purchase_count", "category_id", "cover", "price", "user_price",
+                "only_user", "purchase_count", "category_id", "cover", "detail_image", "price", "user_price",
                 "status", "owner", "delivery_way", "contact_type", "password_status", "level_price",
                 "level_disable", "coupon", "shared_id", "shared_code", "shared_premium", "shared_premium_type", "seckill_status",
                 "seckill_start_time", "seckill_end_time", "draft_status", "draft_premium", "inventory_hidden",
@@ -248,6 +248,9 @@ class Shop implements \App\Service\Shop
 
         if (!$array['cover']) {
             $array['cover'] = "/favicon.ico";
+        }
+        if (empty($array['detail_image'])) {
+            $array['detail_image'] = $array['cover'];
         }
 
         $array['share_url'] = Client::getUrl() . "/item/{$array['id']}";

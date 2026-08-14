@@ -118,7 +118,7 @@
         }));
         const turndown = new global.TurndownService({headingStyle: 'atx', codeBlockStyle: 'fenced', bulletListMarker: '-'});
         // keep media / styling tags markdown can't represent so legacy HTML round-trips visually
-        turndown.keep(['video', 'audio', 'iframe', 'source', 'embed', 'font', 'span', 'sub', 'sup', 'ins', 'del', 's', 'strike', 'mark', 'u', 'small', 'kbd', 'center', 'marquee', 'table', 'style']);
+        turndown.keep(['div', 'section', 'article', 'video', 'audio', 'iframe', 'source', 'embed', 'font', 'span', 'sub', 'sup', 'ins', 'del', 's', 'strike', 'mark', 'u', 'small', 'kbd', 'center', 'marquee', 'table', 'style']);
         const html2md = (html) => {
             try {
                 return turndown.turndown(html ?? '');
@@ -156,10 +156,11 @@
 
         // --- seed: hidden textarea holds canonical HTML; CodeMirror shows the markdown ---
         const rawDefault = (opt.value !== undefined && opt.value !== null) ? opt.value : ($textarea.val() || '');
-        const seedHtml = normalizeDefault(rawDefault);
-        const seedMd = seedHtml ? html2md(seedHtml) : '';
-        $textarea.val(seedHtml);
-        $preview.html(allowRawHtml ? seedHtml : sanitizePreview(seedHtml));
+        let canonicalHtml = normalizeDefault(rawDefault);
+        let seedMd = canonicalHtml ? html2md(canonicalHtml) : '';
+        let markdownDirty = false;
+        $textarea.val(canonicalHtml);
+        $preview.html(allowRawHtml ? canonicalHtml : sanitizePreview(canonicalHtml));
 
         const cmHeight = opt.height ? (Number.isInteger(opt.height) ? opt.height + 'px' : opt.height) : '460px';
         const cm = global.CodeMirror(cmHost, {
@@ -224,17 +225,37 @@
         togglePh();
 
         // --- live render: markdown -> HTML -> hidden textarea + preview (debounced) ---
+        // Custom HTML (classes / cards) cannot survive Turndown+marked. Keep the original
+        // HTML until the author actually edits the Markdown source.
         let rid;
+        const currentMode = () => $editor.attr('data-mode') || 'md';
         const render = () => {
             if (destroyed) return;
+            if (currentMode() === 'html' && aceEditor) {
+                const html = aceEditor.getValue();
+                canonicalHtml = html;
+                $textarea.val(html);
+                $preview.html(allowRawHtml ? html : sanitizePreview(html));
+                opt.onChange && opt.onChange(html);
+                return;
+            }
             const src = cm.getValue();
+            if (!markdownDirty) {
+                $textarea.val(canonicalHtml);
+                $preview.html(allowRawHtml ? canonicalHtml : sanitizePreview(canonicalHtml));
+                togglePh();
+                opt.onChange && opt.onChange(canonicalHtml);
+                return;
+            }
             const html = src.trim() === '' ? '' : md2html(src);
+            canonicalHtml = html;
             $textarea.val(html);
             $preview.html(html);
             togglePh();
             opt.onChange && opt.onChange(html);
         };
         const onMarkdownChange = () => {
+            markdownDirty = cm.getValue() !== seedMd;
             clearTimeout(rid);
             rid = setTimeout(render, 120);
         };
@@ -323,7 +344,10 @@
             const $btn = $(this);
             if ($btn.attr('data-type') == 0) {
                 $btn.attr('data-type', 1).html('<i class="fa-duotone fa-regular fa-pen-paintbrush me-1"></i>' + i18n('写作'));
-                const html = cm.getValue().trim() === '' ? '' : md2html(cm.getValue());
+                const html = markdownDirty
+                    ? (cm.getValue().trim() === '' ? '' : md2html(cm.getValue()))
+                    : canonicalHtml;
+                canonicalHtml = html;
                 $textarea.val(html);
                 $editor.attr('data-mode', 'html');
                 $body.hide();
@@ -335,14 +359,19 @@
                 aceEditor.setValue($textarea.val(), -1);
                 aceEditor.getSession().on('change', () => {
                     const h = aceEditor.getValue();
+                    canonicalHtml = h;
                     $textarea.val(h);
                     $preview.html(h);
                     opt.onChange && opt.onChange(h);
                 });
             } else {
                 $btn.attr('data-type', 0).html('<i class="fa-duotone fa-regular fa-code me-1"></i>HTML');
-                const html = $textarea.val();
-                cm.setValue(html.trim() === '' ? '' : html2md(html));
+                const html = aceEditor ? aceEditor.getValue() : $textarea.val();
+                canonicalHtml = html;
+                seedMd = html.trim() === '' ? '' : html2md(html);
+                markdownDirty = false;
+                cm.setValue(seedMd);
+                $textarea.val(html);
                 $preview.html(html);
                 $('#' + aceId).remove();
                 aceEditor = null;
@@ -405,7 +434,15 @@
                 render();
                 return $textarea.val();
             },
-            setHTML: (h) => { if (!destroyed) cm.setValue((h && normalizeDefault(h)) ? html2md(h) : ''); },
+            setHTML: (h) => {
+                if (destroyed) return;
+                canonicalHtml = normalizeDefault(h);
+                seedMd = canonicalHtml ? html2md(canonicalHtml) : '';
+                markdownDirty = false;
+                cm.setValue(seedMd);
+                $textarea.val(canonicalHtml);
+                $preview.html(allowRawHtml ? canonicalHtml : sanitizePreview(canonicalHtml));
+            },
             destroy: destroy
         };
     }

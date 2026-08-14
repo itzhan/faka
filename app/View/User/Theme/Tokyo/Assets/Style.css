@@ -1740,6 +1740,16 @@ img {
     background: var(--tokyo-bg);
 }
 
+.tokyo-desc-warn {
+    padding: 13px 16px 13px 18px;
+    border: 1px solid #ead7b3;
+    border-radius: 16px;
+    background: #fff7ea;
+    color: #1c2024;
+    font-weight: 700;
+    box-shadow: inset 4px 0 0 #111;
+}
+
 .tokyo-desc-step {
     display: grid;
     grid-template-columns: 36px 1fr;

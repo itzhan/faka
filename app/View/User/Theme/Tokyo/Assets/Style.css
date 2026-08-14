@@ -1636,6 +1636,164 @@ img {
     overflow-wrap: anywhere;
 }
 
+/* ================================================================
+   Product detail content blocks (class-based, survives HTMLPurifier)
+   ================================================================ */
+.tokyo-desc {
+    display: grid;
+    gap: 14px;
+    color: var(--tokyo-text);
+    font-size: 14px;
+    line-height: 1.7;
+}
+
+.tokyo-desc-card {
+    padding: 22px;
+    border: 1px solid var(--tokyo-border);
+    border-radius: 24px;
+    background: var(--tokyo-surface);
+    box-shadow: var(--tokyo-shadow-soft);
+}
+
+.tokyo-desc-kicker {
+    margin: 0 0 8px;
+    color: var(--tokyo-muted);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+}
+
+.tokyo-desc-title {
+    margin: 0 0 10px;
+    color: var(--tokyo-black);
+    font-size: 28px;
+    font-weight: 800;
+    letter-spacing: -.05em;
+    line-height: 1.1;
+}
+
+.tokyo-desc-subtitle {
+    margin: 0 0 12px;
+    color: var(--tokyo-black);
+    font-size: 18px;
+    font-weight: 800;
+    letter-spacing: -.04em;
+}
+
+.tokyo-desc-text {
+    margin: 0 0 16px;
+    color: var(--tokyo-muted);
+}
+
+.tokyo-desc-text:last-child {
+    margin-bottom: 0;
+}
+
+.tokyo-desc-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.tokyo-desc-pill {
+    display: inline-flex;
+    align-items: center;
+    min-height: 28px;
+    padding: 0 10px;
+    border-radius: var(--tokyo-radius-pill);
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.tokyo-desc-pill-ok {
+    background: rgba(26, 162, 81, .1);
+    color: #1aa251;
+}
+
+.tokyo-desc-pill-info {
+    background: rgba(13, 116, 206, .1);
+    color: var(--tokyo-link);
+}
+
+.tokyo-desc-pill-mute {
+    background: var(--tokyo-bg);
+    color: var(--tokyo-muted-strong);
+}
+
+.tokyo-desc-stack {
+    display: grid;
+    gap: 10px;
+}
+
+.tokyo-desc-alert {
+    padding: 12px 14px;
+    border-radius: 16px;
+    background: var(--tokyo-black);
+    color: #fff;
+    font-weight: 700;
+}
+
+.tokyo-desc-note {
+    padding: 12px 14px;
+    border-radius: 16px;
+    background: var(--tokyo-bg);
+}
+
+.tokyo-desc-step {
+    display: grid;
+    grid-template-columns: 36px 1fr;
+    gap: 12px;
+    align-items: start;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--tokyo-border);
+}
+
+.tokyo-desc-step:last-child {
+    border-bottom: 0;
+}
+
+.tokyo-desc-num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 999px;
+    background: var(--tokyo-black);
+    color: #fff;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.tokyo-desc-step b {
+    display: block;
+    margin-bottom: 2px;
+}
+
+.tokyo-desc-step span {
+    color: var(--tokyo-muted);
+}
+
+.tokyo-desc-faq {
+    padding: 14px 16px;
+    border-radius: 16px;
+    background: var(--tokyo-bg);
+}
+
+.tokyo-desc-faq div {
+    margin-top: 4px;
+    color: var(--tokyo-muted);
+}
+
+.tokyo-desc-foot {
+    padding: 16px 18px;
+    border-radius: 16px;
+    background: var(--tokyo-black);
+    color: #fff;
+    font-size: 13px;
+}
+
 .tokyo-description-panel .panel-header {
     justify-content: flex-start;
 }

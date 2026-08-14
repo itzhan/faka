@@ -23,7 +23,7 @@ class Site extends User
             "title" => Config::get("title"),
             "description" => Config::get("description"),
             "keywords" => Config::get("keywords"),
-            "user_theme" => Config::get("user_theme"),
+            "user_theme" => \App\Util\Theme::resolveStorefrontTheme(Config::get("user_theme")),
             "registered_state" => Config::get("registered_state"),
             "notice" => Config::get("notice"),
         ]);

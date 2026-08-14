@@ -39,6 +39,7 @@ class Helper
         if ($theme == "0") {
             $theme = $pc;
         }
+        $theme = Theme::resolveStorefrontTheme($theme);
         return "/app/View/User/Theme/" . $theme . "/{$path}?v=" . Theme::getConfig($theme)["info"]["VERSION"] . (!$debug ? "" : "&debug=" . Str::generateRandStr(16));
     }
 

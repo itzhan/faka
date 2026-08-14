@@ -88,4 +88,43 @@ class Theme
         }
         return $plug;
     }
+
+    /**
+     * 默认模板（Cartoon）实际对照的前台皮肤。
+     * 授权校验会把 user_theme 改回 Cartoon，对照项不会被改回。
+     */
+    public static function resolveStorefrontTheme(?string $theme, ?array $cfg = null): string
+    {
+        $theme = trim((string)$theme);
+        if ($theme === '' || $theme === '0') {
+            $theme = 'Cartoon';
+        }
+        if ($theme !== 'Cartoon') {
+            return $theme;
+        }
+
+        $alias = '';
+        if (is_array($cfg) && array_key_exists('user_theme_alias', $cfg)) {
+            $alias = trim((string)$cfg['user_theme_alias']);
+        } else {
+            try {
+                $alias = trim((string)\App\Model\Config::get('user_theme_alias'));
+            } catch (\Throwable $e) {
+                $alias = '';
+            }
+        }
+
+        if ($alias === '' || $alias === '0') {
+            $alias = 'Tokyo';
+        }
+        if ($alias === 'Cartoon') {
+            return 'Cartoon';
+        }
+        if (!preg_match('/^[A-Za-z][A-Za-z0-9_]{0,63}$/', $alias)
+            || !is_dir(BASE_PATH . '/app/View/User/Theme/' . $alias)
+            || !is_file(BASE_PATH . '/app/View/User/Theme/' . $alias . '/Config.php')) {
+            return 'Cartoon';
+        }
+        return $alias;
+    }
 }

@@ -143,6 +143,25 @@
                             <!--begin::Input group-->
                             <div class="row mb-6">
                                 <!--begin::Label-->
+                                <label class="col-lg-4 col-form-label required fw-bold fs-6">默认模板对照</label>
+                                <!--end::Label-->
+                                <!--begin::Col-->
+                                <div class="col-lg-6 fv-row">
+                                    <select name="user_theme_alias" class="form-select form-select-solid form-select-lg"
+                                            data-control="select2" data-hide-search="true">
+                                        #{foreach $themes as $theme}
+                                            <option value="#{$theme.info.KEY|escape:'html'}" #{if $theme.info.KEY== $config.user_theme_alias || (!$config.user_theme_alias && $theme.info.KEY== 'Tokyo')} selected #{/if}>
+                                                #{$theme.info.NAME|escape:'html'} (v#{$theme.info.VERSION|escape:'html'})
+                                            </option>
+                                        #{/foreach}
+                                    </select>
+                                    <div class="form-text">PC 模板被改回「默认模板」时，前台按这里对照的皮肤显示。选 Tokyo / Nagoya 即可一键切换。</div>
+                                </div>
+                            </div>
+                            <!--end::Input group-->
+                            <!--begin::Input group-->
+                            <div class="row mb-6">
+                                <!--begin::Label-->
                                 <label class="col-lg-4 col-form-label required fw-bold fs-6">PC模板</label>
                                 <!--end::Label-->
                                 <!--begin::Col-->

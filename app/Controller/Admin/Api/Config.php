@@ -40,6 +40,7 @@ class Config extends Manage
         'closed',
         'username_len',
         'user_theme',
+        'user_theme_alias',
         'user_mobile_theme',
         'user_center_theme',
         'user_center_mobile_theme',
@@ -261,6 +262,24 @@ class Config extends Manage
             || !is_dir(BASE_PATH . '/app/View/User/Theme/' . $theme)
             || !is_file(BASE_PATH . '/app/View/User/Theme/' . $theme . '/Config.php')) {
             throw new JSONException('所选网站模板未安装或已损坏');
+        }
+        return $theme;
+    }
+
+    /**
+     * 默认模板对照皮肤：Cartoon 实际渲染 Tokyo/Nagoya，授权改回 Cartoon 后仍生效。
+     * @throws JSONException
+     */
+    private function settingThemeAlias(array $post): string
+    {
+        $theme = trim($this->settingString($post, 'user_theme_alias', 64, true));
+        if ($theme === 'Cartoon' || $theme === '0') {
+            return 'Cartoon';
+        }
+        if (!preg_match('/^[A-Za-z][A-Za-z0-9_]{0,63}$/', $theme)
+            || !is_dir(BASE_PATH . '/app/View/User/Theme/' . $theme)
+            || !is_file(BASE_PATH . '/app/View/User/Theme/' . $theme . '/Config.php')) {
+            throw new JSONException('所选默认模板对照未安装或已损坏');
         }
         return $theme;
     }
@@ -741,6 +760,7 @@ class Config extends Manage
             'background_mobile_url' => $this->settingUrl($post, 'background_mobile_url'),
             'username_len' => $usernameLength,
             'user_theme' => $this->settingTheme($post, 'user_theme'),
+            'user_theme_alias' => $this->settingThemeAlias($post),
             'user_mobile_theme' => $this->settingTheme($post, 'user_mobile_theme', true),
             'user_center_theme' => $this->settingTheme($post, 'user_center_theme'),
             'user_center_mobile_theme' => $this->settingTheme($post, 'user_center_mobile_theme', true),

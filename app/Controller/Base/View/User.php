@@ -90,9 +90,9 @@ abstract class User extends \App\Controller\Base\User
                 }
 
                 if ($theme == "0" || $theme === "" || $theme === null) {
-                    $theme = $cfg['user_theme'] ?: "Tokyo";
+                    $theme = $cfg['user_theme'] ?: "Cartoon";
                 }
-                $theme = $theme ?: "Tokyo";
+                $theme = Theme::resolveStorefrontTheme($theme ?: "Cartoon", $cfg);
 
                 // 仅当 URL 显式带 ?theme= 时临时预览；后台保存的 user_theme 始终优先。
                 // 不再用 cookie 长期覆盖后台设置，避免设置里切换主题看起来“没效果”。

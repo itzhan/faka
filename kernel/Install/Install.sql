@@ -253,6 +253,7 @@ INSERT INTO `__PREFIX__config` VALUES (48, 'user_center_theme', 'MountFuji');
 INSERT INTO `__PREFIX__config` VALUES (49, 'user_center_mobile_theme', '0');
 INSERT INTO `__PREFIX__config` VALUES (50, 'callback_ip_whitelist', '0');
 INSERT INTO `__PREFIX__config` VALUES (51, 'callback_ip_whitelist_rules', '');
+INSERT INTO `__PREFIX__config` VALUES (52, 'user_theme_alias', 'Tokyo');
 
 
 DROP TABLE IF EXISTS `__PREFIX__coupon`;

@@ -54,7 +54,19 @@ class Firewall
 
         // 自定义 HTML 定义
         $config->set('HTML.DefinitionID', 'firewall.html');
-        $config->set('HTML.DefinitionRev', 1);
+        $config->set('HTML.DefinitionRev', 2);
+        $config->set('CSS.AllowedProperties', [
+            'color', 'background', 'background-color', 'background-image',
+            'font', 'font-size', 'font-weight', 'font-style', 'font-family', 'line-height',
+            'letter-spacing', 'text-transform', 'text-align', 'text-decoration',
+            'margin', 'margin-top', 'margin-right', 'margin-bottom', 'margin-left',
+            'padding', 'padding-top', 'padding-right', 'padding-bottom', 'padding-left',
+            'border', 'border-top', 'border-right', 'border-bottom', 'border-left',
+            'border-color', 'border-style', 'border-width', 'border-radius',
+            'width', 'height', 'min-height', 'max-width', 'max-height',
+            'display', 'flex-wrap', 'align-items', 'justify-content', 'gap',
+            'grid-template-columns', 'box-shadow', 'vertical-align', 'white-space',
+        ]);
 
         $config->set('Filter.Custom', [IgnoreStyleTagFilter::make()]);
 

@@ -94,32 +94,19 @@ abstract class User extends \App\Controller\Base\User
                 }
                 $theme = $theme ?: "Tokyo";
 
-                // 前台主题预览/切换：?theme=Tokyo|Nagoya|Cartoon ，?theme=0 清除预览
-                // 用 cookie 保持翻页/商品详情仍为同一主题，不改动后台默认配置
+                // 仅当 URL 显式带 ?theme= 时临时预览；后台保存的 user_theme 始终优先。
+                // 不再用 cookie 长期覆盖后台设置，避免设置里切换主题看起来“没效果”。
                 $previewTheme = trim((string)($_GET['theme'] ?? ''));
                 if ($previewTheme !== '') {
-                    if (in_array($previewTheme, ['0', 'default', 'reset'], true)) {
-                        setcookie('preview_user_theme', '', time() - 3600, '/');
-                        unset($_COOKIE['preview_user_theme']);
-                    } elseif (preg_match('/^[A-Za-z][A-Za-z0-9_-]{0,32}$/', $previewTheme)
+                    if (preg_match('/^[A-Za-z][A-Za-z0-9_-]{0,32}$/', $previewTheme)
                         && is_dir(BASE_PATH . '/app/View/User/Theme/' . $previewTheme)
                         && is_file(BASE_PATH . '/app/View/User/Theme/' . $previewTheme . '/Config.php')) {
                         $theme = $previewTheme;
-                        setcookie('preview_user_theme', $previewTheme, [
-                            'expires' => time() + 86400,
-                            'path' => '/',
-                            'httponly' => false,
-                            'samesite' => 'Lax',
-                        ]);
-                        $_COOKIE['preview_user_theme'] = $previewTheme;
                     }
-                } elseif (!empty($_COOKIE['preview_user_theme'])) {
-                    $cookieTheme = (string)$_COOKIE['preview_user_theme'];
-                    if (preg_match('/^[A-Za-z][A-Za-z0-9_-]{0,32}$/', $cookieTheme)
-                        && is_dir(BASE_PATH . '/app/View/User/Theme/' . $cookieTheme)
-                        && is_file(BASE_PATH . '/app/View/User/Theme/' . $cookieTheme . '/Config.php')) {
-                        $theme = $cookieTheme;
-                    }
+                }
+                if (!empty($_COOKIE['preview_user_theme'])) {
+                    setcookie('preview_user_theme', '', time() - 3600, '/');
+                    unset($_COOKIE['preview_user_theme']);
                 }
             } else {
                 $centerTheme = $cfg['user_center_theme'] ?? "Cartoon";

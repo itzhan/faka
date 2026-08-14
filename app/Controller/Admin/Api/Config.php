@@ -781,7 +781,16 @@ class Config extends Manage
         // Preserve the pre-existing theme/plugin licence validation semantics.
         // This is deliberately not exercised by mobile QA because it may update
         // plugin/theme state according to the remote licence response.
-        _plugin_start($settings['user_theme'], true);
+        if (function_exists('_plugin_start')) {
+            try {
+                _plugin_start($settings['user_theme'], true);
+            } catch (\Throwable $e) {
+                // 内置主题 Tokyo/Nagoya/Cartoon 不走插件授权，失败不应回滚网站设置
+            }
+        }
+        if (!headers_sent()) {
+            setcookie('preview_user_theme', '', time() - 3600, '/');
+        }
         ManageLog::log($this->getManage(), "修改了网站设置");
         return $this->json(200, '保存成功');
     }

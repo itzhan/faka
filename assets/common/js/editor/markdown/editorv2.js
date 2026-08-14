@@ -131,6 +131,10 @@
             const t = String(html).replace(/\s|&nbsp;|<br\s*\/?>|<\/?p>/gi, '');
             return t === '' ? '' : String(html);
         };
+        const looksLikeHtml = (src) => {
+            const s = String(src || '').trim();
+            return /^</.test(s) && /<\/[a-z][\w:-]*>/i.test(s);
+        };
 
         // --- markdown formatting commands (selection wrap / line prefix / snippet) ---
         const applyCmd = (cm, cmd) => {
@@ -240,6 +244,16 @@
                 return;
             }
             const src = cm.getValue();
+            if (looksLikeHtml(src)) {
+                canonicalHtml = src;
+                markdownDirty = false;
+                seedMd = src;
+                $textarea.val(src);
+                $preview.html(allowRawHtml ? src : sanitizePreview(src));
+                togglePh();
+                opt.onChange && opt.onChange(src);
+                return;
+            }
             if (!markdownDirty) {
                 $textarea.val(canonicalHtml);
                 $preview.html(allowRawHtml ? canonicalHtml : sanitizePreview(canonicalHtml));

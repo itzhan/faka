@@ -1729,3 +1729,115 @@ html[data-theme] body.shopify-admin a.sp-topbar-icon:hover,
 html body.shopify-admin a.sp-topbar-icon:hover {
     color: #e3e3e3 !important;
 }
+
+/* ================================================================
+   Product description preview — Tokyo card blocks in EditorV2
+   ================================================================ */
+.ev2-preview .tokyo-desc {
+    display: grid;
+    gap: 14px;
+    color: #1c2024;
+    font-size: 14px;
+    line-height: 1.7;
+}
+.ev2-preview .tokyo-desc-card {
+    padding: 22px;
+    border: 1px solid #e0e1e6;
+    border-radius: 24px;
+    background: #fff;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, .06);
+}
+.ev2-preview .tokyo-desc-kicker {
+    margin: 0 0 8px;
+    color: #60646c;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+}
+.ev2-preview .tokyo-desc-title {
+    margin: 0 0 10px;
+    color: #000;
+    font-size: 28px;
+    font-weight: 800;
+    letter-spacing: -.05em;
+    line-height: 1.1;
+}
+.ev2-preview .tokyo-desc-subtitle {
+    margin: 0 0 12px;
+    color: #000;
+    font-size: 18px;
+    font-weight: 800;
+    letter-spacing: -.04em;
+}
+.ev2-preview .tokyo-desc-text {
+    margin: 0 0 16px;
+    color: #60646c;
+}
+.ev2-preview .tokyo-desc-text:last-child { margin-bottom: 0; }
+.ev2-preview .tokyo-desc-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+.ev2-preview .tokyo-desc-pill {
+    display: inline-flex;
+    align-items: center;
+    min-height: 28px;
+    padding: 0 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 700;
+}
+.ev2-preview .tokyo-desc-pill-ok { background: rgba(26, 162, 81, .1); color: #1aa251; }
+.ev2-preview .tokyo-desc-pill-info { background: rgba(13, 116, 206, .1); color: #0d74ce; }
+.ev2-preview .tokyo-desc-pill-mute { background: #f0f0f3; color: #555860; }
+.ev2-preview .tokyo-desc-stack { display: grid; gap: 10px; }
+.ev2-preview .tokyo-desc-alert {
+    padding: 12px 14px;
+    border-radius: 16px;
+    background: #111;
+    color: #fff;
+    font-weight: 700;
+}
+.ev2-preview .tokyo-desc-note {
+    padding: 12px 14px;
+    border-radius: 16px;
+    background: #f0f0f3;
+}
+.ev2-preview .tokyo-desc-step {
+    display: grid;
+    grid-template-columns: 36px 1fr;
+    gap: 12px;
+    align-items: start;
+    padding: 12px 0;
+    border-bottom: 1px solid #e0e1e6;
+}
+.ev2-preview .tokyo-desc-step:last-child { border-bottom: 0; }
+.ev2-preview .tokyo-desc-num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 999px;
+    background: #111;
+    color: #fff;
+    font-size: 12px;
+    font-weight: 700;
+}
+.ev2-preview .tokyo-desc-step b { display: block; margin-bottom: 2px; }
+.ev2-preview .tokyo-desc-step span { color: #60646c; }
+.ev2-preview .tokyo-desc-faq {
+    padding: 14px 16px;
+    border-radius: 16px;
+    background: #f0f0f3;
+}
+.ev2-preview .tokyo-desc-faq div { margin-top: 4px; color: #60646c; }
+.ev2-preview .tokyo-desc-foot {
+    padding: 16px 18px;
+    border-radius: 16px;
+    background: #111;
+    color: #fff;
+    font-size: 13px;
+}

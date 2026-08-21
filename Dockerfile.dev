@@ -17,6 +17,7 @@ RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
     gd \
     zip \
     curl \
+    bcmath \
     opcache
 
 # 安装 Redis 扩展（用于 session 存储，消除文件锁瓶颈）

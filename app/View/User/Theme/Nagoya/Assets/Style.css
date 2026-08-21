@@ -1029,17 +1029,18 @@ img {
     flex-direction: column;
 }
 
+/* 封面按图片自身比例完整展示，不再固定 180px 高裁切 */
 .nagoya-product-visual {
     display: block;
-    flex: 0 0 180px;
+    flex: none;
     overflow: hidden;
     background: #eef0f4;
 }
 
 .nagoya-product-visual img {
+    display: block;
     width: 100%;
-    height: 100%;
-    object-fit: cover;
+    height: auto;
 }
 
 .nagoya-product-copy {

@@ -1,0 +1,80 @@
+<div class="tokyo-desc">
+
+  <div class="tokyo-desc-card">
+    <div class="tokyo-desc-kicker">Official Recharge</div>
+    <h2 class="tokyo-desc-title">菲区官方正规卡充</h2>
+    <p class="tokyo-desc-text">本商品为 GPT Plus 自助充值卡密。兑换成功后可获得一个月 ChatGPT Plus，官方价 20 美元。24 小时自动充值，预计 1–3 分钟到账。</p>
+    <div class="tokyo-desc-pills">
+      <span class="tokyo-desc-pill tokyo-desc-pill-ok">秒冲到账</span>
+      <span class="tokyo-desc-pill tokyo-desc-pill-info">同步官方售后</span>
+      <span class="tokyo-desc-pill tokyo-desc-pill-mute">当天使用</span>
+    </div>
+  </div>
+
+  <div class="tokyo-desc-card">
+    <div class="tokyo-desc-kicker">Risk</div>
+    <h3 class="tokyo-desc-subtitle">使用提醒</h3>
+    <div class="tokyo-desc-stack">
+      <div class="tokyo-desc-warn">不支持覆盖，不支持覆盖，不支持覆盖</div>
+      <div class="tokyo-desc-warn">账号必须是未订阅状态 / 免费版才可充值</div>
+      <div class="tokyo-desc-warn">小众邮箱容易掉订阅，建议使用谷歌邮箱</div>
+      <div class="tokyo-desc-warn">原账号若是 GPT Pro，Plus 无法覆盖。请换新号，或等 Pro 到期后再充</div>
+    </div>
+  </div>
+
+  <div class="tokyo-desc-card">
+    <div class="tokyo-desc-kicker">Before You Buy</div>
+    <h3 class="tokyo-desc-subtitle">下单前必读</h3>
+    <p class="tokyo-desc-text">以下条款请确认接受后再拍，任意一条不能接受都不建议购买。</p>
+    <div class="tokyo-desc-stack">
+      <div class="tokyo-desc-step">
+        <span class="tokyo-desc-num">01</span>
+        <div><b>需已有 GPT 账号</b><span>没有账号无法使用。</span></div>
+      </div>
+      <div class="tokyo-desc-step">
+        <span class="tokyo-desc-num">02</span>
+        <div><b>账号需为个人版</b><span>加入过 Team 空间，请先切回个人版再获取 Token，否则可能充值失败。</span></div>
+      </div>
+      <div class="tokyo-desc-step">
+        <span class="tokyo-desc-num">03</span>
+        <div><b>接受不退不换</b><span>卡密售出后，除非卡密无法兑换，否则不退不换。</span></div>
+      </div>
+      <div class="tokyo-desc-step">
+        <span class="tokyo-desc-num">04</span>
+        <div><b>当天购买、当天使用</b><span>不建议囤货。囤货多天后再反馈无法使用，不支持退款。</span></div>
+      </div>
+      <div class="tokyo-desc-step">
+        <span class="tokyo-desc-num">05</span>
+        <div><b>不建议微软邮箱</b><span>微软邮箱更容易风控，建议使用谷歌邮箱。</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tokyo-desc-card">
+    <div class="tokyo-desc-kicker">Support</div>
+    <h3 class="tokyo-desc-subtitle">常见问题</h3>
+    <div class="tokyo-desc-stack">
+      <div class="tokyo-desc-faq">
+        <b>兑换失败</b>
+        <div>继续重试，或等待 30 分钟后再试。</div>
+      </div>
+      <div class="tokyo-desc-faq">
+        <b>充值成功但未显示 Plus</b>
+        <div>退出账号后重新登录 GPT。</div>
+      </div>
+      <div class="tokyo-desc-faq">
+        <b>网页版看不到 Plus 模型</b>
+        <div>使用浏览器无痕模式重新登录。</div>
+      </div>
+      <div class="tokyo-desc-faq">
+        <b>Codex 额度未刷新</b>
+        <div>属于官方延迟。等待 30 分钟后重新登录 Codex，随意提问一次即可激活。</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tokyo-desc-foot">
+    拍下即默认已阅读并接受以上全部条款。由于官方风控或渠道规则变化，兑换方式可能随时失效，请即买即用。当天无法使用请当天反馈。
+  </div>
+
+</div>

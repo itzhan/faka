@@ -31,6 +31,17 @@
     }
     return window.mdUserCell(item);
   };
+  /* 游客单元格（上游 3.6.0 的 trade/order.js 会调用）：无 item.user 的游客订单
+     显示联系方式 + 「游客」标签。i18n 不存在时退回原文。 */
+  window.mdGuestCell = function (contact) {
+    var t = function (s) { return window.i18n ? i18n(s) : s; };
+    var raw = contact == null ? '' : String(contact).trim();
+    var esc = raw.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
+    return '<div class="md-user-cell md-guest-cell"><span class="md-guest-cell__avatar"><i class="fa-duotone fa-regular fa-user"></i></span><div class="md-user-cell__text">' +
+      (raw === '' ? '<span class="md-guest-cell__empty">' + t('未留联系方式') + '</span>'
+                  : '<span class="md-guest-cell__contact" title="' + esc + '">' + esc + '</span>') +
+      '<span class="md-guest-cell__tag">' + t('游客') + '</span></div></div>';
+  };
 
   if (window.__mdThemeInit) return;
   window.__mdThemeInit = true;
@@ -268,6 +279,17 @@
       $(this).select2({ width: '100%', minimumResultsForSearch: Infinity });
     });
   }
+
+  /* 上游 3.6.0 的 config/index.js 保存主题后会调它重建下拉 */
+  window.mdReinitSettingsSelect2 = function (names) {
+    var $ = window.jQuery;
+    if (!$ || !$.fn || !$.fn.select2) return;
+    (names || []).forEach(function (name) {
+      var sel = $('.md-settings select[name="' + name + '"][data-control="select2"]');
+      if (sel.length && sel.hasClass('select2-hidden-accessible')) sel.select2('destroy');
+    });
+    initSettingsSelect2();
+  };
 
   /* reusable MUI user cell (avatar-left + name-top / id-below) for table columns.
    * Exposed globally so per-page controllers (loaded individually in prod) can use it

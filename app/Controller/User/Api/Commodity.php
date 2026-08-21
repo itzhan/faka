@@ -114,6 +114,13 @@ class Commodity extends User
             throw new JSONException("商品单价不能低于0元哦(｡￫‿￩｡)");
         }
 
+        // widget 来自表单的 widget 组件，提交前恒做 encodeURIComponent（防输入清洗层伤 JSON）。
+        // 旧版靠清洗层的隐式二次 urldecode 还原，清洗层修正（#833）后在消费点显式解码，
+        // 与后台商品保存、插件/主题配置保存的惯例一致。
+        if (isset($map['widget']) && is_string($map['widget'])) {
+            $map['widget'] = urldecode($map['widget']);
+        }
+
         //create new
         if ($isCreate) {
             unset($map['id']);
@@ -161,6 +168,11 @@ class Commodity extends User
         //解析配置文件
         if (array_key_exists('config', $map) && $map['config'] !== '') {
             Ini::toArray((string)$map['config']);
+        }
+
+        //校验会员等级独立配置，脏数据入库会导致登录用户的商品列表整体报错
+        if (array_key_exists('level_price', $map) && $map['level_price'] !== '') {
+            \App\Model\Commodity::validateLevelPrice((string)$map['level_price']);
         }
 
         $save = new Save(\App\Model\Commodity::class);

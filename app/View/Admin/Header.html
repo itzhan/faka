@@ -186,6 +186,12 @@
                         </a>
                     </li>
                     <li class="sp-nav-item">
+                        <a href="/admin/store/priceTemplate" class="sp-nav-link #{if $title == '加价模板'}sp-active#{/if}">
+                            <span class="sp-nav-icon"><svg viewBox="0 0 20 20" width="20" height="20"><path d="M11 2H4a2 2 0 0 0-2 2v7l9 9 7-7-7-11zM6.5 8A1.5 1.5 0 1 1 8 6.5 1.5 1.5 0 0 1 6.5 8z" fill="currentColor"/></svg></span>
+                            <span class="sp-nav-text">加价模板</span>
+                        </a>
+                    </li>
+                    <li class="sp-nav-item">
                         <a href="/admin/cash/index" class="sp-nav-link #{if $title == '提现管理'}sp-active#{/if}">
                             <span class="sp-nav-icon"><svg viewBox="0 0 20 20" width="20" height="20"><path d="M5 4a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2H5zm5 8a2 2 0 1 1 0-4 2 2 0 0 1 0 4z" fill="currentColor"/></svg></span>
                             <span class="sp-nav-text">提现管理</span>
@@ -212,9 +218,15 @@
                         </a>
                     </li>
                     <li class="sp-nav-item">
-                        <a href="/admin/pay/plugin" class="sp-nav-link #{if in_array($title,['支付插件','支付设置'])}sp-active#{/if}">
+                        <a href="/admin/pay/plugin" class="sp-nav-link #{if $title == '支付插件'}sp-active#{/if}">
                             <span class="sp-nav-icon"><svg viewBox="0 0 20 20" width="20" height="20"><path d="M4 4a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2H4zm0 4h12v2H4V8z" fill="currentColor"/></svg></span>
                             <span class="sp-nav-text">支付管理</span>
+                        </a>
+                    </li>
+                    <li class="sp-nav-item">
+                        <a href="/admin/pay/index" class="sp-nav-link #{if $title == '支付设置'}sp-active#{/if}">
+                            <span class="sp-nav-icon"><svg viewBox="0 0 20 20" width="20" height="20"><path d="M2 6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6zm2 3v2h4V9H4zm0 4v1h6v-1H4zm10-4a2 2 0 1 0 0 4 2 2 0 0 0 0-4z" fill="currentColor"/></svg></span>
+                            <span class="sp-nav-text">支付接口</span>
                         </a>
                     </li>
 
@@ -258,6 +270,11 @@
                     <a href="/admin/config/index" class="sp-nav-link sp-settings-link #{if in_array($title, ['网站设置' , '短信设置' , '邮箱设置' , '其他设置'])}sp-active#{/if}">
                         <span class="sp-nav-icon"><svg viewBox="0 0 20 20" width="20" height="20"><path d="M10 13a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm7.6-1.6l-1.2-.7c.1-.4.1-.9 0-1.4l1.2-.7c.2-.2.3-.5.2-.8l-.8-1.4c-.2-.3-.5-.4-.8-.3L15 7l-1-1 .5-1.2c.1-.3 0-.6-.3-.8L12.8 3c-.3-.2-.6-.1-.8.2l-.7 1.2c-.4-.1-.9-.1-1.4 0L9.2 3.2C9 3 8.7 2.9 8.4 3l-1.4.8c-.3.2-.4.5-.3.8L7.2 6l-1 1-1.2-.5c-.3-.1-.6 0-.8.3L3.4 8.2c-.2.3-.1.6.2.8L4.8 9.7c-.1.4-.1.9 0 1.4l-1.2.7c-.2.2-.3.5-.2.8l.8 1.4c.2.3.5.4.8.3l1.2-.5 1 1-.5 1.2c-.1.3 0 .6.3.8l1.4.8c.3.2.6.1.8-.2l.7-1.2c.4.1.9.1 1.4 0l.7 1.2c.2.2.5.3.8.2l1.4-.8c.3-.2.4-.5.3-.8L14.8 14l1-1 1.2.5c.3.1.6 0 .8-.3l.8-1.4c.2-.3.1-.6-.2-.8z" fill="currentColor"/></svg></span>
                         <span class="sp-nav-text">设置</span>
+                    </a>
+
+                    <a href="/admin/lang/index" class="sp-nav-link #{if $title == '语言翻译'}sp-active#{/if}">
+                        <span class="sp-nav-icon"><svg viewBox="0 0 20 20" width="20" height="20"><path d="M10 2a8 8 0 1 0 0 16 8 8 0 0 0 0-16zM4 10c0-.5.06-1 .17-1.5H7a15 15 0 0 0 0 3H4.17A6 6 0 0 1 4 10zm5-6v2.5H7.6A9.6 9.6 0 0 1 9 4zm2 0a9.6 9.6 0 0 1 1.4 2.5H11V4zM9 8.5v3H7.2a13 13 0 0 1 0-3H9zm2 0h1.8a13 13 0 0 1 0 3H11v-3zM9 13.5V16a9.6 9.6 0 0 1-1.4-2.5H9zm2 2.5v-2.5h1.4A9.6 9.6 0 0 1 11 16zm2.83-4.5H15.83c.11.5.17 1 .17 1.5s-.06 1-.17 1.5H13a15 15 0 0 0 0-3z" fill="currentColor"/></svg></span>
+                        <span class="sp-nav-text">语言翻译</span>
                     </a>
 
                     <div class="sp-version-info">

@@ -137,6 +137,17 @@ class Firewall
             $def->addAttribute('a', 'target', 'Text');
             $def->addAttribute('img', 'width', 'Text');
             $def->addAttribute('img', 'height', 'Text');
+
+            //富文本常用的HTML5语义标签，本身无脚本能力，纳入白名单，避免商品介绍/公告排版被拆壳(#775)
+            foreach (['section', 'article', 'aside', 'nav', 'header', 'footer', 'main', 'figure', 'figcaption'] as $html5Block) {
+                $def->addElement($html5Block, 'Block', 'Flow', 'Common');
+            }
+            $def->addElement('details', 'Block', 'Flow', 'Common', ['open' => 'Bool#open']);
+            $def->addElement('summary', 'Block', 'Inline', 'Common');
+            $def->addElement('mark', 'Inline', 'Inline', 'Common');
+            $def->addElement('time', 'Inline', 'Inline', 'Common', ['datetime' => 'Text']);
+            //仅允许纯装饰按钮，type限定button，防止嵌入页面表单被意外提交
+            $def->addElement('button', 'Inline', 'Flow', 'Common', ['type' => 'Enum#button', 'disabled' => 'Bool#disabled']);
         }
 
 
@@ -193,6 +204,12 @@ class Firewall
 
 
     /**
+     * 输入在 PHP 解析请求时已经完成 URL 解码，这里绝不能再 urldecode 一次：
+     * 用户字面输入的 %20/%2B/%25 等会被二次解码改写，全站所有表单字段
+     * （查单密码、联系方式、自定义控件）都因此失真（#833）。
+     * 统一走 xssKillerLiteral 的处理：照常用 HTMLPurifier 清 XSS，
+     * 但保住裸 &，避免入库变成 &amp;。
+     *
      * @param string $input
      * @return mixed
      * @throws \HTMLPurifier_Exception
@@ -200,16 +217,7 @@ class Firewall
      */
     private function getCache(string $input): mixed
     {
-        /*       $hash = "firewall:" . $input;
-               $cache = $this->cache->get($hash);
-               if ($cache) {
-                   return $cache;
-               }*/
-
-        $this->HTMLPurifierInit();
-        return $this->HTMLPurifier->purify(urldecode(str_replace("+", "%2B", $input)));
-        //  $this->cache->set($hash, $input);
-        //return $input;
+        return $this->xssKillerLiteral($input);
     }
 
     /**
@@ -245,6 +253,34 @@ class Firewall
         $escapedAmpersands = str_replace('&', '&amp;', $input);
         $cleaned = $this->HTMLPurifier->purify($escapedAmpersands);
         return str_replace('&amp;', '&', $cleaned);
+    }
+
+    /**
+     * 旧版清洗管线（3.5.8 及以前）：对已解码的输入再做一次 urldecode，
+     * 并且 HTMLPurifier 会把裸 & 实体化为 &amp;。
+     * 仅供比对旧版本入库的历史数据（订单查询密码、账号密码哈希）时
+     * 重放当年的转义形态使用，严禁用于新数据入库。
+     *
+     * @param mixed $input
+     * @return mixed
+     * @throws \HTMLPurifier_Exception
+     * @throws \ReflectionException
+     */
+    public function xssKillerLegacy(mixed $input): mixed
+    {
+        if (is_array($input)) {
+            $cleanedArray = [];
+            foreach ($input as $key => $value) {
+                $cleanedArray[$key] = $this->xssKillerLegacy($value);
+            }
+            return $cleanedArray;
+        }
+        if (!is_string($input)) {
+            return $input;
+        }
+
+        $this->HTMLPurifierInit();
+        return $this->HTMLPurifier->purify(urldecode(str_replace("+", "%2B", $input)));
     }
 
     /**

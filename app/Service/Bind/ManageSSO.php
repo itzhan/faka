@@ -22,13 +22,21 @@ class ManageSSO implements \App\Service\ManageSSO
 {
 
     /**
+     * 账号已绑定谷歌验证器但本次未提交动态码：前端据此弹出谷歌验证码输入框。
+     * 仅在邮箱+密码验证通过后抛出，不向未授权者泄露 2FA 开启状态
+     */
+    public const CODE_NEED_TOTP = 42001;
+
+    /**
      * @param string $username
      * @param string $password
      * @param bool $remember
+     * @param string $code
+     * @param string|null $rawPassword 未清洗的原始密码输入，用于旧清洗管线的兼容比对（#833）
      * @return array
      * @throws JSONException
      */
-    public function login(string $username, string $password, bool $remember = false, string $code = ''): array
+    public function login(string $username, string $password, bool $remember = false, string $code = '', ?string $rawPassword = null): array
     {
         $failedAudit = null;
         try {
@@ -37,6 +45,7 @@ class ManageSSO implements \App\Service\ManageSSO
                 $password,
                 $remember,
                 $code,
+                $rawPassword,
                 &$failedAudit
             ): array {
                 // Lock the account through verification and session creation. A
@@ -46,15 +55,23 @@ class ManageSSO implements \App\Service\ManageSSO
                 if (!$manage) {
                     throw new JSONException("该邮箱不存在");
                 }
-                if (!hash_equals((string)$manage->password, Str::generatePassword($password, $manage->salt))) {
+                //verifyPassword 内含旧清洗管线的兼容比对（#833）
+                if (!Str::verifyPassword((string)$manage->password, (string)$manage->salt, $password, $rawPassword)) {
                     $failedAudit = [$manage, "登录失败：密码错误"];
                     throw new JSONException("密码错误");
                 }
 
                 //谷歌验证器：已绑定则必须校验动态码（密码通过后才校验，避免暴露 2FA 是否开启）
-                if (!empty($manage->google_secret) && !\App\Util\Totp::verify((string)$manage->google_secret, $code)) {
-                    $failedAudit = [$manage, "登录失败：谷歌验证码错误"];
-                    throw new JSONException("谷歌验证码错误");
+                if (!empty($manage->google_secret)) {
+                    if (trim($code) === '') {
+                        //未提交动态码：用专属 code 通知前端弹出输入框（密码正确却无码也值得留痕）
+                        $failedAudit = [$manage, "登录待验证：密码正确，等待谷歌验证码"];
+                        throw new JSONException("该账号已开启两步验证，请输入谷歌验证码", self::CODE_NEED_TOTP);
+                    }
+                    if (!\App\Util\Totp::verify((string)$manage->google_secret, $code)) {
+                        $failedAudit = [$manage, "登录失败：谷歌验证码错误"];
+                        throw new JSONException("谷歌验证码错误");
+                    }
                 }
 
                 if ($manage->status != 1) {
@@ -119,6 +136,12 @@ class ManageSSO implements \App\Service\ManageSSO
             'samesite' => 'Lax',              //防 CSRF：跨站请求不携带后台会话
             'secure' => (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off'),
         ]);
+
+        //登录成功通知点位（会话已签发；钩子异常不影响登录结果）
+        try {
+            hook(\App\Consts\Hook::ADMIN_API_AUTH_LOGIN_AFTER, $login['manage']);
+        } catch (\Throwable $e) {
+        }
 
         return ["username" => $login['manage']->email, "avatar" => $login['manage']->avatar];
     }

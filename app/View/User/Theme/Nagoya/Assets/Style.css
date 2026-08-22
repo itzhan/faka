@@ -2602,6 +2602,12 @@ img {
         border-radius: 14px;
     }
 
+    /* 基础样式改为 height:auto 后，74px 方形小图需要显式恢复居中裁切 */
+    .nagoya-product-visual img {
+        height: 100%;
+        object-fit: cover;
+    }
+
     .nagoya-product-copy {
         display: flex;
         flex-direction: column;

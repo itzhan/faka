@@ -1,5 +1,4 @@
 import type { Commodity } from "@/lib/api";
-import { LEGACY_BASE } from "@/lib/site";
 
 function formatPrice(value: number): string {
   return value % 1 === 0 ? String(value) : value.toFixed(2);
@@ -29,7 +28,7 @@ const TAG_STYLE: Record<string, string> = {
 export default function ProductCard({ item }: { item: Commodity }) {
   const soldOut = item.stock <= 0 || item.stock_state === 0;
   const stock = STOCK_LABEL[item.stock_state] ?? STOCK_LABEL[3];
-  const detailUrl = `${LEGACY_BASE}/item/${item.id}`;
+  const detailUrl = `/item/${item.id}`;
   const hasDiscount = item.user_price < item.price;
 
   return (

@@ -13,7 +13,7 @@ export const SITE = {
 
 export const NAV_LINKS = [
   { label: "商城", href: "/" },
-  { label: "查单", href: `${LEGACY_BASE}/user/index/query` },
+  { label: "查单", href: "/query" },
   { label: "订单", href: `${LEGACY_BASE}/user/personal/purchaseRecord` },
   { label: "教程", href: "#faq" },
 ];
@@ -32,7 +32,7 @@ export const COMMUNITY_LINKS = [
 
 export const HERO_ACTIONS = {
   browse: { label: "查看商品", href: "#products" },
-  query: { label: "查询订单", href: `${LEGACY_BASE}/user/index/query` },
+  query: { label: "查询订单", href: "/query" },
   agent: { label: "代理合作", href: "#" },
 };
 
@@ -88,7 +88,7 @@ export const FOOTER_COLUMNS = [
     title: "帮助中心",
     links: [
       { label: "常见问题", href: "#faq" },
-      { label: "查单", href: `${LEGACY_BASE}/user/index/query` },
+      { label: "查单", href: "/query" },
       { label: "订单", href: `${LEGACY_BASE}/user/personal/purchaseRecord` },
       { label: "联系客服", href: "#" },
     ],

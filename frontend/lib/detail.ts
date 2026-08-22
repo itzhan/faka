@@ -19,6 +19,17 @@ export interface CommodityDetail {
   tags: { text: string; color: string }[];
   service_url: string;
   share_url: string;
+  /** {category?: {race: price}, sku?: {group: {option: addPrice}}} 或空数组 */
+  config: { category?: Record<string, number>; sku?: Record<string, Record<string, number>> } | unknown[];
+  widget: { name: string; title?: string; label?: string }[];
+  contact_type: number; // 0=任意 1=手机 2=邮箱 3=QQ
+  password_status: number;
+  trade_captcha: number;
+  coupon: number;
+  minimum: number;
+  maximum: number;
+  draft_status: number;
+  login: boolean;
 }
 
 export async function getCommodityDetail(

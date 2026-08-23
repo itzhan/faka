@@ -19,8 +19,8 @@ export const NAV_LINKS = [
 ];
 
 export const AUTH_LINKS = {
-  login: `${LEGACY_BASE}/user/authentication/login`,
-  register: `${LEGACY_BASE}/user/authentication/register`,
+  login: "/login",
+  register: "/register",
 };
 
 /** 社群按钮(占位链接,上线前替换) */

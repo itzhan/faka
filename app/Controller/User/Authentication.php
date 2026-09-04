@@ -80,6 +80,7 @@ class Authentication extends User
     public function logout(): void
     {
         setcookie(\App\Consts\User::SESSION, "", time() - 3600, "/");
-        Client::redirect("/user/authentication/login", "注销成功", 1);
+        header('Location: ' . Client::getStorefrontUrl() . '/login', true, 302);
+        exit;
     }
 }

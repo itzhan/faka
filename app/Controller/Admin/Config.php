@@ -22,6 +22,7 @@ class Config extends Manage
         ["name" => "👹 短信设置", "url" => "/admin/config/sms"],
         ["name" => "👺 邮箱设置", "url" => "/admin/config/email"],
         ["name" => "🛡️ 其他设置", "url" => "/admin/config/other"],
+        ["name" => "💬 社群设置", "url" => "/admin/config/community"],
     ];
 
     /**
@@ -143,6 +144,21 @@ class Config extends Manage
                 CallbackIpWhitelist::ENABLED_CONFIG => \App\Model\Config::get(CallbackIpWhitelist::ENABLED_CONFIG),
                 CallbackIpWhitelist::RULES_CONFIG => \App\Model\Config::get(CallbackIpWhitelist::RULES_CONFIG),
             ],
+        ]);
+    }
+
+    /**
+     * @return string
+     * @throws ViewException
+     */
+    public function community(): string
+    {
+        $groups = \App\Util\Community::decode(\App\Model\Config::get("community_groups"));
+        $json = json_encode($groups, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+        return $this->render("社群设置", "Config/Community.html", [
+            "toolbar" => $this->TOOLBAR,
+            "community_json" => is_string($json) ? $json : "[]",
+            "community_types" => \App\Util\Community::TYPES,
         ]);
     }
 }

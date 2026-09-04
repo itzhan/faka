@@ -903,6 +903,29 @@ class Config extends Manage
         return $this->json(200, '保存成功');
     }
 
+    /**
+     * @return array
+     * @throws JSONException
+     */
+    public function community(): array
+    {
+        $map = $this->configPost(['groups'], '社群设置');
+        $raw = $this->configString($map, 'groups', 60000, '社群列表');
+        $decoded = json_decode($raw, true);
+        $groups = \App\Util\Community::normalizeSave($decoded);
+        $encoded = json_encode($groups, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+        if (!is_string($encoded)) {
+            throw new JSONException('社群列表保存失败');
+        }
+        try {
+            CFG::put('community_groups', $encoded);
+        } catch (\Throwable $e) {
+            throw new JSONException('保存失败，请检查原因');
+        }
+        ManageLog::log($this->getManage(), "修改了社群设置");
+        return $this->json(200, '保存成功', $groups);
+    }
+
 
     /**
      * @return array

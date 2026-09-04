@@ -70,13 +70,15 @@ def faqs(items):
     )
 
 
-COMMON_STEPS = [
-    ('需已有 GPT 账号', '没有账号无法使用。'),
-    ('账号需为个人版', '加入过 Team 空间，请先切回个人版再获取 Token，否则可能充值失败。'),
-    ('接受不退不换', '卡密售出后，除非卡密无法兑换，否则不退不换。'),
-    ('当天购买、当天使用', '不建议囤货。囤货多天后再反馈无法使用，不支持退款。'),
-    ('不建议微软邮箱', '微软邮箱更容易风控，建议使用谷歌邮箱。'),
-]
+EMAIL_STEP = ('建议谷歌邮箱', '微软 / 小众邮箱更容易风控、掉订阅。')
+REFUND_STEP = (
+    '不退不换，当天使用',
+    '卡密售出后，除非无法兑换，否则不退不换。当天买当天用，囤货后无法使用不支持退款。',
+)
+PERSONAL_ACCOUNT_STEP = (
+    '账号要求',
+    '需已有 GPT 个人账号。加入过 Team 空间，请先切回个人版再获取 Token。',
+)
 
 COMMON_FAQS = [
     ('兑换失败', '继续重试，或等待 30 分钟后再试。'),
@@ -86,6 +88,14 @@ COMMON_FAQS = [
 ]
 
 NOTICE = '拍下即默认已阅读并接受以下全部条款。由于官方风控或渠道规则变化，兑换方式可能随时失效，请即买即用。当天无法使用请当天反馈。'
+
+
+def buy_notice(items):
+    return f"""  <div class="gpt-plus-card">
+    <div class="gpt-plus-kicker">Before You Buy</div>
+    <div class="gpt-plus-subtitle">下单前必读</div>
+    {steps(items)}
+  </div>"""
 
 
 def wrap(body):
@@ -99,24 +109,24 @@ def fei_plus_html():
     <div class="gpt-plus-kicker">Official Recharge</div>
     <div class="gpt-plus-title">菲区官方正规卡充</div>
     <div class="gpt-plus-text">本商品为 GPT Plus 自助充值卡密。兑换成功后可获得一个月 ChatGPT Plus，官方价 20 美元。24 小时自动充值，预计 1–3 分钟到账。</div>
-    {pills([('秒冲到账', 'ok'), ('同步官方售后', 'info'), ('当天使用', 'mute')])}
+    {pills([('秒冲到账', 'ok'), ('质保一个月', 'info'), ('当天使用', 'mute')])}
   </div>
   <div class="gpt-plus-card">
-    <div class="gpt-plus-kicker">Risk</div>
-    <div class="gpt-plus-subtitle">使用提醒</div>
+    <div class="gpt-plus-kicker">Warranty</div>
+    <div class="gpt-plus-subtitle">质保规则</div>
     {points([
-        '不支持覆盖，不支持覆盖，不支持覆盖',
-        '账号必须是未订阅状态 / 免费版才可充值',
-        '小众邮箱容易掉订阅，建议使用谷歌邮箱',
-        '原账号若是 GPT Pro，Plus 无法覆盖。请换新号，或等 Pro 到期后再充',
+        '质保一个月不掉订阅。不质保封号情况。',
+        '如一个月内出现掉订阅，可按剩余天数退差价。',
+        '封号问题 99% 为用户自身使用环境或账号本身风控导致，封号不在售后范围内。',
+        '建议使用干净稳定的 IP 环境，不要多人共享或频繁切换地区登录。',
     ])}
   </div>
-  <div class="gpt-plus-card">
-    <div class="gpt-plus-kicker">Before You Buy</div>
-    <div class="gpt-plus-subtitle">下单前必读</div>
-    <div class="gpt-plus-text">以下条款请确认接受后再拍，任意一条不能接受都不建议购买。</div>
-    {steps(COMMON_STEPS)}
-  </div>
+  {buy_notice([
+        ('账号要求', '需已有 GPT 个人免费账号（未订阅）。加入过 Team 空间，请先切回个人版再获取 Token。'),
+        ('不支持覆盖', '已是 Plus / Pro 无法充值。原账号若是 Pro，请换新号或等到期后再充。'),
+        EMAIL_STEP,
+        REFUND_STEP,
+    ])}
   <div class="gpt-plus-card">
     <div class="gpt-plus-kicker">Support</div>
     <div class="gpt-plus-subtitle">常见问题</div>
@@ -144,30 +154,12 @@ def ios_html():
         '建议使用干净稳定的 IP 环境，不要多人共享或频繁切换地区登录。',
     ])}
   </div>
-  <div class="gpt-plus-card">
-    <div class="gpt-plus-kicker">Risk</div>
-    <div class="gpt-plus-subtitle">使用提醒</div>
-    {points([
-        '原 Plus 未到期会被覆盖，不叠加时长。',
-        '小众邮箱容易掉订阅，不要使用微软邮箱，建议使用谷歌邮箱。',
-        '如果原账号订阅的是 GPT Pro，Plus 卡密无法覆盖。请换新号，或等 Pro 到期后再充。',
+  {buy_notice([
+        PERSONAL_ACCOUNT_STEP,
+        ('覆盖规则', '原 Plus 未到期会被覆盖，不叠加时长。原是 Pro 无法用 Plus 覆盖，请换新号或等到期后再充。'),
+        EMAIL_STEP,
+        REFUND_STEP,
     ])}
-  </div>
-  <div class="gpt-plus-card">
-    <div class="gpt-plus-kicker">Before You Buy</div>
-    <div class="gpt-plus-subtitle">下单前必读</div>
-    <div class="gpt-plus-text">以下条款请确认接受后再拍，任意一条不能接受都不建议购买。</div>
-    {steps(COMMON_STEPS)}
-  </div>
-  <div class="gpt-plus-card">
-    <div class="gpt-plus-kicker">Official</div>
-    <div class="gpt-plus-subtitle">风险说明</div>
-    {points([
-        '不建议囤货。囤货多天后再反馈无法使用并要求退款，不支持退款。',
-        '由于官方风控或渠道规则变化，兑换方式可能随时失效，请即买即用。',
-        '如当天无法使用，请当天联系反馈处理。',
-    ])}
-  </div>
   <div class="gpt-plus-card">
     <div class="gpt-plus-kicker">Support</div>
     <div class="gpt-plus-subtitle">常见问题</div>
@@ -195,30 +187,12 @@ def pro5x_html():
         '建议使用干净稳定的 IP 环境，不要多人共享或频繁切换地区登录。',
     ])}
   </div>
-  <div class="gpt-plus-card">
-    <div class="gpt-plus-kicker">Risk</div>
-    <div class="gpt-plus-subtitle">使用提醒</div>
-    {points([
-        '原 Plus 未到期会被覆盖，不叠加时长。',
-        '小众邮箱容易掉订阅，不要使用微软邮箱，建议使用谷歌邮箱。',
-        '请勿使用微软邮箱。',
+  {buy_notice([
+        PERSONAL_ACCOUNT_STEP,
+        ('覆盖规则', '原 Plus 未到期会被覆盖，不叠加时长。'),
+        EMAIL_STEP,
+        REFUND_STEP,
     ])}
-  </div>
-  <div class="gpt-plus-card">
-    <div class="gpt-plus-kicker">Before You Buy</div>
-    <div class="gpt-plus-subtitle">下单前必读</div>
-    <div class="gpt-plus-text">以下条款请确认接受后再拍，任意一条不能接受都不建议购买。</div>
-    {steps(COMMON_STEPS)}
-  </div>
-  <div class="gpt-plus-card">
-    <div class="gpt-plus-kicker">Official</div>
-    <div class="gpt-plus-subtitle">风险说明</div>
-    {points([
-        '不建议囤货。囤货多天后再反馈无法使用并要求退款，不支持退款。',
-        '由于官方风控或渠道规则变化，兑换方式可能随时失效，请即买即用。',
-        '如当天无法使用，请当天联系反馈处理。',
-    ])}
-  </div>
   <div class="gpt-plus-card">
     <div class="gpt-plus-kicker">Support</div>
     <div class="gpt-plus-subtitle">常见问题</div>
@@ -246,30 +220,12 @@ def pro20x_ios_html():
         '建议使用干净稳定的 IP 环境，不要多人共享或频繁切换地区登录。',
     ])}
   </div>
-  <div class="gpt-plus-card">
-    <div class="gpt-plus-kicker">Risk</div>
-    <div class="gpt-plus-subtitle">使用提醒</div>
-    {points([
-        '原 Plus 未到期会被覆盖，不叠加时长。',
-        '小众邮箱容易掉订阅，不要使用微软邮箱，建议使用谷歌邮箱。',
-        '请勿使用微软邮箱。',
+  {buy_notice([
+        PERSONAL_ACCOUNT_STEP,
+        ('覆盖规则', '原 Plus 未到期会被覆盖，不叠加时长。'),
+        EMAIL_STEP,
+        REFUND_STEP,
     ])}
-  </div>
-  <div class="gpt-plus-card">
-    <div class="gpt-plus-kicker">Before You Buy</div>
-    <div class="gpt-plus-subtitle">下单前必读</div>
-    <div class="gpt-plus-text">以下条款请确认接受后再拍，任意一条不能接受都不建议购买。</div>
-    {steps(COMMON_STEPS)}
-  </div>
-  <div class="gpt-plus-card">
-    <div class="gpt-plus-kicker">Official</div>
-    <div class="gpt-plus-subtitle">风险说明</div>
-    {points([
-        '不建议囤货。囤货多天后再反馈无法使用并要求退款，不支持退款。',
-        '由于官方风控或渠道规则变化，兑换方式可能随时失效，请即买即用。',
-        '如当天无法使用，请当天联系反馈处理。',
-    ])}
-  </div>
   <div class="gpt-plus-card">
     <div class="gpt-plus-kicker">Support</div>
     <div class="gpt-plus-subtitle">常见问题</div>
@@ -371,7 +327,7 @@ def main():
             f"UPDATE acg_commodity SET description='{sql_escape(html)}' WHERE id={cid};"
         )
     statements.append(
-        "SELECT id, name, LOCATE('以下全部条款', description) AS notice_ok, LOCATE('gpt-plus-warn', description) AS old_warn FROM acg_commodity ORDER BY id;"
+        "SELECT id, name, LOCATE('使用提醒', description) AS old_risk, LOCATE('风险说明', description) AS old_notice, LOCATE('下单前必读', description) AS buy_ok FROM acg_commodity ORDER BY id;"
     )
     print('\n'.join(statements))
 

@@ -138,12 +138,16 @@ export default function OrderPanel({ detail }: { detail: CommodityDetail }) {
       post["pay_id"] = String(payId);
       const res = await postForm("/user/api/order/trade", post);
       if (res.code !== 200) throw new Error(res.msg || "下单失败");
-      if (!res.data.url) {
-        // 余额支付 / 0 元单:直接出卡密
-        setResult(res.data);
-      } else {
+      const tradeNo = res.data?.tradeNo as string | undefined;
+      if (res.data?.url) {
         window.location.href = res.data.url;
+        return;
       }
+      if (detail.login && tradeNo) {
+        window.location.href = `/orders?tradeNo=${encodeURIComponent(tradeNo)}`;
+        return;
+      }
+      setResult(res.data);
     } catch (err) {
       setError(err instanceof Error ? err.message : "下单失败,请稍后再试");
       setCaptchaTs(Date.now());
@@ -162,30 +166,30 @@ export default function OrderPanel({ detail }: { detail: CommodityDetail }) {
 
   const soldOut = stock <= 0;
   const fieldCls =
-    "h-11 w-full rounded-xl border border-black/10 bg-white px-4 text-[14px] outline-none transition-shadow placeholder:text-[#a1a1a6] focus:border-black/20 focus:shadow-[0_0_0_4px_rgba(13,116,206,0.08)]";
-  const labelCls = "mb-1.5 block text-[13px] font-medium text-[#424245]";
+    "h-11 w-full rounded-xl border border-hairline bg-surface px-4 text-[16px] outline-none transition-shadow placeholder:text-faint focus:border-hairline-strong focus:shadow-[0_0_0_4px_rgba(13,116,206,0.08)] sm:text-[14px]";
+  const labelCls = "mb-1.5 block text-[13px] font-medium text-subtle";
 
   // 下单成功(无收银台跳转)结果卡
   if (result) {
     return (
       <div className="flex h-full flex-col justify-center">
-        <div className="rounded-2xl bg-[#18794e]/8 p-6">
-          <p className="text-[15px] font-semibold text-[#18794e]">✓ 购买成功</p>
-          <p className="font-pixel mt-2 text-[13px] text-[#424245]">
+        <div className="rounded-2xl bg-ok-fill p-6">
+          <p className="text-[15px] font-semibold text-ok">✓ 购买成功</p>
+          <p className="font-pixel mt-2 text-[13px] text-subtle">
             {result.tradeNo}
           </p>
           {result.secret && (
-            <pre className="mt-4 overflow-x-auto whitespace-pre-wrap break-all rounded-xl bg-white p-4 font-mono text-[13px] leading-relaxed">
+            <pre className="mt-4 overflow-x-auto whitespace-pre-wrap break-all rounded-xl bg-surface p-4 font-mono text-[13px] leading-relaxed">
               {result.secret}
             </pre>
           )}
           {result.leave_message && (
-            <p className="mt-3 text-xs leading-relaxed text-[#86868b]">
+            <p className="mt-3 text-xs leading-relaxed text-muted">
               {result.leave_message}
             </p>
           )}
           <a
-            href="/query"
+            href={result.tradeNo ? `/query?tradeNo=${encodeURIComponent(result.tradeNo)}` : "/query"}
             className="btn-graphite mt-5 inline-block rounded-full px-6 py-2 text-sm"
           >
             前往查单页
@@ -206,8 +210,8 @@ export default function OrderPanel({ detail }: { detail: CommodityDetail }) {
         <span
           className={`flex items-center gap-1 rounded-full px-3 py-1 ${
             detail.delivery_way === 0
-              ? "bg-[#18794e]/10 text-[#18794e]"
-              : "bg-[#0d74ce]/10 text-[#0d74ce]"
+              ? "bg-ok-fill text-ok"
+              : "bg-accent-fill text-accent"
           }`}
         >
           <svg viewBox="0 0 16 16" className="h-3 w-3 fill-current" aria-hidden>
@@ -215,21 +219,21 @@ export default function OrderPanel({ detail }: { detail: CommodityDetail }) {
           </svg>
           {detail.delivery_way === 0 ? "自动发货" : "在线发货"}
         </span>
-        <span className="rounded-full bg-black/5 px-3 py-1 text-[#424245]">
+        <span className="rounded-full bg-fill px-3 py-1 text-subtle">
           已售 {detail.order_sold}
         </span>
         <span
           className={`rounded-full px-3 py-1 ${
             soldOut
-              ? "bg-black/5 text-[#86868b]"
-              : "bg-[#18794e]/10 text-[#18794e]"
+              ? "bg-fill text-muted"
+              : "bg-ok-fill text-ok"
           }`}
         >
           库存 {detail.inventory_hidden ? "充足" : stock}
         </span>
         <button
           onClick={share}
-          className="rounded-full border border-black/10 px-3 py-1 text-[#424245] transition-colors hover:bg-black/5"
+          className="rounded-full border border-hairline px-3 py-1 text-subtle transition-colors hover:bg-fill"
         >
           {shared ? "已复制链接 ✓" : "分享"}
         </button>
@@ -254,8 +258,8 @@ export default function OrderPanel({ detail }: { detail: CommodityDetail }) {
                   onClick={() => setRace(name)}
                   className={`rounded-full px-4 py-1.5 text-[13px] font-medium transition-all ${
                     race === name
-                      ? "bg-[#1d1d1f] text-white"
-                      : "border border-black/10 bg-white text-[#424245] hover:border-black/25"
+                      ? "bg-ink text-on-ink"
+                      : "border border-hairline bg-surface text-subtle hover:border-hairline-strong"
                   }`}
                 >
                   {name}
@@ -279,8 +283,8 @@ export default function OrderPanel({ detail }: { detail: CommodityDetail }) {
                     onClick={() => setSku((s) => ({ ...s, [group]: opt }))}
                     className={`rounded-full px-4 py-1.5 text-[13px] font-medium transition-all ${
                       sku[group] === opt
-                        ? "bg-[#1d1d1f] text-white"
-                        : "border border-black/10 bg-white text-[#424245] hover:border-black/25"
+                        ? "bg-ink text-on-ink"
+                        : "border border-hairline bg-surface text-subtle hover:border-hairline-strong"
                     }`}
                   >
                     {opt}
@@ -352,11 +356,11 @@ export default function OrderPanel({ detail }: { detail: CommodityDetail }) {
         {/* 购买数量 */}
         <div>
           <label className={labelCls}>购买数量</label>
-          <div className="flex h-11 w-40 items-stretch overflow-hidden rounded-xl border border-black/10 bg-white">
+          <div className="flex h-11 w-full max-w-xs items-stretch overflow-hidden rounded-xl border border-hairline bg-surface sm:w-40">
             <button
               type="button"
               onClick={() => setNum((n) => Math.max(detail.minimum > 0 ? detail.minimum : 1, n - 1))}
-              className="w-11 text-lg text-[#424245] transition-colors hover:bg-black/5"
+              className="w-11 text-lg text-subtle transition-colors hover:bg-fill"
             >
               −
             </button>
@@ -364,7 +368,7 @@ export default function OrderPanel({ detail }: { detail: CommodityDetail }) {
               type="number"
               value={num}
               onChange={(e) => setNum(Math.max(1, Number(e.target.value) || 1))}
-              className="w-full border-x border-black/10 text-center text-[14px] outline-none"
+              className="w-full border-x border-hairline text-center text-[14px] outline-none"
             />
             <button
               type="button"
@@ -373,7 +377,7 @@ export default function OrderPanel({ detail }: { detail: CommodityDetail }) {
                   detail.maximum > 0 ? Math.min(detail.maximum, n + 1) : n + 1
                 )
               }
-              className="w-11 text-lg text-[#424245] transition-colors hover:bg-black/5"
+              className="w-11 text-lg text-subtle transition-colors hover:bg-fill"
             >
               +
             </button>
@@ -397,7 +401,7 @@ export default function OrderPanel({ detail }: { detail: CommodityDetail }) {
                   alt="验证码"
                   title="点击刷新"
                   onClick={() => setCaptchaTs(Date.now())}
-                  className="h-11 cursor-pointer rounded-xl border border-black/10"
+                  className="h-11 w-[108px] shrink-0 cursor-pointer rounded-xl border border-hairline bg-white object-contain"
                 />
               )}
             </div>
@@ -416,8 +420,8 @@ export default function OrderPanel({ detail }: { detail: CommodityDetail }) {
                   onClick={() => setPayId(pay.id)}
                   className={`flex items-center gap-2 rounded-xl px-4 py-2.5 text-[13px] font-medium transition-all ${
                     payId === pay.id
-                      ? "bg-[#1d1d1f] text-white"
-                      : "border border-black/10 bg-white text-[#424245] hover:border-black/25"
+                      ? "bg-ink text-on-ink"
+                      : "border border-hairline bg-surface text-subtle hover:border-hairline-strong"
                   }`}
                 >
                   <img src={pay.icon} alt="" className="h-5 w-5 rounded" />
@@ -429,7 +433,7 @@ export default function OrderPanel({ detail }: { detail: CommodityDetail }) {
         )}
 
         {error && (
-          <p className="rounded-xl bg-[#ce2c31]/8 px-4 py-3 text-[13px] text-[#ce2c31]">
+          <p className="rounded-xl bg-danger-fill px-4 py-3 text-[13px] text-danger">
             {error}
           </p>
         )}
@@ -439,7 +443,7 @@ export default function OrderPanel({ detail }: { detail: CommodityDetail }) {
           disabled={soldOut || submitting}
           className={`w-full rounded-full py-3 text-[15px] font-medium ${
             soldOut
-              ? "pointer-events-none bg-[#e8e8ed] text-[#86868b]"
+              ? "pointer-events-none bg-fill-strong text-muted"
               : "btn-graphite disabled:opacity-60"
           }`}
         >

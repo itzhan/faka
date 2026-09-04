@@ -1,0 +1,35 @@
+#{include file="../Header.html"}
+<textarea id="md-community-source" hidden aria-hidden="true">#{$community_json|escape:'html'}</textarea>
+<div class="content d-flex flex-column flex-column-fluid" id="kt_content">
+    #{include file="../Toolbar.html"}
+    <div class="post d-flex flex-column-fluid" id="kt_post">
+        <div id="kt_content_container" class="container-xxl md-settings">
+            <div class="card mb-5 mb-xl-10">
+                <div class="card-header border-0">
+                    <div class="card-title m-0">
+                        <h3 class="fw-bolder m-0">#{t("社群设置")}</h3>
+                    </div>
+                </div>
+                <div class="collapse show">
+                    <form id="data-form" class="form">
+                        <div class="card-body p-9">
+                            <p class="text-muted mb-6">#{t("前台「社群」页会展示这里配置的全部群。每条可填写邀请链接，或上传二维码/封面图，也可两项都填。")}</p>
+                            <div class="d-flex flex-wrap gap-2 mb-6">
+                                <button type="button" class="btn btn-light-primary community-add" data-type="telegram_notice">#{t("添加电报通知群")}</button>
+                                <button type="button" class="btn btn-light-primary community-add" data-type="telegram_chat">#{t("添加电报交流群")}</button>
+                                <button type="button" class="btn btn-light-primary community-add" data-type="qq_notice">#{t("添加 QQ 通知群")}</button>
+                            </div>
+                            <div id="community-list" class="d-flex flex-column gap-4"></div>
+                            <p id="community-empty" class="text-muted py-10 text-center mb-0">#{t("还没有社群，点击上方按钮添加。")}</p>
+                        </div>
+                        <div class="card-footer d-flex justify-content-center py-6 px-9">
+                            <button type="button" class="btn btn-primary save-data"><i class="fa-duotone fa-regular fa-floppy-disk me-2"></i>#{t("保存设置")}</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+#{ready("/assets/admin/controller/config/community.js")}
+#{include file="../Footer.html"}

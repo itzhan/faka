@@ -32,15 +32,28 @@ export interface CommodityDetail {
   login: boolean;
 }
 
+const detailCache = new Map<number, Promise<CommodityDetail | null>>();
+
 export async function getCommodityDetail(
   id: number
 ): Promise<CommodityDetail | null> {
+  const isServer = typeof window === "undefined";
+  const base = isServer ? SERVER_BASE : "";
   const res = await fetch(
-    `${SERVER_BASE}/user/api/index/commodityDetail?commodityId=${id}`,
-    { next: { revalidate: 15 } }
+    `${base}/user/api/index/commodityDetail?commodityId=${id}`,
+    isServer ? { next: { revalidate: 15 } } : undefined
   );
   if (!res.ok) return null;
   const json = await res.json();
   if (json.code !== 200) return null;
   return json.data as CommodityDetail;
+}
+
+/** 悬停预取,展开详情时 instant 命中 */
+export function prefetchCommodityDetail(id: number) {
+  if (typeof window === "undefined") return;
+  if (!detailCache.has(id)) {
+    detailCache.set(id, getCommodityDetail(id));
+  }
+  return detailCache.get(id);
 }

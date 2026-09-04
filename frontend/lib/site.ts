@@ -14,8 +14,9 @@ export const SITE = {
 export const NAV_LINKS = [
   { label: "商城", href: "/" },
   { label: "查单", href: "/query" },
-  { label: "订单", href: `${LEGACY_BASE}/user/personal/purchaseRecord` },
-  { label: "教程", href: "#faq" },
+  { label: "订单", href: "/orders" },
+  { label: "我的", href: "/me" },
+  { label: "教程", href: "/tutorials" },
 ];
 
 export const AUTH_LINKS = {
@@ -23,11 +24,11 @@ export const AUTH_LINKS = {
   register: "/register",
 };
 
-/** 社群按钮(占位链接,上线前替换) */
+/** 首页社群入口，详情在 /community */
 export const COMMUNITY_LINKS = [
-  { label: "电报通知群", href: "https://t.me/", icon: "telegram" as const },
-  { label: "电报交流群", href: "https://t.me/", icon: "telegram" as const },
-  { label: "QQ 通知群", href: "#", icon: "qq" as const },
+  { label: "电报通知群", href: "/community#telegram_notice", icon: "telegram" as const },
+  { label: "电报交流群", href: "/community#telegram_chat", icon: "telegram" as const },
+  { label: "QQ 通知群", href: "/community#qq_notice", icon: "qq" as const },
 ];
 
 export const HERO_ACTIONS = {
@@ -79,18 +80,20 @@ export const FOOTER_COLUMNS = [
   {
     title: "购买指南",
     links: [
-      { label: "充值教程", href: "#faq" },
-      { label: "自动发货查收说明", href: "#faq" },
-      { label: "充值不到账怎么办", href: "#faq" },
+      { label: "充值教程", href: "/tutorials/chatgpt-recharge-card-and-payment-guide" },
+      { label: "卡密兑换教程", href: "/tutorials/chatgpt-cdk-recharge-guide" },
+      { label: "自动发货查收说明", href: "/tutorials/auto-delivery-and-order-lookup-guide" },
+      { label: "充值不到账怎么办", href: "/tutorials/recharge-not-received-troubleshooting" },
     ],
   },
   {
     title: "帮助中心",
     links: [
-      { label: "常见问题", href: "#faq" },
+      { label: "常见问题", href: "/tutorials" },
       { label: "查单", href: "/query" },
-      { label: "订单", href: `${LEGACY_BASE}/user/personal/purchaseRecord` },
-      { label: "联系客服", href: "#" },
+      { label: "订单", href: "/orders" },
+      { label: "社群", href: "/community" },
+      { label: "联系客服", href: "/community" },
     ],
   },
   {

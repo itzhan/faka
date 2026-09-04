@@ -1,5 +1,7 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Doto } from "next/font/google";
+import FromCookie from "@/components/FromCookie";
+import { THEME_BOOT_SCRIPT, ThemeProvider } from "@/lib/theme";
 import "./globals.css";
 
 // 点阵像素字体:仅用于标题中的拉丁字符(如 "AI")
@@ -10,15 +12,31 @@ export const metadata: Metadata = {
   description: "AI 订阅商品自助商店",
 };
 
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#f5f5f7" },
+    { media: "(prefers-color-scheme: dark)", color: "#0b0b0d" },
+  ],
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="zh-CN">
+    <html lang="zh-CN" className="overflow-x-hidden" suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: THEME_BOOT_SCRIPT }} />
+      </head>
       <body
-        className={`${doto.variable} min-h-screen bg-[#f5f5f7] font-sans text-[#1d1d1f] antialiased`}
+        className={`${doto.variable} min-h-screen overflow-x-hidden bg-page font-sans text-ink antialiased`}
       >
-        {children}
+        <ThemeProvider>
+          <FromCookie />
+          {children}
+        </ThemeProvider>
       </body>
     </html>
   );

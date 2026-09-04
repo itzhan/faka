@@ -9,7 +9,7 @@ use App\Interceptor\Waf;
 use Kernel\Annotation\Interceptor;
 use Kernel\Exception\JSONException;
 
-#[Interceptor([Waf::class, UserSession::class])]
+#[Interceptor([Waf::class])]
 class Personal extends User
 {
     /**
@@ -20,14 +20,20 @@ class Personal extends User
      */
     public function purchaseRecord(): string
     {
-        $tradeNo = (string)$_GET['tradeNo'];
-        return $this->theme("购买记录", "PURCHASE_RECORD", "User/PurchaseRecord.html", ['tradeNo' => $tradeNo]);
+        $tradeNo = trim((string)($_GET['tradeNo'] ?? ''));
+        $url = \App\Util\Client::getStorefrontUrl() . '/me/orders';
+        if ($tradeNo !== '') {
+            $url .= '?tradeNo=' . urlencode($tradeNo);
+        }
+        header('Location: ' . $url, true, 302);
+        exit;
     }
 
     /**
      * 下载宝贝信息
      * @throws \Kernel\Exception\JSONException
      */
+    #[Interceptor([UserSession::class])]
     public function secretDownload(): string
     {
         $id = (int)$_GET['id'];

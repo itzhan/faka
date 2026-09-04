@@ -9,6 +9,7 @@ const nextConfig: NextConfig = {
       // JSON API 与图片资源都代理到 PHP 后端，同源转发，天然绕开 CORS 与跨域 cookie
       { source: "/user/api/:path*", destination: `${API_BASE}/user/api/:path*` },
       { source: "/user/captcha/:path*", destination: `${API_BASE}/user/captcha/:path*` },
+      { source: "/user/authentication/logout", destination: `${API_BASE}/user/authentication/logout` },
       { source: "/assets/:path*", destination: `${API_BASE}/assets/:path*` },
       { source: "/favicon.ico", destination: `${API_BASE}/favicon.ico` },
     ];

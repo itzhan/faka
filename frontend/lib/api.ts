@@ -60,3 +60,26 @@ export function getCategories(): Promise<Category[]> {
 export function getCommodities(categoryId: number): Promise<Commodity[]> {
   return request<Commodity[]>(`/user/api/index/commodity?categoryId=${categoryId}`);
 }
+
+export type CommunityType = "telegram_notice" | "telegram_chat" | "qq_notice";
+
+export interface CommunityGroup {
+  id: string;
+  type: CommunityType;
+  name: string;
+  url: string;
+  image: string;
+}
+
+export async function getCommunityGroups(): Promise<CommunityGroup[]> {
+  try {
+    const res = await fetch(`${baseUrl()}/user/api/site/community`, {
+      cache: "no-store",
+    });
+    if (!res.ok) return [];
+    const json = (await res.json()) as ApiEnvelope<CommunityGroup[]>;
+    return json.code === 200 && Array.isArray(json.data) ? json.data : [];
+  } catch {
+    return [];
+  }
+}

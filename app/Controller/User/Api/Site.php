@@ -7,6 +7,7 @@ namespace App\Controller\User\Api;
 use App\Controller\Base\API\User;
 use App\Interceptor\Waf;
 use App\Model\Config;
+use App\Util\Community;
 use Kernel\Annotation\Interceptor;
 
 #[Interceptor(Waf::class)]
@@ -27,5 +28,10 @@ class Site extends User
             "registered_state" => Config::get("registered_state"),
             "notice" => Config::get("notice"),
         ]);
+    }
+
+    public function community(): array
+    {
+        return $this->json(200, "success", Community::publicList());
     }
 }

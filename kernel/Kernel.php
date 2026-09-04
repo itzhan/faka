@@ -49,6 +49,7 @@ try {
 
     //waf install -> 2025-07-26
     $routePath = $_GET['s'] = $_GET['s'] ?? "/user/index/index";
+    \App\Util\Client::redirectUserView($routePath);
     Context::set(\Kernel\Context\Interface\Request::class, new Request());
     if (trim($routePath, "/") == 'admin') {
         header('location:' . "/admin/authentication/login");

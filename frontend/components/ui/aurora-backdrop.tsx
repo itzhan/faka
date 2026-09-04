@@ -22,7 +22,7 @@ export default function AuroraBackdrop({ className }: { className?: string }) {
           "[background-image:var(--stripes),var(--aurora)]",
           "[background-size:300%,200%]",
           "[background-position:50%_50%,50%_50%]",
-          "opacity-35 blur-[12px] will-change-transform",
+          "opacity-35 blur-[12px] will-change-transform dark:opacity-50",
           "[mask-image:radial-gradient(ellipse_at_50%_0%,black_15%,transparent_75%)]"
         )}
       />

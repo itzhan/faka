@@ -10,7 +10,7 @@ export default function NotFound() {
         <h1 className="mt-4 text-2xl font-semibold tracking-tight">
           页面不存在或商品已下架
         </h1>
-        <p className="mt-3 text-[15px] text-[#86868b]">
+        <p className="mt-3 text-[15px] text-muted">
           它可能被移动、删除,或者从未存在过。
         </p>
         <a

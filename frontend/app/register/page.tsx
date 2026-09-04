@@ -28,6 +28,7 @@ export default function RegisterPage() {
       const res = await fetch("/user/api/authentication/register", {
         method: "POST",
         body,
+        credentials: "include",
       });
       const json = await res.json();
       if (json.code !== 200) throw new Error(json.msg || "注册失败");
@@ -116,14 +117,14 @@ export default function RegisterPage() {
                 alt="验证码"
                 title="点击刷新"
                 onClick={() => setCaptchaTs(Date.now())}
-                className="h-12 cursor-pointer rounded-xl border border-black/10"
+                className="h-12 w-[108px] shrink-0 cursor-pointer rounded-xl border border-hairline bg-white object-contain"
               />
             )}
           </div>
         </div>
 
         {error && (
-          <p className="rounded-xl bg-[#ce2c31]/8 px-4 py-3 text-[13px] text-[#ce2c31]">
+          <p className="rounded-xl bg-danger-fill px-4 py-3 text-[13px] text-danger">
             {error}
           </p>
         )}
@@ -137,9 +138,9 @@ export default function RegisterPage() {
         </button>
       </form>
 
-      <p className="mt-6 text-center text-[13px] text-[#86868b]">
+      <p className="mt-6 text-center text-[13px] text-muted">
         已有账号?{" "}
-        <a href="/login" className="font-medium text-[#0d74ce] hover:underline">
+        <a href="/login" className="font-medium text-accent hover:underline">
           直接登录
         </a>
       </p>

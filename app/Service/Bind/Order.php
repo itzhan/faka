@@ -859,13 +859,14 @@ class Order implements \App\Service\Order
         //回调地址
         $callbackDomain = trim(Config::get("callback_domain"), "/");
         $clientDomain = Client::getUrl();
+        $storefront = Client::getStorefrontUrl();
 
         if (!$callbackDomain) {
             $callbackDomain = $clientDomain;
         }
 
         DB::connection()->getPdo()->exec("set session transaction isolation level serializable");
-        $result = Db::transaction(function () use ($commodity, $rent, $rebate, $divideAmount, $business, $sku, $requestNo, $user, $userGroup, $num, $contact, $device, $amount, $owner, $pay, $cardId, $password, $coupon, $from, $widget, $race, $callbackDomain, $clientDomain) {
+        $result = Db::transaction(function () use ($commodity, $rent, $rebate, $divideAmount, $business, $sku, $requestNo, $user, $userGroup, $num, $contact, $device, $amount, $owner, $pay, $cardId, $password, $coupon, $from, $widget, $race, $callbackDomain, $clientDomain, $storefront) {
             // Keep this as the first business-row lock in the transaction.
             $lockedCommodity = $this->lockCommodityForOrder($commodity);
 
@@ -976,8 +977,8 @@ class Order implements \App\Service\Order
                 $secret = $this->orderSuccess($order); //提交订单并且获取到卡密信息
                 //0元单没有支付环节，url直接指向订单结果页，避免前端拿到null后相对跳转出 /item/null
                 $url = $owner == 0
-                    ? $clientDomain . '/user/index/query?tradeNo=' . $order->trade_no
-                    : $clientDomain . '/user/personal/purchaseRecord?tradeNo=' . $order->trade_no;
+                    ? $storefront . '/query?tradeNo=' . $order->trade_no
+                    : $storefront . '/orders?tradeNo=' . $order->trade_no;
             } else {
                 if ($pay->handle == "#system") {
                     //余额购买
@@ -1002,7 +1003,7 @@ class Order implements \App\Service\Order
                     $order->save();//先将订单保存下来
                     $secret = $this->orderSuccess($order); //提交订单并且获取到卡密信息
                     //余额支付同样没有收银环节，补上结果页url，避免API调用方拿到null
-                    $url = $clientDomain . '/user/personal/purchaseRecord?tradeNo=' . $order->trade_no;
+                    $url = $storefront . '/orders?tradeNo=' . $order->trade_no;
                 } else {
                     //开始进行远程下单
                     //增加接口手续费：0.9.6-beta
@@ -1011,9 +1012,9 @@ class Order implements \App\Service\Order
 
                     //判断如果登录
                     if ($owner == 0) {
-                        $returnUrl = $clientDomain . '/user/index/query?tradeNo=' . $order->trade_no;
+                        $returnUrl = $storefront . '/query?tradeNo=' . $order->trade_no;
                     } else {
-                        $returnUrl = $clientDomain . '/user/personal/purchaseRecord?tradeNo=' . $order->trade_no;
+                        $returnUrl = $storefront . '/orders?tradeNo=' . $order->trade_no;
                     }
 
                     $payObject = PayFactory::make(

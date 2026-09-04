@@ -51,10 +51,9 @@ class Captcha
         $bw = self::W * self::SS;
         $bh = self::H * self::SS;
         $big = imagecreatetruecolor($bw, $bh);
-        imagesavealpha($big, true);
-        //先关混合，把画布刷成全透明；再开混合，后续绘制才能正常叠色
+        //白底深色字：暗色页上透明底会和深色数字糊在一起
         imagealphablending($big, false);
-        imagefilledrectangle($big, 0, 0, $bw - 1, $bh - 1, imagecolorallocatealpha($big, 0, 0, 0, 127));
+        imagefilledrectangle($big, 0, 0, $bw - 1, $bh - 1, imagecolorallocate($big, 255, 255, 255));
         imagealphablending($big, true);
         imageantialias($big, true);
 
@@ -64,9 +63,9 @@ class Captcha
         //降采样到实际输出尺寸：这一步把锯齿抹平，等效于抗锯齿。
         //目标画布同样要关混合、开存 alpha，否则透明通道会在复制时被丢掉
         $im = imagecreatetruecolor(self::W, self::H);
-        imagesavealpha($im, true);
         imagealphablending($im, false);
-        imagefilledrectangle($im, 0, 0, self::W - 1, self::H - 1, imagecolorallocatealpha($im, 0, 0, 0, 127));
+        imagefilledrectangle($im, 0, 0, self::W - 1, self::H - 1, imagecolorallocate($im, 255, 255, 255));
+        imagealphablending($im, true);
         imagecopyresampled($im, $big, 0, 0, 0, 0, self::W, self::H, $bw, $bh);
         imagedestroy($big);
 

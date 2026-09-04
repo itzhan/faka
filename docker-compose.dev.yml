@@ -18,9 +18,10 @@ services:
     environment:
       - APACHE_DOCUMENT_ROOT=/var/www/html
       - PHP_IDE_CONFIG=serverName=acg-faka-dev
+      - STOREFRONT_URL=http://localhost:3000
     extra_hosts:
       - "host.docker.internal:host-gateway"
-    restart: unless-stopped
+    restart: "no"
     networks:
       - acg-dev-network
 
@@ -33,7 +34,7 @@ services:
     volumes:
       - redis_dev_data:/data
     command: redis-server --appendonly yes
-    restart: unless-stopped
+    restart: "no"
     networks:
       - acg-dev-network
 
@@ -59,7 +60,7 @@ services:
       interval: 5s
       timeout: 3s
       retries: 10
-    restart: unless-stopped
+    restart: "no"
     networks:
       - acg-dev-network
 
@@ -76,7 +77,7 @@ services:
     depends_on:
       mysql:
         condition: service_healthy
-    restart: unless-stopped
+    restart: "no"
     networks:
       - acg-dev-network
 

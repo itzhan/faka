@@ -23,28 +23,28 @@ const NOTE_ICONS = [
 
 export default function Hero({ stats }: { stats: Stats }) {
   return (
-    <section className="mx-auto grid max-w-7xl gap-5 px-6 pt-28 lg:grid-cols-[1.4fr_1fr]">
+    <section className="mx-auto grid max-w-7xl gap-4 px-4 pt-24 sm:gap-5 sm:px-6 sm:pt-28 lg:grid-cols-[1.4fr_1fr]">
       {/* 左:标题 + 宣传 + 社群 + 行动,右侧嵌像素抖动视觉 */}
-      <div className="grid rounded-3xl bg-white p-10 lg:grid-cols-[1fr_240px] lg:gap-8">
+      <div className="grid rounded-3xl bg-surface p-6 sm:p-8 lg:grid-cols-[1fr_240px] lg:gap-8 lg:p-10">
       <div className="flex flex-col justify-center">
-        <div className="flex items-center gap-2">
-          <span className="whitespace-nowrap rounded-full bg-[#18794e]/10 px-2.5 py-1 text-[11px] font-medium text-[#18794e]">
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="whitespace-nowrap rounded-full bg-ok-fill px-2.5 py-1 text-[11px] font-medium text-ok">
             官方直充
           </span>
-          <span className="whitespace-nowrap rounded-full bg-[#0d74ce]/10 px-2.5 py-1 text-[11px] font-medium text-[#0d74ce]">
+          <span className="whitespace-nowrap rounded-full bg-accent-fill px-2.5 py-1 text-[11px] font-medium text-accent">
             自动发货
           </span>
-          <span className="truncate text-xs font-medium uppercase tracking-widest text-[#86868b]">
-            {SITE.subtitle}
-          </span>
         </div>
-        <h1 className="mt-4 text-5xl font-semibold tracking-tight">
+        <p className="mt-2 text-xs font-medium tracking-widest text-muted">
+          {SITE.subtitle}
+        </p>
+        <h1 className="mt-3 text-[34px] font-semibold tracking-tight sm:mt-4 sm:text-5xl">
           <span className="text-gradient-ink">
             <span className="font-pixel">AI</span> 订阅
           </span>
           ,即买即用。
         </h1>
-        <div className="mt-4 space-y-1 text-[15px] text-[#424245]">
+        <div className="mt-4 space-y-1 text-[15px] text-subtle">
           {SITE.promises.map((line) => (
             <p key={line}>{line}</p>
           ))}
@@ -55,9 +55,9 @@ export default function Hero({ stats }: { stats: Stats }) {
             <a
               key={link.label}
               href={link.href}
-              className="flex items-center gap-1.5 rounded-full border border-black/10 px-3.5 py-1.5 text-xs font-medium text-[#424245] transition-colors hover:bg-black/5"
+              className="flex items-center gap-1.5 rounded-full border border-hairline px-3.5 py-1.5 text-xs font-medium text-subtle transition-colors hover:bg-fill"
             >
-              <svg viewBox="0 0 24 24" className="h-3.5 w-3.5 fill-[#48484a]" aria-hidden>
+              <svg viewBox="0 0 24 24" className="h-3.5 w-3.5 fill-subtle" aria-hidden>
                 {link.icon === "telegram" ? (
                   <path d="M22 3L2 11l5.5 2L18 6l-8 8.5V20l3.5-3.5L19 19l3-16z" />
                 ) : (
@@ -78,13 +78,13 @@ export default function Hero({ stats }: { stats: Stats }) {
           </a>
           <a
             href={HERO_ACTIONS.query.href}
-            className="rounded-full border border-black/10 px-6 py-2.5 text-sm font-medium text-[#1d1d1f] transition-colors hover:bg-black/5"
+            className="rounded-full border border-hairline px-6 py-2.5 text-sm font-medium text-ink transition-colors hover:bg-fill"
           >
             {HERO_ACTIONS.query.label}
           </a>
           <a
             href={HERO_ACTIONS.agent.href}
-            className="text-sm font-medium text-[#1d1d1f] underline decoration-black/20 underline-offset-4 transition-colors hover:decoration-black/50"
+            className="text-sm font-medium text-ink underline decoration-ink/20 underline-offset-4 transition-colors hover:decoration-ink/50"
           >
             {HERO_ACTIONS.agent.label} →
           </a>
@@ -101,38 +101,38 @@ export default function Hero({ stats }: { stats: Stats }) {
 
       {/* 右:统计 + 购买说明 */}
       <div className="flex flex-col gap-5">
-        <div className="grid grid-cols-3 gap-px overflow-hidden rounded-3xl bg-black/5">
+        <div className="grid grid-cols-3 gap-px overflow-hidden rounded-3xl bg-fill">
           {[
-            { label: "上架商品", value: String(stats.productCount), cls: "text-[#0d74ce]" },
-            { label: "可用库存", value: stats.stockLabel, cls: "text-[#18794e]" },
-            { label: "累计成交", value: stats.totalSold.toLocaleString(), cls: "text-[#7e42af]" },
+            { label: "上架商品", value: String(stats.productCount), cls: "text-accent" },
+            { label: "可用库存", value: stats.stockLabel, cls: "text-ok" },
+            { label: "累计成交", value: stats.totalSold.toLocaleString(), cls: "text-purple" },
           ].map((stat) => (
-            <div key={stat.label} className="bg-white px-4 py-6 text-center">
-              <p className={`text-2xl font-semibold tracking-tight ${stat.cls}`}>
+            <div key={stat.label} className="bg-surface px-2 py-5 text-center sm:px-4 sm:py-6">
+              <p className={`text-xl font-semibold tracking-tight sm:text-2xl ${stat.cls}`}>
                 {/^[\d,]+$/.test(stat.value) ? (
                   <span className="font-pixel">{stat.value}</span>
                 ) : (
                   stat.value
                 )}
               </p>
-              <p className="mt-1 text-xs text-[#86868b]">{stat.label}</p>
+              <p className="mt-1 text-xs text-muted">{stat.label}</p>
             </div>
           ))}
         </div>
 
-        <div className="flex-1 rounded-3xl bg-white p-7">
+        <div className="flex-1 rounded-3xl bg-surface p-5 sm:p-7">
           <h2 className="text-sm font-semibold">购买说明</h2>
           <ul className="mt-4 space-y-4">
             {BUYING_NOTES.map((note, i) => (
               <li key={note.title} className="flex gap-3">
-                <span className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-black/5">
-                  <svg viewBox="0 0 24 24" className="h-3.5 w-3.5 fill-[#48484a]" aria-hidden>
+                <span className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-fill">
+                  <svg viewBox="0 0 24 24" className="h-3.5 w-3.5 fill-subtle" aria-hidden>
                     {NOTE_ICONS[i]}
                   </svg>
                 </span>
                 <div>
                   <p className="text-[13px] font-medium">{note.title}</p>
-                  <p className="mt-0.5 text-xs leading-relaxed text-[#86868b]">
+                  <p className="mt-0.5 text-xs leading-relaxed text-muted">
                     {note.desc}
                   </p>
                 </div>

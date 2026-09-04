@@ -1,10 +1,92 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+  color-scheme: light;
+  --page: #f5f5f7;
+  --surface: #ffffff;
+  --ink: #1d1d1f;
+  --on-ink: #ffffff;
+  --muted: #86868b;
+  --subtle: #424245;
+  --faint: #a1a1a6;
+  --fill: rgba(0, 0, 0, 0.05);
+  --fill-strong: rgba(0, 0, 0, 0.08);
+  --hairline: rgba(0, 0, 0, 0.1);
+  --hairline-soft: rgba(0, 0, 0, 0.05);
+  --hairline-strong: rgba(0, 0, 0, 0.2);
+  --accent: #0d74ce;
+  --ok: #18794e;
+  --danger: #ce2c31;
+  --purple: #7e42af;
+  --warn: #b25000;
+  --accent-fill: rgba(13, 116, 206, 0.1);
+  --ok-fill: rgba(24, 121, 78, 0.1);
+  --danger-fill: rgba(206, 44, 49, 0.08);
+  --purple-fill: rgba(126, 66, 175, 0.1);
+  --warn-fill: rgba(178, 80, 0, 0.1);
+  --dot: rgba(29, 29, 31, 0.045);
+  --border: 240 6% 90%;
+}
+
+html.dark {
+  color-scheme: dark;
+  --page: #0b0b0d;
+  --surface: #161618;
+  --ink: #f5f5f7;
+  --on-ink: #111113;
+  --muted: #a1a1a6;
+  --subtle: #d2d2d7;
+  --faint: #6e6e73;
+  --fill: rgba(255, 255, 255, 0.06);
+  --fill-strong: rgba(255, 255, 255, 0.1);
+  --hairline: rgba(255, 255, 255, 0.12);
+  --hairline-soft: rgba(255, 255, 255, 0.06);
+  --hairline-strong: rgba(255, 255, 255, 0.22);
+  --accent: #0a84ff;
+  --ok: #30d158;
+  --danger: #ff453a;
+  --purple: #bf5af2;
+  --warn: #ff9f0a;
+  --accent-fill: rgba(10, 132, 255, 0.16);
+  --ok-fill: rgba(48, 209, 88, 0.14);
+  --danger-fill: rgba(255, 69, 58, 0.14);
+  --purple-fill: rgba(191, 90, 242, 0.16);
+  --warn-fill: rgba(255, 159, 10, 0.14);
+  --dot: rgba(255, 255, 255, 0.06);
+  --border: 240 5% 18%;
+}
+
 @theme {
   /* Apple 系统字体栈：mac/iOS 上是 SF Pro + 苹方，其余平台优雅降级 */
   --font-sans: -apple-system, BlinkMacSystemFont, "SF Pro SC", "SF Pro Display",
     "PingFang SC", "Helvetica Neue", "Hiragino Sans GB", "Microsoft YaHei",
     sans-serif;
+
+  --color-page: var(--page);
+  --color-surface: var(--surface);
+  --color-ink: var(--ink);
+  --color-on-ink: var(--on-ink);
+  --color-muted: var(--muted);
+  --color-subtle: var(--subtle);
+  --color-faint: var(--faint);
+  --color-fill: var(--fill);
+  --color-fill-strong: var(--fill-strong);
+  --color-hairline: var(--hairline);
+  --color-hairline-soft: var(--hairline-soft);
+  --color-hairline-strong: var(--hairline-strong);
+  --color-accent: var(--accent);
+  --color-ok: var(--ok);
+  --color-danger: var(--danger);
+  --color-purple: var(--purple);
+  --color-warn: var(--warn);
+  --color-accent-fill: var(--accent-fill);
+  --color-ok-fill: var(--ok-fill);
+  --color-danger-fill: var(--danger-fill);
+  --color-purple-fill: var(--purple-fill);
+  --color-warn-fill: var(--warn-fill);
+  --color-border: var(--hairline);
 
   /* Aurora 极光背景动画(二创自 Aceternity) */
   --animate-aurora: aurora 60s linear infinite;
@@ -24,7 +106,7 @@
 }
 
 ::selection {
-  background: rgba(0, 113, 227, 0.18);
+  background: color-mix(in srgb, var(--accent) 22%, transparent);
 }
 
 /* 点阵像素字体(next/font 注入的 --font-pixel 变量) */
@@ -33,9 +115,64 @@
   letter-spacing: 0.02em;
 }
 
-/* 锚点跳转平滑滚动 */
+/* 「我的」页像素字走彩色渐变,避免暗色下纯白看不清;收支绿/红仍可单独覆盖 */
+.me-shell .font-pixel:not(.text-ok):not(.text-danger) {
+  background-image: linear-gradient(120deg, var(--accent), var(--purple));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* 锚点跳转平滑滚动;禁止横向溢出 */
 html {
   scroll-behavior: smooth;
+  overflow-x: hidden;
+}
+
+/* 主题切换:圆形从按钮展开覆盖 */
+::view-transition {
+  pointer-events: none;
+}
+html.theme-vt::view-transition-image-pair(root) {
+  isolation: auto;
+}
+html.theme-vt::view-transition-old(root) {
+  animation: none;
+  mix-blend-mode: normal;
+  z-index: 1;
+}
+html.theme-vt::view-transition-new(root) {
+  animation: theme-cover 560ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  mix-blend-mode: normal;
+  z-index: 2;
+}
+@keyframes theme-cover {
+  from {
+    clip-path: circle(0px at var(--theme-x) var(--theme-y));
+  }
+  to {
+    clip-path: circle(var(--theme-r) at var(--theme-x) var(--theme-y));
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  html.theme-vt::view-transition-new(root) {
+    animation: none;
+  }
+}
+
+/* iOS 避免 input 小于 16px 时自动放大 */
+@media (max-width: 640px) {
+  input,
+  select,
+  textarea {
+    font-size: 16px !important;
+  }
+}
+
+button,
+a,
+[role="button"] {
+  touch-action: manipulation;
 }
 
 /* 分类切换时商品区整组淡入上浮 */
@@ -56,28 +193,38 @@ html {
 
 /* 渐变文字:标题关键词与价格用,给极简版面提彩 */
 .text-gradient-ink {
-  background: linear-gradient(120deg, #1d1d1f 20%, #4a4a9c 55%, #7e42af 85%);
+  background: linear-gradient(120deg, var(--ink) 20%, #4a4a9c 55%, #7e42af 85%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
 }
+html.dark .text-gradient-ink {
+  background: linear-gradient(120deg, #f5f5f7 20%, #c4b5fd 55%, #93c5fd 85%);
+  -webkit-background-clip: text;
+  background-clip: text;
+}
 .text-gradient-price {
-  background: linear-gradient(120deg, #0d74ce, #7e42af);
+  background: linear-gradient(120deg, var(--accent), #7e42af);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
 }
 
-/* 页面顶部的浅色氛围底纹:两团极淡的蓝紫光晕 */
+/* 页面顶部氛围底纹 */
 .hero-wash {
   background:
-    radial-gradient(560px 300px at 18% 0%, rgba(13, 116, 206, 0.08), transparent 70%),
+    radial-gradient(560px 300px at 18% 0%, color-mix(in srgb, var(--accent) 12%, transparent), transparent 70%),
     radial-gradient(640px 320px at 85% 8%, rgba(126, 66, 175, 0.07), transparent 70%);
+}
+html.dark .hero-wash {
+  background:
+    radial-gradient(560px 300px at 18% 0%, rgba(10, 132, 255, 0.16), transparent 70%),
+    radial-gradient(640px 320px at 85% 8%, rgba(191, 90, 242, 0.12), transparent 70%);
 }
 
 /* 石墨主按钮:近黑渐变 + 顶部一线内高光,hover 微提亮上浮 */
 .btn-graphite {
-  color: #fff;
+  color: var(--on-ink);
   background: linear-gradient(180deg, #3d3d3f 0%, #1d1d1f 55%, #161617 100%);
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.14),
@@ -86,6 +233,12 @@ html {
     filter 0.25s ease,
     transform 0.25s ease,
     box-shadow 0.25s ease;
+}
+html.dark .btn-graphite {
+  background: linear-gradient(180deg, #f5f5f7 0%, #e8e8ed 55%, #d2d2d7 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.55),
+    0 1px 2px rgba(0, 0, 0, 0.35);
 }
 .btn-graphite:hover {
   filter: brightness(1.15);
@@ -99,9 +252,11 @@ html {
   transform: translateY(0);
 }
 
-/* 极淡的像素点网格底纹:唯一的全局像素纹理,克制 */
+/* 极淡的像素点网格底纹 */
 body {
-  background-image: radial-gradient(rgba(29, 29, 31, 0.045) 1px, transparent 1px);
+  background-color: var(--page);
+  color: var(--ink);
+  background-image: radial-gradient(var(--dot) 1px, transparent 1px);
   background-size: 14px 14px;
 }
 
@@ -109,7 +264,7 @@ body {
 .detail-html {
   font-size: 14px;
   line-height: 1.8;
-  color: #424245;
+  color: var(--subtle);
 }
 .detail-html img {
   max-width: 100%;
@@ -123,7 +278,7 @@ body {
 .detail-html h3 {
   margin: 1.2em 0 0.5em;
   font-weight: 600;
-  color: #1d1d1f;
+  color: var(--ink);
 }
 .detail-html ul,
 .detail-html ol {
@@ -131,7 +286,59 @@ body {
   margin: 0.6em 0;
 }
 .detail-html a {
-  color: #0d74ce;
+  color: var(--accent);
+}
+
+/*
+  详情正文常带编辑器内联浅色 CSS(白底、#000 字)。
+  暗色下强制改写，避免仍是白天稿。
+*/
+html.dark .detail-html *:not(img):not(svg):not(video):not(source) {
+  color: var(--subtle) !important;
+  border-color: var(--hairline) !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  box-shadow: none !important;
+}
+html.dark .detail-html :is(h1, h2, h3, h4, h5, h6, b, strong) {
+  color: var(--ink) !important;
+}
+html.dark .detail-html a {
+  color: var(--accent) !important;
+}
+html.dark .detail-html :is([class*="card"], [class*="faq"], [class*="block"], [class*="panel"]) {
+  background-color: var(--fill) !important;
+}
+html.dark .detail-html [class*="notice"] {
+  background-color: var(--danger-fill) !important;
+  color: var(--danger) !important;
+  border-color: color-mix(in srgb, var(--danger) 35%, transparent) !important;
+}
+html.dark .detail-html [class*="pill"] {
+  background-color: var(--fill) !important;
+  color: var(--ink) !important;
+}
+html.dark .detail-html [class*="ok"] {
+  background-color: var(--ok-fill) !important;
+  color: var(--ok) !important;
+}
+html.dark .detail-html [class*="info"] {
+  background-color: var(--accent-fill) !important;
+  color: var(--accent) !important;
+}
+html.dark .detail-html [class*="mute"] {
+  background-color: var(--fill) !important;
+  color: var(--muted) !important;
+}
+html.dark .detail-html [class*="num"] {
+  background-color: var(--ink) !important;
+  color: var(--on-ink) !important;
+}
+
+/* 验证码:白底,暗色页上也能看清 */
+img[src*="captcha/image"] {
+  background-color: #fff;
+  object-fit: contain;
 }
 
 /* 胶囊条窄屏横向滚动时隐藏滚动条 */

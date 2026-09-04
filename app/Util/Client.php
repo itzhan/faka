@@ -383,6 +383,149 @@ class Client
     }
 
     /**
+     * 新前台(Next)根地址。支付回跳、购买记录都应落到这里,才能带上前台登录态。
+     */
+    public static function getStorefrontUrl(): string
+    {
+        $env = getenv('STOREFRONT_URL');
+        if (is_string($env) && $env !== '') {
+            return rtrim($env, '/');
+        }
+        $fwdHost = trim((string)($_SERVER['HTTP_X_FORWARDED_HOST'] ?? ''));
+        if ($fwdHost !== '') {
+            $host = trim(explode(',', $fwdHost)[0]);
+            $proto = trim((string)($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? ''));
+            if ($proto === '') {
+                $proto = strtolower((string)($_SERVER['HTTPS'] ?? '')) === 'on' ? 'https' : 'http';
+            }
+            return $proto . '://' . $host;
+        }
+        $url = self::getUrl();
+        if (str_contains($url, ':8081') || str_contains($url, ':8080')) {
+            return 'http://localhost:3000';
+        }
+        return $url;
+    }
+
+    /**
+     * 旧用户 HTML 页跳到 Next 前台。API / 验证码 / 支付页 / 下载 / 退出 仍留在 PHP。
+     * 前台根地址与当前请求同源时不跳，避免自跳循环。
+     */
+    public static function redirectUserView(string $route): void
+    {
+        $target = self::userViewStorefrontPath($route);
+        if ($target === null) {
+            return;
+        }
+        $base = self::getStorefrontUrl();
+        if (rtrim($base, '/') === rtrim(self::getUrl(), '/')) {
+            return;
+        }
+        header('Location: ' . $base . $target, true, 302);
+        exit;
+    }
+
+    public static function userViewStorefrontPath(string $route): ?string
+    {
+        $route = '/' . strtolower(trim($route, '/'));
+        if ($route === '/') {
+            $route = '/user/index/index';
+        }
+
+        if (str_starts_with($route, '/user/api')) {
+            return null;
+        }
+        if (str_starts_with($route, '/user/captcha')) {
+            return null;
+        }
+        if (str_starts_with($route, '/user/pay')) {
+            return null;
+        }
+        if (str_starts_with($route, '/user/personal/secretdownload')) {
+            return null;
+        }
+        if ($route === '/user/authentication/logout') {
+            return null;
+        }
+        if (!str_starts_with($route, '/user/')) {
+            return null;
+        }
+
+        $parts = explode('/', trim($route, '/'));
+        if (count($parts) === 2) {
+            $route .= '/index';
+        }
+
+        $map = [
+            '/user/index/index' => '/',
+            '/user/index/query' => '/query',
+            '/user/authentication/login' => '/login',
+            '/user/authentication/register' => '/register',
+            '/user/authentication/emailforget' => '/login',
+            '/user/authentication/phoneforget' => '/login',
+            '/user/dashboard/index' => '/me',
+            '/user/business/index' => '/me/shop',
+            '/user/category/index' => '/me/categories',
+            '/user/commodity/index' => '/me/commodities',
+            '/user/card/index' => '/me/cards',
+            '/user/coupon/index' => '/me/coupons',
+            '/user/order/index' => '/me/sales',
+            '/user/recharge/index' => '/me/recharge',
+            '/user/cash/index' => '/me/cash',
+            '/user/cash/record' => '/me/cash',
+            '/user/bill/index' => '/me/bills',
+            '/user/agent/promote' => '/me/promote',
+            '/user/agent/member' => '/me/members',
+            '/user/ticket/index' => '/me/tickets',
+            '/user/ticket/create' => '/me/tickets/new',
+            '/user/message/index' => '/me/messages',
+            '/user/security/personal' => '/me/profile',
+            '/user/security/email' => '/me/profile',
+            '/user/security/phone' => '/me/profile',
+            '/user/security/password' => '/me/password',
+            '/user/personal/purchaserecord' => '/me/orders',
+        ];
+
+        if ($route === '/user/index/item') {
+            $id = (int)($_GET['mid'] ?? 0);
+            $path = $id > 0 ? '/item/' . $id : '/';
+            return self::appendStorefrontQuery($path, ['from']);
+        }
+
+        if ($route === '/user/ticket/detail') {
+            $id = (int)($_GET['id'] ?? 0);
+            return $id > 0 ? '/me/tickets/' . $id : '/me/tickets';
+        }
+
+        $path = $map[$route] ?? '/me';
+        if ($path === '/') {
+            return self::appendStorefrontQuery('/', ['from']);
+        }
+        if ($path === '/query' || $path === '/orders' || $path === '/me/orders') {
+            return self::appendStorefrontQuery($path, ['tradeNo']);
+        }
+        return $path;
+    }
+
+    /**
+     * @param list<string> $keys
+     */
+    private static function appendStorefrontQuery(string $path, array $keys): string
+    {
+        $query = [];
+        foreach ($keys as $key) {
+            $value = $_GET[$key] ?? '';
+            if (is_scalar($value) && (string)$value !== '') {
+                $query[$key] = (string)$value;
+            }
+        }
+        if ($query === []) {
+            return $path;
+        }
+        return $path . '?' . http_build_query($query);
+    }
+
+    /**
      * @return string
      */
     public static function getDomain(): string

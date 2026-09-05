@@ -16,7 +16,7 @@ export const NAV_LINKS = [
   { label: "查单", href: "/query" },
   { label: "订单", href: "/orders" },
   { label: "我的", href: "/me" },
-  { label: "教程", href: "/tutorials" },
+  // 教程入口暂时从顶栏隐藏，页面仍可访问 /tutorials
 ];
 
 export const AUTH_LINKS = {

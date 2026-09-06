@@ -6,6 +6,8 @@ import Hero from "@/components/Hero";
 import PillHeader from "@/components/PillHeader";
 import Storefront from "@/components/Storefront";
 
+export const dynamic = "force-dynamic";
+
 export default async function Home() {
   const categories = await getCategories();
   const sections = await Promise.all(

@@ -5,6 +5,8 @@ import Footer from "@/components/Footer";
 import OrderPanel from "@/components/OrderPanel";
 import PillHeader from "@/components/PillHeader";
 
+export const dynamic = "force-dynamic";
+
 export default async function ItemPage({
   params,
 }: {

@@ -5,6 +5,8 @@ import Footer from "@/components/Footer";
 import PillHeader from "@/components/PillHeader";
 import { getCommunityGroups } from "@/lib/api";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "售后客服｜TabCode小铺",
   description: "购买咨询和售后都走这一个客服入口。联系时请带上订单号。",

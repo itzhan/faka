@@ -35,6 +35,7 @@ export interface Commodity {
   category_id: number;
   stock_state: number;
   tags: { text: string; color: string }[];
+  leave_message?: string;
   category?: { id: number; name: string; icon: string };
 }
 

@@ -29,7 +29,7 @@ class Pay extends User
             return '订单不存在';
         }
 
-        $tradeNo = $_GET['_PARAMETER'][0];
+        $tradeNo = trim((string)$_GET['_PARAMETER'][0]);
         $type = (int)$_GET['_PARAMETER'][1];
         //获取订单信息
         $order = Order::with(['pay'])->where("trade_no", $tradeNo)->first();
@@ -41,14 +41,19 @@ class Pay extends User
             return '支付方式不存在';
         }
 
-        $data = OrderOption::get($order->id);
+        $data = OrderOption::get($order->id) ?? [];
+        $returnUrl = (string)($data['returnUrl'] ?? '/');
+        $payUrl = trim((string)$order->pay_url);
+        $tradeNo = trim((string)$order->trade_no);
+        $amount = (string)$order->amount;
+        $createTime = (string)$order->create_time;
 
         if ($type == 2) {
-            if (!$data) {
+            if ($data === []) {
                 throw new JSONException("参数错误");
             }
             return $this->render("正在下单，请稍后..", "Submit.html", [
-                "url" => $order->pay_url,
+                "url" => $payUrl,
                 "data" => $data
             ]);
         }
@@ -60,6 +65,26 @@ class Pay extends User
             throw new JSONException("视图不存在");
         }
 
-        return View::render($html, ['order' => $order, 'option' => $data], BASE_PATH . '/app/Pay/');
+        $vars = [
+            'amount' => $amount,
+            'tradeNo' => $tradeNo,
+            'payUrl' => $payUrl,
+            'createTime' => $createTime,
+            'returnUrl' => $returnUrl,
+            'tradeNoJs' => json_encode($tradeNo, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES),
+            'payUrlJs' => json_encode($payUrl, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES),
+            'returnUrlJs' => json_encode($returnUrl, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES),
+            'order' => [
+                'amount' => $amount,
+                'trade_no' => $tradeNo,
+                'pay_url' => $payUrl,
+                'create_date' => $createTime,
+                'create_time' => $createTime,
+            ],
+            'option' => ['returnUrl' => $returnUrl],
+        ];
+
+        // 收银台不要走主题钩子，否则会把 404 页嵌进支付二维码页
+        return View::render($html, $vars, BASE_PATH . '/app/Pay/', false);
     }
 }

@@ -133,7 +133,7 @@ class Index extends User
             ->orderBy("sort", "asc")
             ->select([
                 'id', 'name', 'cover',
-                'status', 'delivery_way', 'price',
+                'status', 'delivery_way', 'price', 'leave_message',
                 'user_price',
                 'level_disable', 'level_price', 'hide', 'owner', 'inventory_hidden', "recommend", 'category_id', 'stock', 'shared_id',
                 'tags',
@@ -461,7 +461,7 @@ class Index extends User
                 $relation->select(['id', 'name', 'cover', 'password_status', 'leave_message']);
             }]);
 
-            if (preg_match('/^\d{18}$/', $keywords)) {
+            if (preg_match('/^\d{18,19}$/', $keywords)) {
                 $builder = $builder->where("trade_no", $keywords);
             } else {
                 $builder = $builder->whereIn("contact", $keywordsCandidates);

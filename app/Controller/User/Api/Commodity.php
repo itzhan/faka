@@ -72,7 +72,7 @@ class Commodity extends User
         });
 
         foreach ($data['list'] as &$item) {
-            $item['share_url'] = Client::getUrl() . "/item/{$item['id']}";
+            $item['share_url'] = Client::getStorefrontUrl() . "/item/{$item['id']}";
         }
 
         return $this->json(data: $data);

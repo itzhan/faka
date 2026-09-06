@@ -339,6 +339,12 @@ export default function PurchaseRecordList() {
                   <pre className="mt-2 overflow-x-auto whitespace-pre-wrap break-all font-mono text-[13px] leading-relaxed text-ink">
                     {order.secret}
                   </pre>
+                  <a
+                    href={`/redeem?code=${encodeURIComponent(order.secret.trim().split(/\s+/)[0])}`}
+                    className="mt-3 inline-block text-sm font-semibold text-accent hover:underline"
+                  >
+                    打开充值页
+                  </a>
                   {order.leave_message && (
                     <div
                       className="detail-html mt-3 border-t border-hairline-soft pt-3 text-xs leading-relaxed text-muted"

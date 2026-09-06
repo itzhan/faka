@@ -60,9 +60,7 @@ function stockLabel(item: Commodity) {
     return { text: "售罄", className: "bg-danger-fill text-danger" };
   }
   if (item.stock_state === 1) {
-    const rest =
-      item.inventory_hidden === 1 ? "" : `（剩 ${item.stock}）`;
-    return { text: `库存紧张${rest}`, className: "bg-warn-fill text-warn" };
+    return { text: "即将售罄", className: "bg-warn-fill text-warn" };
   }
   return { text: "有库存", className: "bg-ok-fill text-ok" };
 }
@@ -136,11 +134,11 @@ export default function ProductCard({
             onMouseEnter={() => prefetchCommodityDetail(item.id)}
             onClick={onTriggerClick}
           >
-            <div className="h-16 w-16 shrink-0 overflow-hidden rounded-2xl bg-fill sm:h-[72px] sm:w-[72px]">
+            <div className="h-[88px] w-[70px] shrink-0 overflow-hidden rounded-2xl bg-fill sm:h-[110px] sm:w-[88px]">
               <img
                 src={item.cover || "/favicon.ico"}
                 alt=""
-                className="h-full w-full object-cover"
+                className="h-full w-full object-contain"
               />
             </div>
             <div className="min-w-0 flex-1">
@@ -152,6 +150,11 @@ export default function ProductCard({
               <h3 className="mt-0.5 line-clamp-1 text-[15px] font-semibold tracking-tight">
                 {item.name}
               </h3>
+              {item.leave_message ? (
+                <p className="mt-0.5 line-clamp-1 text-xs text-muted">
+                  {item.leave_message}
+                </p>
+              ) : null}
               <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
                 {(item.tags ?? []).slice(0, 2).map((tag, i) => (
                   <span

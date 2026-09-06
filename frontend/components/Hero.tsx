@@ -58,7 +58,9 @@ export default function Hero({ stats }: { stats: Stats }) {
               className="flex items-center gap-1.5 rounded-full border border-hairline px-3.5 py-1.5 text-xs font-medium text-subtle transition-colors hover:bg-fill"
             >
               <svg viewBox="0 0 24 24" className="h-3.5 w-3.5 fill-subtle" aria-hidden>
-                {link.icon === "telegram" ? (
+                {link.icon === "support" ? (
+                  <path d="M4 5h16a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H8l-4 3v-3H4a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2z" />
+                ) : link.icon === "telegram" ? (
                   <path d="M22 3L2 11l5.5 2L18 6l-8 8.5V20l3.5-3.5L19 19l3-16z" />
                 ) : (
                   <path d="M12 2a9 9 0 0 1 9 9c0 2-.7 3.8-1.8 5.3.3 1.2.8 2.2.8 2.2s-1.7-.2-3-.9A9 9 0 1 1 12 2z" />

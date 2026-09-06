@@ -179,9 +179,17 @@ export default function OrderPanel({ detail }: { detail: CommodityDetail }) {
             {result.tradeNo}
           </p>
           {result.secret && (
-            <pre className="mt-4 overflow-x-auto whitespace-pre-wrap break-all rounded-xl bg-surface p-4 font-mono text-[13px] leading-relaxed">
-              {result.secret}
-            </pre>
+            <>
+              <pre className="mt-4 overflow-x-auto whitespace-pre-wrap break-all rounded-xl bg-surface p-4 font-mono text-[13px] leading-relaxed">
+                {result.secret}
+              </pre>
+              <a
+                href={`/redeem?code=${encodeURIComponent(result.secret.trim().split(/\s+/)[0])}`}
+                className="mt-3 inline-block text-sm font-semibold text-accent hover:underline"
+              >
+                打开充值页
+              </a>
+            </>
           )}
           {result.leave_message && (
             <p className="mt-3 text-xs leading-relaxed text-muted">

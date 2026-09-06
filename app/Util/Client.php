@@ -413,16 +413,8 @@ class Client
      */
     public static function redirectUserView(string $route): void
     {
-        $target = self::userViewStorefrontPath($route);
-        if ($target === null) {
-            return;
-        }
-        $base = self::getStorefrontUrl();
-        if (rtrim($base, '/') === rtrim(self::getUrl(), '/')) {
-            return;
-        }
-        header('Location: ' . $base . $target, true, 302);
-        exit;
+        // 先保留 PHP 用户前台，方便在原端口测支付；不要把 8180/8080 整站跳到 Next。
+        return;
     }
 
     public static function userViewStorefrontPath(string $route): ?string
@@ -532,6 +524,36 @@ class Client
     {
         $host = explode(":", (string)$_SERVER['HTTP_HOST']);
         return (string)$host[0];
+    }
+
+    /**
+     * 把旧用户 HTML 路径改写到 Next 前台。支付/API 等 PHP 专属路径原样返回。
+     */
+    public static function toStorefront(string $url): string
+    {
+        if (preg_match('#^https?://#i', $url)) {
+            return $url;
+        }
+        $parts = parse_url($url);
+        $path = (string)($parts['path'] ?? $url);
+        if ($path === '' || $path[0] !== '/') {
+            return $url;
+        }
+        $mapped = self::userViewStorefrontPath($path);
+        if ($mapped === null) {
+            return $url;
+        }
+        $mappedParts = parse_url($mapped);
+        $mappedPath = (string)($mappedParts['path'] ?? $mapped);
+        $query = [];
+        parse_str((string)($mappedParts['query'] ?? ''), $query);
+        parse_str((string)($parts['query'] ?? ''), $extra);
+        $query = array_merge($query, $extra);
+        $out = self::getStorefrontUrl() . $mappedPath;
+        if ($query !== []) {
+            $out .= '?' . http_build_query($query);
+        }
+        return $out;
     }
 
     /**

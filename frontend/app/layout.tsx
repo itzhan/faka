@@ -8,7 +8,7 @@ import "./globals.css";
 const doto = Doto({ subsets: ["latin"], weight: "900", variable: "--font-pixel" });
 
 export const metadata: Metadata = {
-  title: "异次元店铺",
+  title: "TabCode小铺",
   description: "AI 订阅商品自助商店",
 };
 

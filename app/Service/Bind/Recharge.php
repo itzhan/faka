@@ -66,12 +66,13 @@ class Recharge implements \App\Service\Recharge
         //回调地址
         $callbackDomain = trim(Config::get("callback_domain"), "/");
         $clientDomain = Client::getUrl();
+        $storefront = Client::getStorefrontUrl();
 
         if (!$callbackDomain) {
             $callbackDomain = $clientDomain;
         }
 
-        return Db::transaction(function () use ($user, $pay, $amount, $callbackDomain, $clientDomain) {
+        return Db::transaction(function () use ($user, $pay, $amount, $callbackDomain, $clientDomain, $storefront) {
             $order = new UserRecharge();
             $order->trade_no = Str::generateTradeNo();
             $order->user_id = $user->id;
@@ -93,7 +94,7 @@ class Recharge implements \App\Service\Recharge
                 (string)$order->trade_no,
                 (float)$order->amount,
                 $callbackDomain . '/user/api/rechargeNotification/callback.' . $order->trade_no,
-                $clientDomain . '/user/recharge/index',
+                $storefront . '/me/recharge',
                 (string)$order->create_ip
             );
             $trade = $payObject->trade();
@@ -105,10 +106,10 @@ class Recharge implements \App\Service\Recharge
                         $url = $order->pay_url;
                         break;
                     case \App\Pay\Pay::TYPE_LOCAL_RENDER:
-                        $url = '/user/recharge/order.' . $order->trade_no . ".1";
+                        $url = '/user/recharge/order.' . trim((string)$order->trade_no) . ".1";
                         break;
                     case \App\Pay\Pay::TYPE_SUBMIT:
-                        $url = '/user/recharge/order.' . $order->trade_no . ".2";
+                        $url = '/user/recharge/order.' . trim((string)$order->trade_no) . ".2";
                         break;
                 }
 

@@ -24,8 +24,15 @@ class Request extends Abstract\Request
 
         $this->clientIp = Client::getAddress();
 
-        if (str_contains((string)$this->header("ContentType"), "application/json")) {
+        $contentType = strtolower(
+            (string)($this->header("ContentType") ?: ($_SERVER["CONTENT_TYPE"] ?? ""))
+        );
+        if (str_contains($contentType, "application/json")) {
             $this->_unsafe_json = $this->json = (array)json_decode($this->raw, true);
+            if ($this->json) {
+                $this->post = array_merge($this->post, $this->json);
+                $this->_unsafe_post = array_merge($this->_unsafe_post, $this->json);
+            }
         }
 
         if (isset($_SERVER["HTTPS"]) && strtolower((string)$_SERVER["HTTPS"]) == "on") {

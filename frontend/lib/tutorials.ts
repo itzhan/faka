@@ -97,7 +97,8 @@ export function headingId(text: string) {
 
 function rewrite(text: string) {
   return text
-    .replaceAll("贝贝商店", "异次元店铺")
+    .replaceAll("贝贝商店", "TabCode小铺")
+    .replaceAll("异次元店铺", "TabCode小铺")
     .replaceAll("/orders/lookup", "/query")
     .replaceAll("](/faq)", "](/tutorials)");
 }

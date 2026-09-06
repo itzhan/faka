@@ -19,7 +19,7 @@ export async function generateMetadata({
   const { slug } = await params;
   const meta = getTutorial(slug);
   if (!meta) return { title: "教程" };
-  return { title: `${meta.title}｜异次元店铺`, description: meta.excerpt };
+  return { title: `${meta.title}｜TabCode小铺`, description: meta.excerpt };
 }
 
 export default async function TutorialPage({

@@ -72,8 +72,8 @@ def faqs(items):
 
 EMAIL_STEP = ('建议谷歌邮箱', '微软 / 小众邮箱更容易风控、掉订阅。')
 REFUND_STEP = (
-    '不退不换，当天使用',
-    '卡密售出后，除非无法兑换，否则不退不换。当天买当天用，囤货后无法使用不支持退款。',
+    '不要囤卡密，三天内使用',
+    '务必在购买后三天内兑换。不要囤货。超过三天未使用，或囤卡后再反馈无法使用，不支持退款。卡密无法兑换除外。',
 )
 PERSONAL_ACCOUNT_STEP = (
     '账号要求',
@@ -87,7 +87,7 @@ COMMON_FAQS = [
     ('Codex 额度未刷新', '属于官方延迟。等待 30 分钟后重新登录 Codex，随意提问一次即可激活。'),
 ]
 
-NOTICE = '拍下即默认已阅读并接受以下全部条款。由于官方风控或渠道规则变化，兑换方式可能随时失效，请即买即用。当天无法使用请当天反馈。'
+NOTICE = '不要囤卡密，务必在三天内使用。超过三天未兑换不支持退款。拍下即默认已阅读并接受以下全部条款。'
 
 
 def buy_notice(items):
@@ -102,14 +102,19 @@ def wrap(body):
     return CSS + '\n<div class="gpt-plus-desc">\n' + body + '\n</div>\n'
 
 
-def fei_plus_html():
+def plus_html():
     return wrap(f"""
   <div class="gpt-plus-notice">{NOTICE}</div>
   <div class="gpt-plus-card">
     <div class="gpt-plus-kicker">Official Recharge</div>
-    <div class="gpt-plus-title">菲区官方正规卡充</div>
-    <div class="gpt-plus-text">本商品为 GPT Plus 自助充值卡密。兑换成功后可获得一个月 ChatGPT Plus，官方价 20 美元。24 小时自动充值，预计 1–3 分钟到账。</div>
-    {pills([('秒冲到账', 'ok'), ('质保一个月', 'info'), ('当天使用', 'mute')])}
+    <div class="gpt-plus-title">ChatGPT Plus 官方充值</div>
+    <div class="gpt-plus-text">本商品为 GPT Plus 自助充值卡密。兑换成功后可获得一个月 ChatGPT Plus，官方价 20 美元。全球通用，无地区限制。24 小时自动充值，预计 1–3 分钟到账。</div>
+    {pills([('秒冲到账', 'ok'), ('质保一个月', 'info'), ('全球通用', 'mute')])}
+  </div>
+  <div class="gpt-plus-card">
+    <div class="gpt-plus-kicker">Recharge</div>
+    <div class="gpt-plus-subtitle">充值地址</div>
+    <div class="gpt-plus-text">打开本站 <a class="gpt-plus-link" href="/redeem">自助充值页 /redeem</a>，粘贴卡密即可识别并提交。</div>
   </div>
   <div class="gpt-plus-card">
     <div class="gpt-plus-kicker">Warranty</div>
@@ -173,9 +178,14 @@ def pro5x_html():
   <div class="gpt-plus-notice">{NOTICE}</div>
   <div class="gpt-plus-card">
     <div class="gpt-plus-kicker">Official Recharge</div>
-    <div class="gpt-plus-title">iOS 官方正规充值｜GPT Pro 5X</div>
-    <div class="gpt-plus-text">本商品为 GPT Pro 5X 自助充值卡密。兑换成功后可获得 1 个月 GPT Pro 5X 订阅，官方价 100 美元。24 小时自动充值，预计 1–3 分钟到账。不要拿之前在别的地方用低价卡密充值过的号来充值，容易封号。如果你的 Plus 是 iOS 端充值的，可以覆盖上去。</div>
-    {pills([('秒冲到账', 'ok'), ('质保30天', 'info'), ('100刀款', 'mute')])}
+    <div class="gpt-plus-title">GPT Pro 5X 官方正版充值</div>
+    <div class="gpt-plus-text">本商品为 GPT Pro 5X 官方正版充值卡密。兑换成功后可获得 1 个月 GPT Pro 5X 订阅。24 小时自动充值，预计 1–3 分钟到账。</div>
+    {pills([('官方正版充值', 'ok'), ('质保30天', 'info'), ('秒冲到账', 'mute')])}
+  </div>
+  <div class="gpt-plus-card">
+    <div class="gpt-plus-kicker">Recharge</div>
+    <div class="gpt-plus-subtitle">充值地址</div>
+    <div class="gpt-plus-text">打开本站 <a class="gpt-plus-link" href="/redeem">自助充值页 /redeem</a>，粘贴卡密即可识别并提交。</div>
   </div>
   <div class="gpt-plus-card">
     <div class="gpt-plus-kicker">Warranty</div>
@@ -189,7 +199,6 @@ def pro5x_html():
   </div>
   {buy_notice([
         PERSONAL_ACCOUNT_STEP,
-        ('覆盖规则', '原 Plus 未到期会被覆盖，不叠加时长。'),
         EMAIL_STEP,
         REFUND_STEP,
     ])}
@@ -201,14 +210,19 @@ def pro5x_html():
 """)
 
 
-def pro20x_ios_html():
+def pro20x_html():
     return wrap(f"""
   <div class="gpt-plus-notice">{NOTICE}</div>
   <div class="gpt-plus-card">
     <div class="gpt-plus-kicker">Official Recharge</div>
-    <div class="gpt-plus-title">iOS 官方正规充值｜GPT Pro 20X</div>
-    <div class="gpt-plus-text">本商品为 GPT Pro 20X 自助充值卡密。兑换成功后可获得 1 个月 GPT Pro 20X 订阅，官方价 200 美元。24 小时自动充值，预计 1–3 分钟到账。保证正规充值。不要拿之前在别的地方用低价卡密充值过的号来充值，容易封号。如果你的 Plus 是 iOS 端充值的，可以覆盖上去。</div>
-    {pills([('秒冲到账', 'ok'), ('质保30天', 'info'), ('200刀款', 'mute')])}
+    <div class="gpt-plus-title">GPT Pro 20X 官方正版充值</div>
+    <div class="gpt-plus-text">本商品为 GPT Pro 20X 官方正版充值卡密。兑换成功后可获得 1 个月 GPT Pro 20X 订阅。24 小时自动充值，预计 1–3 分钟到账。</div>
+    {pills([('官方正版充值', 'ok'), ('质保30天', 'info'), ('秒冲到账', 'mute')])}
+  </div>
+  <div class="gpt-plus-card">
+    <div class="gpt-plus-kicker">Recharge</div>
+    <div class="gpt-plus-subtitle">充值地址</div>
+    <div class="gpt-plus-text">打开本站 <a class="gpt-plus-link" href="/redeem">自助充值页 /redeem</a>，粘贴卡密即可识别并提交。</div>
   </div>
   <div class="gpt-plus-card">
     <div class="gpt-plus-kicker">Warranty</div>
@@ -222,7 +236,6 @@ def pro20x_ios_html():
   </div>
   {buy_notice([
         PERSONAL_ACCOUNT_STEP,
-        ('覆盖规则', '原 Plus 未到期会被覆盖，不叠加时长。'),
         EMAIL_STEP,
         REFUND_STEP,
     ])}
@@ -230,6 +243,55 @@ def pro20x_ios_html():
     <div class="gpt-plus-kicker">Support</div>
     <div class="gpt-plus-subtitle">常见问题</div>
     {faqs(COMMON_FAQS)}
+  </div>
+""")
+
+
+def grok_super_html():
+    return wrap(f"""
+  <div class="gpt-plus-notice">{NOTICE}</div>
+  <div class="gpt-plus-card">
+    <div class="gpt-plus-kicker">Campaign</div>
+    <div class="gpt-plus-title">印度区 iOS Grok Super</div>
+    <div class="gpt-plus-text">本商品为印度区 iOS Grok Super 1 月充值 CDK。自助充值卡密，兑换完即可订阅 1 个月套餐。充值到自己账号。</div>
+    {pills([('正规印区充值', 'ok'), ('全程订阅质保', 'info'), ('安卓/iOS通用', 'mute')])}
+  </div>
+  <div class="gpt-plus-card">
+    <div class="gpt-plus-kicker">Tips</div>
+    <div class="gpt-plus-subtitle">购买提示</div>
+    {points([
+        '正规 iOS 印区充值，非零元购。',
+        '支持安卓端 / iOS 端使用。',
+        '不要囤卡密，务必在购买后三天内使用。',
+        '购买后三天内可 24 小时自助充值。',
+        '可以提前续费，无需等会员到期。提前续费会覆盖原时间，不叠加时长。',
+    ])}
+  </div>
+  <div class="gpt-plus-card">
+    <div class="gpt-plus-kicker">Recharge</div>
+    <div class="gpt-plus-subtitle">充值地址</div>
+    <div class="gpt-plus-text">打开本站 <a class="gpt-plus-link" href="/redeem">自助充值页 /redeem</a>，粘贴卡密即可识别并提交。</div>
+  </div>
+  <div class="gpt-plus-card">
+    <div class="gpt-plus-kicker">Warranty</div>
+    <div class="gpt-plus-subtitle">质保说明</div>
+    {points([
+        '本商品提供全程订阅质保。',
+        '质保期内如掉订阅，按剩余天数退差价。',
+        '封号多数情况下与账号本身状态或使用环境有关，封号不在售后范围内。',
+    ])}
+  </div>
+  <div class="gpt-plus-card">
+    <div class="gpt-plus-kicker">Risk</div>
+    <div class="gpt-plus-subtitle">风控说明</div>
+    {points([
+        '批量注册账号',
+        '账号共享',
+        '频繁更换 IP',
+        '使用环境异常',
+        '询问敏感问题、翻译敏感话术等',
+    ])}
+    <div class="gpt-plus-text">请自行注意账号环境和使用方式，避免触发平台风控。</div>
   </div>
 """)
 
@@ -279,32 +341,28 @@ def pro20x_fei_html():
 
 PRODUCTS = [
     {
-        'name': 'ChatGPT Plus 月卡｜ iOS 官方正规充值【质保30天】【秒冲】【卡密可囤三天】',
-        'price': '132.00',
-        'stock': 200,
-        'sort': 10,
-        'html': ios_html(),
+        'id': 2,
+        'name': 'ChatGPT Plus 月卡｜官方正版【质保一个月】',
+        'price': '128.00',
+        'html': plus_html(),
     },
     {
-        'name': 'ChatGPT Pro 5X｜1个月｜iOS 官方正规充值 【秒冲】【质保30天】',
-        'price': '650.00',
-        'stock': 5,
-        'sort': 20,
+        'id': 4,
+        'name': 'ChatGPT Pro 5X 月卡｜官方正版充值',
+        'price': '698.00',
         'html': pro5x_html(),
     },
     {
-        'name': 'ChatGPT Pro 20X 月卡｜官方卡充｜1个月｜支持续费｜正规充值',
-        'price': '1080.00',
-        'stock': 8,
-        'sort': 30,
-        'html': pro20x_fei_html(),
+        'id': 5,
+        'name': 'ChatGPT Pro 20X 月卡｜官方正版充值',
+        'price': '1150.00',
+        'html': pro20x_html(),
     },
     {
-        'name': 'ChatGPT Pro 20X 月卡｜iOS 官方正规充值【秒冲】【质保30天】',
-        'price': '1180.00',
-        'stock': 10,
-        'sort': 40,
-        'html': pro20x_ios_html(),
+        'id': 7,
+        'name': 'Grok Super 月卡｜IOS官方正规充值【质保订阅】',
+        'price': '180.00',
+        'html': grok_super_html(),
     },
 ]
 
@@ -314,20 +372,21 @@ def sql_escape(value: str) -> str:
 
 
 def main():
-    updates = {
-        2: fei_plus_html(),
-        3: ios_html(),
-        4: pro5x_html(),
-        5: pro20x_fei_html(),
-        6: pro20x_ios_html(),
-    }
     statements = ['SET NAMES utf8mb4;']
-    for cid, html in updates.items():
+    for item in PRODUCTS:
         statements.append(
-            f"UPDATE acg_commodity SET description='{sql_escape(html)}' WHERE id={cid};"
+            "UPDATE acg_commodity SET "
+            f"name='{sql_escape(item['name'])}', "
+            f"price='{item['price']}', "
+            f"description='{sql_escape(item['html'])}' "
+            f"WHERE id={item['id']};"
         )
+    statements.append('UPDATE acg_commodity SET status=0, hide=1 WHERE id IN (3, 6);')
     statements.append(
-        "SELECT id, name, LOCATE('使用提醒', description) AS old_risk, LOCATE('风险说明', description) AS old_notice, LOCATE('下单前必读', description) AS buy_ok FROM acg_commodity ORDER BY id;"
+        "SELECT id, name, price, status, hide, "
+        "LOCATE('不要囤卡密', description) AS notice_ok, "
+        "LOCATE('官方正版充值', description) AS official_ok "
+        "FROM acg_commodity ORDER BY id;"
     )
     print('\n'.join(statements))
 

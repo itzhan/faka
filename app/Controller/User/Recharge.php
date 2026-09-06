@@ -87,7 +87,7 @@ class Recharge extends User
             return '订单不存在';
         }
 
-        $tradeNo = $_GET['_PARAMETER'][0];
+        $tradeNo = trim((string)$_GET['_PARAMETER'][0]);
         $type = (int)$_GET['_PARAMETER'][1];
 
 
@@ -102,13 +102,18 @@ class Recharge extends User
 
 
         $data = (array)json_decode((string)$order->option, true);
+        $returnUrl = (string)($data['returnUrl'] ?? '/me/recharge');
+        $payUrl = trim((string)$order->pay_url);
+        $tradeNo = trim((string)$order->trade_no);
+        $amount = (string)$order->amount;
+        $createTime = (string)$order->create_time;
 
         if ($type == 2) {
-            if (!$data) {
+            if ($data === []) {
                 throw new JSONException("参数错误");
             }
             return $this->render("正在下单，请稍后..", "Submit.html", [
-                "url" => $order->pay_url,
+                "url" => $payUrl,
                 "data" => $data
             ]);
         }
@@ -120,6 +125,23 @@ class Recharge extends User
             throw new JSONException("视图不存在");
         }
 
-        return View::render($html, ['order' => $order, 'option' => $data], BASE_PATH . '/app/Pay/');
+        return View::render($html, [
+            'amount' => $amount,
+            'tradeNo' => $tradeNo,
+            'payUrl' => $payUrl,
+            'createTime' => $createTime,
+            'returnUrl' => $returnUrl,
+            'tradeNoJs' => json_encode($tradeNo, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES),
+            'payUrlJs' => json_encode($payUrl, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES),
+            'returnUrlJs' => json_encode($returnUrl, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES),
+            'order' => [
+                'amount' => $amount,
+                'trade_no' => $tradeNo,
+                'pay_url' => $payUrl,
+                'create_date' => $createTime,
+                'create_time' => $createTime,
+            ],
+            'option' => ['returnUrl' => $returnUrl],
+        ], BASE_PATH . '/app/Pay/', false);
     }
 }

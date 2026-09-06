@@ -5,9 +5,13 @@ Dockerfile
 Dockerfile.dev
 docker-compose.yml
 docker-compose.dev.yml
+docker-compose.tabcode.yml
 README.md
 LICENSE
 *.md
 runtime/
 .env
 kernel/Install/Lock
+frontend/node_modules
+frontend/.next
+vendor

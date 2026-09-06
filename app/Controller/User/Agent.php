@@ -34,7 +34,7 @@ class Agent extends User
         $monthStart = date("Y-m-01 00:00:00");
         $data = [];
 
-        $data['share_url'] = Client::getUrl() . "?from=" . $user->id;
+        $data['share_url'] = Client::getStorefrontUrl() . "?from=" . $user->id;
         $data['children'] = \App\Model\User::query()->where("pid", $user->id)->count();
 
         $orders = \App\Model\Order::query()->where("from", $user->id)->where("status", 1);

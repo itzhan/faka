@@ -1034,10 +1034,10 @@ class Order implements \App\Service\Order
                                 $url = $order->pay_url;
                                 break;
                             case \App\Pay\Pay::TYPE_LOCAL_RENDER:
-                                $url = '/user/pay/order.' . $order->trade_no . ".1";
+                                $url = '/user/pay/order.' . trim((string)$order->trade_no) . ".1";
                                 break;
                             case \App\Pay\Pay::TYPE_SUBMIT:
-                                $url = '/user/pay/order.' . $order->trade_no . ".2";
+                                $url = '/user/pay/order.' . trim((string)$order->trade_no) . ".2";
                                 break;
                         }
                         $order->save();

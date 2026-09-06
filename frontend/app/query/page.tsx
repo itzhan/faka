@@ -54,8 +54,11 @@ function QueryInner() {
     try {
       const res = await fetch("/user/api/index/query", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ keywords: kw, page: 1, limit: 10 }),
+        body: new URLSearchParams({
+          keywords: kw,
+          page: "1",
+          limit: "10",
+        }),
       });
       const json = await res.json();
       if (json.code !== 200) throw new Error(json.msg || "查询失败");
@@ -202,6 +205,12 @@ function QueryInner() {
                         <pre className="mt-2 overflow-x-auto whitespace-pre-wrap break-all font-mono text-[13px] leading-relaxed text-ink">
                           {order.secret}
                         </pre>
+                        <a
+                          href={`/redeem?code=${encodeURIComponent(order.secret.trim().split(/\s+/)[0])}`}
+                          className="mt-3 inline-block text-sm font-semibold text-accent hover:underline"
+                        >
+                          打开充值页
+                        </a>
                         {order.commodity?.leave_message && (
                           <p className="mt-3 border-t border-hairline-soft pt-3 text-xs leading-relaxed text-muted">
                             {order.commodity.leave_message}

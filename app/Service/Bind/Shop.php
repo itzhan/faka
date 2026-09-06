@@ -241,7 +241,7 @@ class Shop implements \App\Service\Shop
             $array['detail_image'] = $array['cover'];
         }
 
-        $array['share_url'] = Client::getUrl() . "/item/{$array['id']}";
+        $array['share_url'] = Client::getStorefrontUrl() . "/item/{$array['id']}";
         $array['login'] = (bool)$user;
         if ($array['login']) {
             $array['share_url'] .= "?from={$user->id}";

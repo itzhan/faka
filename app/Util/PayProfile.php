@@ -101,8 +101,32 @@ class PayProfile
 
         $values = json_decode((string)$row->config, true);
         $values = is_array($values) ? $values : [];
+        if (strcasecmp($handle, 'Alipay') === 0) {
+            $values = self::normalizeAlipayKeys($values);
+        }
         Context::set($key, $values);
 
+        return $values;
+    }
+
+    /**
+     * 后台保存时 + 可能被编成 %2B，openssl 无法识别，签名就会变成空字符串。
+     *
+     * @param array<string, mixed> $values
+     * @return array<string, mixed>
+     */
+    private static function normalizeAlipayKeys(array $values): array
+    {
+        foreach (['private_key', 'public_key'] as $field) {
+            if (!isset($values[$field]) || !is_string($values[$field])) {
+                continue;
+            }
+            $key = trim($values[$field]);
+            if (str_contains($key, '%')) {
+                $key = rawurldecode($key);
+            }
+            $values[$field] = $key;
+        }
         return $values;
     }
 

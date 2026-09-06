@@ -5,7 +5,7 @@ export const LEGACY_BASE =
   process.env.NEXT_PUBLIC_LEGACY_BASE ?? "http://localhost:8081";
 
 export const SITE = {
-  name: "异次元店铺",
+  name: "TabCode小铺",
   slogan: "AI 订阅,即买即用。",
   subtitle: "主营各类 AI 工具充值与账号",
   promises: ["本店不做无意义价格内卷,", "优先保证渠道稳定与交付质量。"],
@@ -14,6 +14,7 @@ export const SITE = {
 export const NAV_LINKS = [
   { label: "商城", href: "/" },
   { label: "查单", href: "/query" },
+  { label: "售后", href: "/support" },
   { label: "订单", href: "/orders" },
   { label: "我的", href: "/me" },
   // 教程入口暂时从顶栏隐藏，页面仍可访问 /tutorials
@@ -24,11 +25,9 @@ export const AUTH_LINKS = {
   register: "/register",
 };
 
-/** 首页社群入口，详情在 /community */
+/** 首页售后入口，详情在 /support */
 export const COMMUNITY_LINKS = [
-  { label: "电报通知群", href: "/community#telegram_notice", icon: "telegram" as const },
-  { label: "电报交流群", href: "/community#telegram_chat", icon: "telegram" as const },
-  { label: "QQ 通知群", href: "/community#qq_notice", icon: "qq" as const },
+  { label: "售后客服", href: "/support", icon: "support" as const },
 ];
 
 export const HERO_ACTIONS = {
@@ -60,11 +59,11 @@ export const FAQ_ITEMS = [
   },
   {
     q: "如果库存不足怎么办?",
-    a: "商品卡会实时显示库存状态。缺货时可以加入社群关注补货通知,或联系客服预订。",
+    a: "商品卡会实时显示库存状态。缺货时可以联系售后客服预订。",
   },
   {
     q: "购买后出现问题怎么办?",
-    a: "请先通过「查单」页确认订单状态,如仍有问题,携订单号联系首页展示的官方客服渠道处理。",
+    a: "请先通过「查单」页确认订单状态。仍有问题，携订单号到「售后」页联系客服。",
   },
 ];
 
@@ -80,6 +79,7 @@ export const FOOTER_COLUMNS = [
   {
     title: "购买指南",
     links: [
+      { label: "自助充值", href: "/redeem" },
       { label: "充值教程", href: "/tutorials/chatgpt-recharge-card-and-payment-guide" },
       { label: "卡密兑换教程", href: "/tutorials/chatgpt-cdk-recharge-guide" },
       { label: "自动发货查收说明", href: "/tutorials/auto-delivery-and-order-lookup-guide" },
@@ -92,8 +92,7 @@ export const FOOTER_COLUMNS = [
       { label: "常见问题", href: "/tutorials" },
       { label: "查单", href: "/query" },
       { label: "订单", href: "/orders" },
-      { label: "社群", href: "/community" },
-      { label: "联系客服", href: "/community" },
+      { label: "售后客服", href: "/support" },
     ],
   },
   {

@@ -700,7 +700,7 @@ class Pay extends Manage
                 //拨测走自己的回调地址，绝不借用真实回调——那条路上挂着发货和加余额。
                 //取名 callbackTest 是为了让 Turnstile 的 'user/api/order/callback' 前缀豁免自动覆盖到它。
                 $callbackUrl,
-                $clientDomain . '/user/index/query?tradeNo=' . $tradeNo,
+                Client::getStorefrontUrl() . '/query?tradeNo=' . $tradeNo,
                 Client::getAddress()
             );
             $trade = $payObject->trade();

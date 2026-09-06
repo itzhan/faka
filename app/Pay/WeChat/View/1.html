@@ -29,8 +29,7 @@
     <div class="mod-ct" style="margin-top: 2px;">
 
         <div class="pc">
-            <div style="font-size: 32px;padding-top: 20px;">请支付 <b style="color: red;">¥
-                #{$order.amount}</b> 元
+            <div style="font-size: 32px;padding-top: 20px;">请支付 <b style="color: red;">¥#{$amount}</b> 元
             </div>
             <div class="hr-top"></div>
 
@@ -59,11 +58,11 @@
             <div class="detail" id="orderDetail">
                 <dl class="detail-ct" id="desc" style="display: none;">
                     <dt>金额</dt>
-                    <dd>#{$order.amount}</dd>
+                    <dd>#{$amount}</dd>
                     <dt>商户订单：</dt>
-                    <dd id="ordernum">#{$order.trade_no}</dd>
+                    <dd id="ordernum">#{$tradeNo}</dd>
                     <dt>创建时间：</dt>
-                    <dd>#{$order.create_date}</dd>
+                    <dd>#{$createTime}</dd>
                     <dt>状态</dt>
                     <dd>等待支付</dd>
                 </dl>
@@ -73,26 +72,26 @@
     </div>
 
     <script type="text/javascript">
-        let tradeNo = '#{$order.trade_no}';
-        let qrcode = "#{$order.pay_url}";
+        var tradeNo = #{$tradeNoJs nofilter};
+        var qrcode = #{$payUrlJs nofilter};
+        var returnUrl = #{$returnUrlJs nofilter};
 
-        $('#qrcode').qrcode({
-            render: "canvas",
-            width: 200,
-            height: 200,
-            text: qrcode
-        });
+        var qrOpts = new Object();
+        qrOpts.render = "canvas";
+        qrOpts.width = 200;
+        qrOpts.height = 200;
+        qrOpts.text = qrcode;
+        $('#qrcode').qrcode(qrOpts);
 
-        //查询订单
-        pay.queryTimer(tradeNo, null, res => {
+        pay.queryTimer(tradeNo, null, function () {
             layer.msg('支付成功');
-            setTimeout(() => {
-                window.location.href = "#{$option.returnUrl}";
+            setTimeout(function () {
+                window.location.href = returnUrl;
             }, 1000);
-        }, res => {
+        }, function () {
             layer.msg('订单已被关闭');
-            setTimeout(() => {
-                window.location.href = "#{$option.returnUrl}";
+            setTimeout(function () {
+                window.location.href = returnUrl;
             }, 1000);
         });
 

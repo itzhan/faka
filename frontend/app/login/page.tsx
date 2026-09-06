@@ -3,6 +3,22 @@
 import { useEffect, useState } from "react";
 import AuthShell, { authFieldCls, authLabelCls } from "@/components/AuthShell";
 
+function afterLoginPath(): string {
+  const raw = new URLSearchParams(window.location.search).get("goto");
+  if (!raw) return "/";
+  let path = raw;
+  try {
+    path = decodeURIComponent(raw);
+  } catch {
+    return "/";
+  }
+  if (!path.startsWith("/") || path.startsWith("//") || path.startsWith("/\\")) return "/";
+  if (path.startsWith("/user/authentication/login")) return "/";
+  if (path.startsWith("/user/")) return "/me";
+  if (path.startsWith("/admin")) return "/";
+  return path;
+}
+
 export default function LoginPage() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -26,7 +42,7 @@ export default function LoginPage() {
       });
       const json = await res.json();
       if (json.code !== 200) throw new Error(json.msg || "登录失败");
-      window.location.href = "/";
+      window.location.href = afterLoginPath();
     } catch (err) {
       setError(err instanceof Error ? err.message : "登录失败,请稍后再试");
       setCaptchaTs(Date.now());

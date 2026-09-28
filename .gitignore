@@ -9,6 +9,8 @@ runtime.log
 .env
 /config/database.php
 /config/store.php
+# 线上从插件商店安装的支付宝插件，配置里含私钥
+/app/Pay/Alipay/
 
 # ============ IDE / 编辑器 ============
 .idea/

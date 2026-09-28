@@ -35,7 +35,12 @@ class ManageSession implements InterceptorInterface
             if (!empty($referer)) {
                 $p1 = parse_url($referer);
                 $refHost = explode(':', (string)($p1['host'] ?? ''))[0];
-                $selfHost = explode(':', (string)$_SERVER['HTTP_HOST'])[0];
+                // 经 Next 前台转发时 Host 是后端地址，原始域名在 X-Forwarded-Host（与 UserSession 一致）
+                $fwd = (string)($_SERVER['HTTP_X_FORWARDED_HOST'] ?? '');
+                $hostHeader = $fwd !== ''
+                    ? trim(explode(',', $fwd)[0])
+                    : (string)$_SERVER['HTTP_HOST'];
+                $selfHost = explode(':', $hostHeader)[0];
                 if ($refHost !== '' && $refHost !== $selfHost) {
                     throw new JSONException("当前页面会话失效，请刷新网页..");
                 }

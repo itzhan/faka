@@ -23,6 +23,7 @@ class Config extends Manage
         ["name" => "👺 邮箱设置", "url" => "/admin/config/email"],
         ["name" => "🛡️ 其他设置", "url" => "/admin/config/other"],
         ["name" => "💬 社群设置", "url" => "/admin/config/community"],
+        ["name" => "💳 充值商家", "url" => "/admin/config/rechargeProvider"],
     ];
 
     /**
@@ -159,6 +160,21 @@ class Config extends Manage
             "toolbar" => $this->TOOLBAR,
             "community_json" => is_string($json) ? $json : "[]",
             "community_types" => \App\Util\Community::TYPES,
+        ]);
+    }
+
+    /**
+     * @return string
+     * @throws ViewException
+     */
+    public function rechargeProvider(): string
+    {
+        $json = json_encode(\App\Util\RechargeProvider::adminList(), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+        $drivers = json_encode(\App\Util\RechargeProvider::DRIVERS, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+        return $this->render("充值商家", "Config/RechargeProvider.html", [
+            "toolbar" => $this->TOOLBAR,
+            "providers_json" => is_string($json) ? $json : "[]",
+            "drivers_json" => is_string($drivers) ? $drivers : "{}",
         ]);
     }
 }

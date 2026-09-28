@@ -1,4 +1,5 @@
-import DitherVisual from "@/components/DitherVisual";
+import Link from "next/link";
+import type { Commodity } from "@/lib/api";
 import {
   BUYING_NOTES,
   COMMUNITY_LINKS,
@@ -21,11 +22,24 @@ const NOTE_ICONS = [
   <path key="2" d="M10 2a8 8 0 1 1 0 16 8 8 0 0 1 0-16zm8.7 15.3l3 3-1.4 1.4-3-3 1.4-1.4zM10 5v5l4 2-.8 1.5L8.5 11V5H10z" />,
 ];
 
-export default function Hero({ stats }: { stats: Stats }) {
+// 右侧封面扇形叠放:左/右两张倾斜垫底,中间一张居前
+const FAN_STYLES = [
+  "left-0 top-5 -rotate-[8deg] z-0",
+  "left-1/2 top-0 -translate-x-1/2 z-20",
+  "right-0 top-5 rotate-[8deg] z-10",
+];
+
+export default function Hero({
+  stats,
+  featured,
+}: {
+  stats: Stats;
+  featured: Commodity[];
+}) {
   return (
     <section className="mx-auto grid max-w-7xl gap-4 px-4 pt-24 sm:gap-5 sm:px-6 sm:pt-28 lg:grid-cols-[1.4fr_1fr]">
-      {/* 左:标题 + 宣传 + 社群 + 行动,右侧嵌像素抖动视觉 */}
-      <div className="grid rounded-3xl bg-surface p-6 sm:p-8 lg:grid-cols-[1fr_240px] lg:gap-8 lg:p-10">
+      {/* 左:标题 + 宣传 + 社群 + 行动,右侧叠放热门商品封面 */}
+      <div className="grid rounded-3xl bg-surface p-6 sm:p-8 lg:grid-cols-[1fr_210px] lg:gap-6 lg:p-10">
       <div className="flex flex-col justify-center">
         <div className="flex flex-wrap items-center gap-2">
           <span className="whitespace-nowrap rounded-full bg-ok-fill px-2.5 py-1 text-[11px] font-medium text-ok">
@@ -42,7 +56,7 @@ export default function Hero({ stats }: { stats: Stats }) {
           <span className="text-gradient-ink">
             <span className="font-pixel">AI</span> 订阅
           </span>
-          ,即买即用。
+          ,<span className="whitespace-nowrap">即买即用。</span>
         </h1>
         <div className="mt-4 space-y-1 text-[15px] text-subtle">
           {SITE.promises.map((line) => (
@@ -84,21 +98,32 @@ export default function Hero({ stats }: { stats: Stats }) {
           >
             {HERO_ACTIONS.query.label}
           </a>
-          <a
-            href={HERO_ACTIONS.agent.href}
-            className="text-sm font-medium text-ink underline decoration-ink/20 underline-offset-4 transition-colors hover:decoration-ink/50"
-          >
-            {HERO_ACTIONS.agent.label} →
-          </a>
         </div>
       </div>
 
-      {/* 像素抖动蛋形视觉(窄屏隐藏) */}
-      <div className="hidden items-center lg:flex">
-        <div className="h-[300px] w-full">
-          <DitherVisual />
+      {/* 商品封面扇形(窄屏隐藏) */}
+      {featured.length > 0 && (
+        <div className="hidden items-center lg:flex">
+        <div className="relative h-[190px] w-full">
+          {featured.map((item, i) => (
+            <Link
+              key={item.id}
+              href={`/item/${item.id}`}
+              title={item.name}
+              className={`absolute w-[124px] overflow-hidden rounded-2xl bg-fill shadow-[0_12px_32px_rgba(0,0,0,0.18)] ring-1 ring-border/50 transition-transform duration-300 hover:z-30 hover:-translate-y-2 ${
+                FAN_STYLES[featured.length === 1 ? 1 : i]
+              }`}
+            >
+              <img
+                src={item.cover || "/favicon.ico"}
+                alt={item.name}
+                className="aspect-[4/5] w-full object-cover"
+              />
+            </Link>
+          ))}
         </div>
-      </div>
+        </div>
+      )}
       </div>
 
       {/* 右:统计 + 购买说明 */}

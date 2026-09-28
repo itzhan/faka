@@ -1,43 +1,13 @@
-const BASE = process.env.BEIBEI_API_BASE ?? "https://beibeichongzhi.com";
-const MAX_BODY = 64 * 1024;
+import { jsonError } from "../http";
+import type { RechargeDriver, RechargeProvider } from "../server";
 
-function jsonError(status: number, code: string, message: string) {
-  return Response.json(
-    { success: false, code, message, data: null, request_id: null },
-    { status }
-  );
-}
-
-export async function readJsonBody(
-  req: Request
-): Promise<{ ok: true; body: Record<string, unknown> } | { ok: false; res: Response }> {
-  const len = Number(req.headers.get("content-length") || 0);
-  if (len > MAX_BODY) {
-    return { ok: false, res: jsonError(413, "INVALID_REQUEST", "请求体过大") };
-  }
-  let body: unknown;
-  try {
-    body = await req.json();
-  } catch {
-    return { ok: false, res: jsonError(400, "INVALID_REQUEST", "请求格式不正确") };
-  }
-  if (!body || typeof body !== "object" || Array.isArray(body)) {
-    return { ok: false, res: jsonError(400, "INVALID_REQUEST", "请求格式不正确") };
-  }
-  return { ok: true, body: body as Record<string, unknown> };
-}
-
-export async function proxyBeibei(
+async function proxyBeibei(
+  provider: RechargeProvider,
   path: string,
   init: { method: string; body?: unknown; idempotencyKey?: string }
 ): Promise<Response> {
-  const token = process.env.BEIBEI_API_TOKEN;
-  if (!token) {
-    return jsonError(503, "SERVICE_UNAVAILABLE", "充值服务未配置");
-  }
-
   const headers: Record<string, string> = {
-    Authorization: `Bearer ${token}`,
+    Authorization: `Bearer ${provider.token}`,
     "Content-Type": "application/json",
   };
   if (init.idempotencyKey) {
@@ -46,7 +16,7 @@ export async function proxyBeibei(
 
   let upstream: Response;
   try {
-    upstream = await fetch(`${BASE}${path}`, {
+    upstream = await fetch(`${provider.api_base}${path}`, {
       method: init.method,
       headers,
       body: init.body === undefined ? undefined : JSON.stringify(init.body),
@@ -87,3 +57,22 @@ export async function proxyBeibei(
     headers: out,
   });
 }
+
+/** 贝贝充值:前台信封格式本就按贝贝接口设计,响应原样透传 */
+export const beibei: RechargeDriver = {
+  check: (provider, code) =>
+    proxyBeibei(provider, "/api/v1/recharge/check", {
+      method: "POST",
+      body: { code },
+    }),
+  submit: (provider, { code, credential, idempotencyKey }) =>
+    proxyBeibei(provider, "/api/v1/recharge/submit", {
+      method: "POST",
+      idempotencyKey,
+      body: { code, credential },
+    }),
+  request: (provider, requestId) =>
+    proxyBeibei(provider, `/api/v1/recharge/requests/${encodeURIComponent(requestId)}`, {
+      method: "GET",
+    }),
+};

@@ -19,7 +19,11 @@ export default async function Home() {
   const nonEmpty = sections.filter((s) => s.items.length > 0);
 
   const allItems = nonEmpty.flatMap((s) => s.items);
-  const totalStock = allItems.reduce((sum, i) => sum + Math.max(i.stock, 0), 0);
+  // 开启"隐藏库存"的商品,后端 stock 返回的是文案(如"即将售罄"),不计入合计
+  const totalStock = allItems.reduce((sum, i) => {
+    const n = Number(i.stock);
+    return sum + (Number.isFinite(n) ? Math.max(n, 0) : 0);
+  }, 0);
   const stats = {
     productCount: allItems.length,
     totalSold: allItems.reduce((sum, i) => sum + (i.order_sold || 0), 0),
@@ -32,7 +36,7 @@ export default async function Home() {
       <div className="hero-wash relative isolate">
         {/* Aceternity Aurora 二创:蓝紫极光缓慢流动,只铺 Hero 区,底部渐隐 */}
         <AuroraBackdrop />
-        <Hero stats={stats} />
+        <Hero stats={stats} featured={allItems.slice(0, 3)} />
         <Storefront sections={nonEmpty} />
       </div>
       <Faq />

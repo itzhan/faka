@@ -926,6 +926,28 @@ class Config extends Manage
         return $this->json(200, '保存成功', $groups);
     }
 
+    /**
+     * @return array
+     * @throws JSONException
+     */
+    public function rechargeProvider(): array
+    {
+        $map = $this->configPost(['providers'], '充值商家');
+        $raw = $this->configString($map, 'providers', 60000, '充值商家列表');
+        $providers = \App\Util\RechargeProvider::normalizeSave(json_decode($raw, true));
+        $encoded = json_encode($providers, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+        if (!is_string($encoded)) {
+            throw new JSONException('充值商家保存失败');
+        }
+        try {
+            CFG::put(\App\Util\RechargeProvider::CONFIG_KEY, $encoded);
+        } catch (\Throwable $e) {
+            throw new JSONException('保存失败，请检查原因');
+        }
+        ManageLog::log($this->getManage(), "修改了充值商家设置");
+        return $this->json(200, '保存成功', \App\Util\RechargeProvider::adminList());
+    }
+
 
     /**
      * @return array

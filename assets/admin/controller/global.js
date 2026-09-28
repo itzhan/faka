@@ -81,17 +81,10 @@
         });
     }
 
-    function _HandleUpdate(isUpdate) {
+    // 二开版本不走官方在线更新(会覆盖二开代码),弹窗只展示版本列表
+    function _HandleUpdate() {
         component.popup({
-            submit: isUpdate ? () => {
-                util.post("/admin/api/app/update", () => {
-                    message.success("更新已完成");
-                    setTimeout(() => {
-                        window.location.reload();
-                    }, 1500);
-                });
-            } : false,
-            confirmText: `<i class="fa-duotone fa-regular fa-arrows-rotate"></i>${i18n('立即更新')}`,
+            submit: false,
             width: "620px",
             height: "720px",
             tab: [
@@ -151,13 +144,13 @@
                     let cache = localStorage.getItem(res.data.version);
                     //第一次检测到版本，主动打开更新窗口
                     if (!cache) {
-                        _HandleUpdate(true);
+                        _HandleUpdate();
                         localStorage.setItem(res.data.version, true);
                     }
                 }
 
                 $('.latest-update').click(function () {
-                    _HandleUpdate(!_IsLatestVersion);
+                    _HandleUpdate();
                 });
             },
             error: () => {

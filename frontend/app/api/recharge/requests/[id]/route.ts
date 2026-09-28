@@ -1,4 +1,9 @@
-import { proxyBeibei } from "@/lib/beibei-server";
+import { jsonError } from "@/lib/recharge/http";
+import {
+  resolveProvider,
+  splitRequestId,
+  withProviderRequestId,
+} from "@/lib/recharge/server";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -15,7 +20,15 @@ export async function GET(
       { status: 400 }
     );
   }
-  return proxyBeibei(`/api/v1/recharge/requests/${encodeURIComponent(requestId)}`, {
-    method: "GET",
-  });
+  const parts = splitRequestId(requestId);
+  if (!parts) {
+    return jsonError(404, "REQUEST_NOT_FOUND", "未找到该充值请求");
+  }
+  const resolved = await resolveProvider({ id: parts.providerId });
+  if (!resolved.ok) return resolved.res;
+  const { provider, driver } = resolved;
+  return withProviderRequestId(
+    await driver.request(provider, parts.upstreamId),
+    provider.id
+  );
 }

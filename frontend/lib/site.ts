@@ -33,7 +33,7 @@ export const COMMUNITY_LINKS = [
 export const HERO_ACTIONS = {
   browse: { label: "查看商品", href: "#products" },
   query: { label: "查询订单", href: "/query" },
-  agent: { label: "代理合作", href: "#" },
+  // 代理合作入口暂时隐藏:{ label: "代理合作", href: "#" }
 };
 
 /** 购买说明卡的三条 */
@@ -64,44 +64,6 @@ export const FAQ_ITEMS = [
   {
     q: "购买后出现问题怎么办?",
     a: "请先通过「查单」页确认订单状态。仍有问题，携订单号到「售后」页联系客服。",
-  },
-];
-
-export const FOOTER_COLUMNS = [
-  {
-    title: "商品分类",
-    links: [
-      { label: "ChatGPT", href: "/#products" },
-      { label: "Claude", href: "/#products" },
-      { label: "Grok", href: "/#products" },
-    ],
-  },
-  {
-    title: "购买指南",
-    links: [
-      { label: "自助充值", href: "/redeem" },
-      { label: "充值教程", href: "/tutorials/chatgpt-recharge-card-and-payment-guide" },
-      { label: "卡密兑换教程", href: "/tutorials/chatgpt-cdk-recharge-guide" },
-      { label: "自动发货查收说明", href: "/tutorials/auto-delivery-and-order-lookup-guide" },
-      { label: "充值不到账怎么办", href: "/tutorials/recharge-not-received-troubleshooting" },
-    ],
-  },
-  {
-    title: "帮助中心",
-    links: [
-      { label: "常见问题", href: "/tutorials" },
-      { label: "查单", href: "/query" },
-      { label: "订单", href: "/orders" },
-      { label: "售后客服", href: "/support" },
-    ],
-  },
-  {
-    title: "网站信息",
-    links: [
-      { label: "关于本店", href: "#" },
-      { label: "服务条款", href: "#" },
-      { label: "隐私政策", href: "#" },
-    ],
   },
 ];
 

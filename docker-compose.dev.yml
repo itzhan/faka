@@ -19,6 +19,7 @@ services:
       - APACHE_DOCUMENT_ROOT=/var/www/html
       - PHP_IDE_CONFIG=serverName=acg-faka-dev
       - STOREFRONT_URL=http://localhost:3000
+      - RECHARGE_INTERNAL_KEY=${RECHARGE_INTERNAL_KEY:-}
     extra_hosts:
       - "host.docker.internal:host-gateway"
     restart: "no"

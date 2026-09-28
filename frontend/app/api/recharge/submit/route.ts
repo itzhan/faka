@@ -1,4 +1,5 @@
-import { proxyBeibei, readJsonBody } from "@/lib/beibei-server";
+import { readJsonBody } from "@/lib/recharge/http";
+import { resolveProvider, withProviderRequestId } from "@/lib/recharge/server";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -41,9 +42,11 @@ export async function POST(req: Request) {
       ? givenKey.trim()
       : crypto.randomUUID();
 
-  return proxyBeibei("/api/v1/recharge/submit", {
-    method: "POST",
-    idempotencyKey,
-    body: { code, credential: { type, value } },
-  });
+  const resolved = await resolveProvider({ code });
+  if (!resolved.ok) return resolved.res;
+  const { provider, driver } = resolved;
+  return withProviderRequestId(
+    await driver.submit(provider, { code, credential: { type, value }, idempotencyKey }),
+    provider.id
+  );
 }

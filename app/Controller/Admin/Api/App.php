@@ -41,12 +41,12 @@ class App extends Manage
     }
 
     /**
-     * @return array
+     * 二开版本禁用官方在线更新：更新包会覆盖二开代码。
+     * @throws JSONException
      */
     public function update(): array
     {
-        $this->app->update();
-        return $this->json(200, "升级完成");
+        throw new JSONException("在线更新已禁用，请通过代码仓库更新");
     }
 
     /**

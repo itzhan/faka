@@ -27,8 +27,7 @@ services:
       API_BASE: http://web:80
       HOSTNAME: "0.0.0.0"
       PORT: "3000"
-      BEIBEI_API_TOKEN: ${BEIBEI_API_TOKEN:-}
-      BEIBEI_API_BASE: ${BEIBEI_API_BASE:-https://beibeichongzhi.com}
+      RECHARGE_INTERNAL_KEY: ${RECHARGE_INTERNAL_KEY:-}
     restart: unless-stopped
     networks:
       - tabcode-net
@@ -38,6 +37,7 @@ services:
     container_name: tabcode-web
     environment:
       - STOREFRONT_URL=${STOREFRONT_URL:-http://38.34.191.113:8280}
+      - RECHARGE_INTERNAL_KEY=${RECHARGE_INTERNAL_KEY:-}
     volumes:
       - .:/var/www/html
     depends_on:

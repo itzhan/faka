@@ -5,6 +5,7 @@ import { useSearchParams } from "next/navigation";
 import {
   Check,
   Clock,
+  Copy,
   ExternalLink,
   KeyRound,
   Shield,
@@ -13,11 +14,24 @@ import {
 import {
   assembleCredential,
   checkCode,
+  envelopeRequestId,
+  followExisting,
+  formatElapsed,
   getRequest,
+  hasPublicReceipt,
   isCompleted,
+  isFailed,
   isProcessing,
   isReady,
+  isTransient,
+  mergeEnvelope,
+  progressStepIndex,
+  PROGRESS_STEPS,
+  receiptView,
+  shouldKeepPolling,
+  statusDetail,
   statusLabel,
+  statusTitle,
   submitRecharge,
   type BeibeiCredentialOption,
   type BeibeiEnvelope,
@@ -54,8 +68,25 @@ export default function RedeemPage() {
   const [values, setValues] = useState<Record<string, string>>({});
   const [submitting, setSubmitting] = useState(false);
   const [job, setJob] = useState<BeibeiEnvelope | null>(null);
+  const [nextPollAt, setNextPollAt] = useState<number | null>(null);
+  const [startedAt, setStartedAt] = useState<number | null>(null);
   const idemKeyRef = useRef<string | undefined>(undefined);
   const pollRef = useRef<number | null>(null);
+  const requestIdRef = useRef<string | null>(null);
+  const jobRef = useRef<BeibeiEnvelope | null>(null);
+  const accountHintRef = useRef("");
+  const fillAttemptsRef = useRef(0);
+
+  function updateJob(next: BeibeiEnvelope | null) {
+    jobRef.current = next;
+    setJob(next);
+  }
+
+  function absorbJob(next: BeibeiEnvelope) {
+    const merged = mergeEnvelope(jobRef.current, next);
+    updateJob(merged);
+    return merged;
+  }
 
 
 
@@ -73,24 +104,76 @@ export default function RedeemPage() {
       window.clearTimeout(pollRef.current);
       pollRef.current = null;
     }
+    setNextPollAt(null);
   }
 
-  function startPoll(requestId: string, seconds: number | null) {
+  function rememberRequestId(id?: string | null) {
+    const next = id?.trim();
+    if (next) requestIdRef.current = next;
+  }
+
+  function startPoll(requestId: string, seconds: number | null, first = false) {
     stopPoll();
-    const wait = Math.max(3, seconds ?? 15) * 1000;
+    rememberRequestId(requestId);
+    const waitSec = first ? Math.min(3, Math.max(1, seconds ?? 3)) : Math.max(3, seconds ?? 15);
+    const wait = waitSec * 1000;
+    setNextPollAt(Date.now() + wait);
+    setStartedAt((prev) => prev ?? Date.now());
     pollRef.current = window.setTimeout(async () => {
-      const env = await getRequest(requestId);
-      setJob(env);
-      if (isCompleted(env) || (!isProcessing(env) && !env.success)) {
-        stopPoll();
-        if (isCompleted(env)) setValues({});
-        return;
+      try {
+        const env = await getRequest(requestId);
+        if (isTransient(env)) {
+          startPoll(requestId, env.retry_after ?? 5);
+          return;
+        }
+        rememberRequestId(envelopeRequestId(env));
+        const merged = absorbJob(env);
+        if (isCompleted(merged) && !isProcessing(merged)) {
+          if (!hasPublicReceipt(merged) && fillAttemptsRef.current < 8) {
+            fillAttemptsRef.current += 1;
+            startPoll(envelopeRequestId(merged) || requestId, merged.retry_after ?? 3);
+            return;
+          }
+          stopPoll();
+          setValues({});
+          return;
+        }
+        if (isFailed(merged) && !shouldKeepPolling(merged)) {
+          stopPoll();
+          return;
+        }
+        startPoll(envelopeRequestId(merged) || requestId, merged.retry_after);
+      } catch {
+        startPoll(requestId, 5);
       }
-      startPoll(requestId, env.retry_after);
     }, wait);
   }
 
   useEffect(() => () => stopPoll(), []);
+
+  async function applyResolved(env: BeibeiEnvelope) {
+    rememberRequestId(envelopeRequestId(env));
+    setCheckEnv(env);
+    const id = envelopeRequestId(env) || requestIdRef.current;
+    if (shouldKeepPolling(env) && id) {
+      absorbJob(env);
+      setPhase("submit");
+      startPoll(id, env.retry_after, true);
+      return true;
+    }
+    if (isCompleted(env)) {
+      const merged = absorbJob(env);
+      setPhase("submit");
+      if (id && !hasPublicReceipt(merged)) {
+        fillAttemptsRef.current = 0;
+        startPoll(id, 3, true);
+        return true;
+      }
+      stopPoll();
+      return true;
+    }
+    return false;
+  }
 
   async function runCheck(raw?: string) {
     const next = (raw ?? code).trim();
@@ -99,22 +182,17 @@ export default function RedeemPage() {
     setChecking(true);
     setError("");
     setCheckEnv(null);
-    setJob(null);
+    updateJob(null);
+    setStartedAt(null);
     idemKeyRef.current = undefined;
+    requestIdRef.current = null;
+    fillAttemptsRef.current = 0;
+    accountHintRef.current = "";
     try {
-      const env = await checkCode(next);
+      let env = await checkCode(next);
+      env = await followExisting(env);
+      if (await applyResolved(env)) return;
       setCheckEnv(env);
-      if (isCompleted(env)) {
-        setJob(env);
-        setPhase("submit");
-        return;
-      }
-      if (isProcessing(env) && env.request_id) {
-        setJob(env);
-        setPhase("submit");
-        startPoll(env.request_id, env.retry_after);
-        return;
-      }
       if (!isReady(env)) {
         setError(env.message || "卡密当前不可用");
       }
@@ -133,7 +211,7 @@ export default function RedeemPage() {
   function enterSubmit() {
     setPhase("submit");
     setValues({});
-    setJob(null);
+    updateJob(null);
     setError("");
   }
 
@@ -165,20 +243,30 @@ export default function RedeemPage() {
         idempotency_key: idemKeyRef.current,
       });
       if (env.idempotency_key) idemKeyRef.current = env.idempotency_key;
-      setJob(env);
+      rememberRequestId(envelopeRequestId(env));
       if (env.code === "SUBMIT_RETRYABLE") {
         idemKeyRef.current = undefined;
         setError(env.message || "请稍后再提交");
         return;
       }
-      if (isCompleted(env)) {
+      const parsed = parseChatGptSession(values.session_json ?? "");
+      if (parsed?.ok) accountHintRef.current = parsed.email;
+      fillAttemptsRef.current = 0;
+      setStartedAt((prev) => prev ?? Date.now());
+      absorbJob(env);
+      if (isCompleted(env) && !isProcessing(env)) {
+        const resolved = envelopeRequestId(env) ? await followExisting(env) : env;
+        absorbJob(resolved);
         setValues({});
+        stopPoll();
         return;
       }
-      if (isProcessing(env) && env.request_id) {
-        startPoll(env.request_id, env.retry_after);
+      const id = envelopeRequestId(env) || requestIdRef.current;
+      if (shouldKeepPolling(env) && id) {
+        startPoll(id, env.retry_after, true);
         return;
       }
+      if (isProcessing(env)) return;
       if (!env.success) {
         if (env.code === "SERVICE_UNAVAILABLE") {
           setError(env.message || "服务暂时不可用，将使用同一请求重试");
@@ -194,17 +282,24 @@ export default function RedeemPage() {
   }
 
   async function refreshStatus() {
-    const id = job?.request_id;
+    const id = envelopeRequestId(job) || requestIdRef.current;
     if (id) {
       const env = await getRequest(id);
-      setJob(env);
-      if (isProcessing(env) && env.request_id) startPoll(env.request_id, env.retry_after);
+      if (!isTransient(env)) {
+        rememberRequestId(envelopeRequestId(env));
+        absorbJob(env);
+      }
+      if (shouldKeepPolling(env) && (envelopeRequestId(env) || id)) {
+        startPoll(envelopeRequestId(env) || id, env.retry_after, true);
+      } else {
+        stopPoll();
+      }
       return;
     }
     await onCheck();
   }
 
-  const busy = checking || submitting || isProcessing(job);
+  const busy = checking || submitting || isProcessing(job) || isTransient(job);
 
   return (
     <main className="mx-auto max-w-4xl px-4 pb-24 pt-24 sm:px-6 sm:pt-32">
@@ -318,10 +413,14 @@ export default function RedeemPage() {
           submitting={submitting}
           onSubmit={onSubmit}
           onRefresh={refreshStatus}
+          nextPollAt={nextPollAt}
+          startedAt={startedAt}
+          accountHint={accountHintRef.current}
           onBack={() => {
             stopPoll();
             setPhase("check");
-            setJob(null);
+            updateJob(null);
+            setStartedAt(null);
             setError("");
           }}
         />
@@ -346,6 +445,9 @@ function SubmitPanel({
   onSubmit,
   onRefresh,
   onBack,
+  nextPollAt,
+  startedAt,
+  accountHint,
 }: {
   code: string;
   checkEnv: BeibeiEnvelope | null;
@@ -360,10 +462,15 @@ function SubmitPanel({
   onSubmit: (e: React.FormEvent) => void;
   onRefresh: () => void;
   onBack: () => void;
+  nextPollAt: number | null;
+  startedAt: number | null;
+  accountHint: string;
 }) {
   const plan = job?.data?.plan || checkEnv?.data?.plan || "会员充值";
-  const completed = isCompleted(job);
-  const processing = isProcessing(job);
+  const processing = isProcessing(job) || isTransient(job);
+  const completed = Boolean(!processing && isCompleted(job));
+  const failed = isFailed(job);
+  const showFields = !completed && !processing && !failed;
   const sessionPreview = parseChatGptSession(values.session_json ?? "");
   const sessionBlocksSubmit =
     Boolean((option?.fields ?? []).some((f) => f.key === "session_json")) &&
@@ -385,22 +492,24 @@ function SubmitPanel({
             "inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium",
             completed
               ? "bg-ok-fill text-ok"
-              : processing
-                ? "bg-accent-fill text-accent"
-                : "bg-ok-fill text-ok"
+              : failed
+                ? "bg-danger-fill text-danger"
+                : processing
+                  ? "bg-accent-fill text-accent"
+                  : "bg-ok-fill text-ok"
           )}
         >
           <span
             className={cn(
               "h-1.5 w-1.5 rounded-full",
-              completed || !processing ? "bg-ok" : "bg-accent"
+              completed ? "bg-ok" : failed ? "bg-danger" : processing ? "bg-accent" : "bg-ok"
             )}
           />
-          {completed ? "充值成功" : processing ? "处理中" : "服务正常"}
+          {completed ? "充值成功" : failed ? "充值失败" : processing ? "处理中" : "服务正常"}
         </span>
       </div>
 
-      {needsChatGptSession && !completed && (
+      {needsChatGptSession && showFields && (
         <div className="rounded-3xl bg-surface p-5 sm:p-8">
           <p className="font-pixel text-[11px] font-bold uppercase tracking-[0.22em] text-faint">
             Tutorial
@@ -440,7 +549,8 @@ function SubmitPanel({
           当前套餐依据卡密识别，提交时会继续核验卡密与套餐。
         </p>
 
-        {(option?.fields ?? []).map((field, i) => {
+        {showFields &&
+          (option?.fields ?? []).map((field, i) => {
           const large =
             field.key.includes("json") ||
             field.label.toLowerCase().includes("json") ||
@@ -487,7 +597,13 @@ function SubmitPanel({
         })}
 
         {job && (
-          <StatusBanner env={job} />
+          <JobStatus
+            env={job}
+            code={code}
+            nextPollAt={nextPollAt}
+            startedAt={startedAt}
+            accountHint={accountHint}
+          />
         )}
 
         {error && (
@@ -497,19 +613,21 @@ function SubmitPanel({
         )}
 
         <div className="mt-6 flex flex-col gap-2.5 sm:flex-row">
-          <button
-            type="submit"
-            disabled={busy || completed || sessionBlocksSubmit}
-            className="btn-graphite h-12 flex-1 rounded-full px-7 text-[15px] font-medium disabled:opacity-60"
-          >
-            {submitting ? "提交中…" : processing ? "处理中，请稍候" : "提交并充值"}
-          </button>
+          {showFields && (
+            <button
+              type="submit"
+              disabled={busy || completed || sessionBlocksSubmit}
+              className="btn-graphite h-12 flex-1 rounded-full px-7 text-[15px] font-medium disabled:opacity-60"
+            >
+              {submitting ? "提交中…" : "提交并充值"}
+            </button>
+          )}
           <button
             type="button"
             onClick={onRefresh}
             className="h-12 flex-1 rounded-full border border-hairline px-7 text-[15px] font-medium text-ink transition-colors hover:bg-fill"
           >
-            查询卡密状态
+            {processing ? "立即刷新状态" : completed ? "立即刷新状态" : "查询卡密状态"}
           </button>
         </div>
         <button
@@ -607,42 +725,183 @@ function StepCard({
   );
 }
 
-function StatusBanner({ env }: { env: BeibeiEnvelope }) {
-  if (isCompleted(env)) {
-    const receipt = env.data?.receipt;
+function JobStatus({
+  env,
+  code,
+  nextPollAt,
+  startedAt,
+  accountHint,
+}: {
+  env: BeibeiEnvelope;
+  code: string;
+  nextPollAt: number | null;
+  startedAt: number | null;
+  accountHint: string;
+}) {
+  const processing = isProcessing(env) || isTransient(env);
+  const completed = !processing && isCompleted(env);
+  const failed = isFailed(env);
+
+  if (completed) {
     return (
-      <div className="mt-6 rounded-2xl bg-ok-fill px-4 py-4">
-        <p className="text-[15px] font-semibold text-ok">充值已经完成</p>
-        {receipt?.email && (
-          <p className="mt-1 text-sm text-subtle">账号 {receipt.email}</p>
-        )}
-        {receipt?.plan && (
-          <p className="text-sm text-subtle">套餐 {receipt.plan}</p>
-        )}
-        <p className="mt-2 text-xs text-muted">
-          请退出 ChatGPT 后重新登录核对。网页版看不到对应模型时，用无痕窗口再登一次。
-        </p>
-      </div>
+      <ReceiptCard
+        env={env}
+        code={code}
+        accountHint={accountHint}
+        submittedHint={startedAt}
+      />
     );
   }
-  if (isProcessing(env)) {
+  if (processing) {
     return (
-      <div className="mt-6 rounded-2xl bg-accent-fill px-4 py-4">
-        <p className="text-[15px] font-semibold text-accent">充值处理中</p>
-        <p className="mt-1 text-sm text-subtle">
-          {env.message || "请求已受理，请保持页面打开，不要重复提交。"}
-        </p>
-      </div>
+      <ProgressCard
+        env={env}
+        nextPollAt={nextPollAt}
+        startedAt={startedAt}
+      />
     );
   }
-  if (!env.success) {
+  if (failed) {
     return (
-      <div className="mt-6 rounded-2xl bg-danger-fill px-4 py-4 text-sm text-danger">
-        {env.message}
+      <div className="mt-6 rounded-2xl bg-danger-fill px-4 py-4">
+        <p className="text-[15px] font-semibold text-danger">充值失败</p>
+        <p className="mt-1 text-sm text-danger">{env.message}</p>
       </div>
     );
   }
   return null;
+}
+
+function ProgressCard({
+  env,
+  nextPollAt,
+  startedAt,
+}: {
+  env: BeibeiEnvelope;
+  nextPollAt: number | null;
+  startedAt: number | null;
+}) {
+  const [now, setNow] = useState(Date.now());
+  useEffect(() => {
+    const id = window.setInterval(() => setNow(Date.now()), 250);
+    return () => window.clearInterval(id);
+  }, []);
+  const current = progressStepIndex(env);
+  const remain = nextPollAt ? Math.max(0, Math.ceil((nextPollAt - now) / 1000)) : 0;
+  const elapsed = startedAt ? formatElapsed(now - startedAt) : "";
+
+  return (
+    <div className="mt-6 rounded-2xl bg-accent-fill px-4 py-4 sm:px-5">
+      <div className="flex items-center gap-2">
+        <span className="h-2 w-2 animate-pulse rounded-full bg-accent" />
+        <p className="text-[15px] font-semibold text-accent">{statusTitle(env)}</p>
+      </div>
+      <p className="mt-1 text-sm text-subtle">{statusDetail(env)}</p>
+
+      <ol className="mt-4 grid grid-cols-4 gap-2">
+        {PROGRESS_STEPS.map((label, i) => {
+          const done = i < current;
+          const active = i === current;
+          return (
+            <li key={label} className="min-w-0 text-center">
+              <span
+                className={cn(
+                  "mx-auto flex h-7 w-7 items-center justify-center rounded-full text-[11px] font-semibold",
+                  done
+                    ? "bg-ok text-white"
+                    : active
+                      ? "bg-accent text-white"
+                      : "bg-surface text-muted"
+                )}
+              >
+                {done ? <Check className="h-3.5 w-3.5" /> : i + 1}
+              </span>
+              <p
+                className={cn(
+                  "mt-1.5 truncate text-[11px]",
+                  done ? "text-ok" : active ? "font-medium text-accent" : "text-muted"
+                )}
+              >
+                {label}
+              </p>
+            </li>
+          );
+        })}
+      </ol>
+
+      <p className="mt-3 text-xs text-muted">
+        {elapsed ? `已等待 ${elapsed}` : "正在查询进度"}
+        {remain > 0 ? ` · ${remain} 秒后自动刷新` : " · 正在刷新"}
+      </p>
+    </div>
+  );
+}
+
+function ReceiptCard({
+  env,
+  code,
+  accountHint,
+  submittedHint,
+}: {
+  env: BeibeiEnvelope;
+  code: string;
+  accountHint: string;
+  submittedHint: number | null;
+}) {
+  const [copied, setCopied] = useState(false);
+  const view = receiptView(env, code, {
+    account: accountHint,
+    submittedAt: submittedHint,
+  });
+  const rows = [
+    { label: "卡密", value: view.code },
+    { label: "充值账号", value: view.account },
+    { label: "充值套餐", value: view.plan },
+    { label: "金额", value: view.amount },
+    { label: "充值时间", value: view.submittedAt },
+    { label: "完成时间", value: view.completedAt },
+  ];
+
+  async function copyCode() {
+    const text = view.code !== "-" ? view.code : code;
+    if (!text) return;
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), 1600);
+    } catch {
+      setCopied(false);
+    }
+  }
+
+  return (
+    <div className="mt-6 rounded-2xl bg-ok-fill px-4 py-4 sm:px-5">
+      <div className="flex items-center gap-2">
+        <span className="h-2 w-2 rounded-full bg-ok" />
+        <p className="text-[15px] font-semibold text-ok">充值成功</p>
+      </div>
+      <p className="mt-1 text-sm text-subtle">{statusDetail(env)}</p>
+      <div className="mt-3 grid gap-2 sm:grid-cols-2">
+        {rows.map((row) => (
+          <div key={row.label} className="rounded-xl bg-surface px-4 py-3">
+            <p className="text-[11px] font-medium text-muted">{row.label}</p>
+            <p className="mt-1 break-all text-sm font-medium text-ink">{row.value}</p>
+          </div>
+        ))}
+      </div>
+      <button
+        type="button"
+        onClick={() => void copyCode()}
+        className="mt-3 flex h-11 w-full items-center justify-center gap-1.5 rounded-full border border-hairline bg-surface text-sm font-medium text-ink transition-colors hover:bg-fill"
+      >
+        {copied ? <Check className="h-4 w-4 text-ok" /> : <Copy className="h-4 w-4" />}
+        {copied ? "已复制" : "复制卡密"}
+      </button>
+      <p className="mt-3 text-xs text-muted">
+        请退出 ChatGPT 后重新登录核对。网页版看不到对应模型时，用无痕窗口再登一次。
+      </p>
+    </div>
+  );
 }
 
 function BatchQuery() {
@@ -662,11 +921,11 @@ function BatchQuery() {
     const next: { code: string; text: string; ok: boolean }[] = [];
     for (const item of list) {
       try {
-        const env = await checkCode(item);
+        const env = await followExisting(await checkCode(item));
         next.push({
           code: item,
           ok: isReady(env) || isCompleted(env) || isProcessing(env),
-          text: `${statusLabel(env)}${env.data?.plan ? ` · ${env.data.plan}` : ""}`,
+          text: `${statusLabel(env)}${env.data?.plan || env.data?.receipt?.plan ? ` · ${env.data?.plan || env.data?.receipt?.plan}` : ""}`,
         });
       } catch {
         next.push({ code: item, ok: false, text: "查询失败" });

@@ -32,8 +32,6 @@ export interface CommodityDetail {
   login: boolean;
 }
 
-const detailCache = new Map<number, Promise<CommodityDetail | null>>();
-
 export async function getCommodityDetail(
   id: number
 ): Promise<CommodityDetail | null> {
@@ -47,13 +45,4 @@ export async function getCommodityDetail(
   const json = await res.json();
   if (json.code !== 200) return null;
   return json.data as CommodityDetail;
-}
-
-/** 悬停预取,展开详情时 instant 命中 */
-export function prefetchCommodityDetail(id: number) {
-  if (typeof window === "undefined") return;
-  if (!detailCache.has(id)) {
-    detailCache.set(id, getCommodityDetail(id));
-  }
-  return detailCache.get(id);
 }
